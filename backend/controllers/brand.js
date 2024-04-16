@@ -15,3 +15,27 @@ exports.createBrand = async(req, res, next) => {
         next(error);
     }
 };
+
+exports.displayBrands = async(req, res, next) => {
+    try {
+        const brands = await Brand.find().populate('models');
+        res.status(200).json({
+            success: true,
+            brands
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.updateBrand = async(req, res, next) => {
+    try {
+        const updatedBrand = await Brand.findOneAndUpdate({_id: req.params.id}, {$push: {models: req.body.modelId}}, {includeResultMetadata: true});
+        res.status(200).json({
+            success: true,
+            updatedBrand
+        });
+    } catch (error) {
+        next(error);
+    }
+};

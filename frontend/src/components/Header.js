@@ -1,21 +1,22 @@
-import React from 'react'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import axios from 'axios';
+import React, {useEffect, useState} from 'react'
+import Container from '@mui/material/Container';
+import myAxios from './axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
-function Header(props) {
+const Header = () => {
   const navigate = useNavigate();
 
-  // console.log(props);
   const logout = () => {
-    axios.get('/api/logout')
+    myAxios.get('/api/logout')
     .then(res => {
-      if (res.data.success === true) {
-        toast.success(res.data.message);
-        localStorage.removeItem('jwt');
+      if (res.status === 200) {
+        toast.success(res.data);
         navigate('/');
       }
     })
@@ -25,23 +26,23 @@ function Header(props) {
   }
 
   return (
-    <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href="/">FindMyService</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
-          </Nav>
-          <Nav>
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/signup">Sign Up</Nav.Link>
-            <Nav.Link href="/signin">Sign In</Nav.Link>
-            <Nav.Link href="" onClick={logout}>Log out</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Container>
+            <Toolbar>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                FindMyService
+              </Typography>
+              <Button color="inherit" href='/'>Home</Button>
+              <Button color="inherit" href='/signup'>Sign Up</Button>
+              <Button color="inherit" href='/signin'>Sign in</Button>
+              <Button color="inherit" onClick={logout}>Logout</Button>
+              <Button color="inherit" href='/dashboard'>My account</Button>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </Box>
   );
 }
 
-export default Header
+export default Header;

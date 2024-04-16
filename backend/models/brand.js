@@ -11,7 +11,7 @@ const brandSchema = new mongoose.Schema({
 
     models: [{
         type: ObjectId,
-        ref: "Models"
+        ref: "Model"
     }],
     
 }, {timestamps: true});

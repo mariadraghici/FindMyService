@@ -15,10 +15,22 @@ const carSchema = new mongoose.Schema({
         required: [true, "Please select a category"]
     },
 
-    model: {
+    brandName: {
         type: String,
         trim: true, // removes whitespace before and after text
-        //required: [true, "Please add car model"],
+        maxlength: 32
+    },
+
+    modelName: {
+        type: String,
+        trim: true, // removes whitespace before and after text
+        maxlength: 32
+    },
+
+    model: {
+        type: ObjectId,
+        trim: true, // removes whitespace before and after text
+        // required: [true, "Please add car model"],
         ref: "Model",
         maxlength: 100
     },
@@ -57,6 +69,18 @@ const carSchema = new mongoose.Schema({
         type: String,
         trim: true, // removes whitespace before and after text
         maxlength: 32
+    },
+
+    description: {
+        type: String,
+        trim: true, // removes whitespace before and after text
+        maxlength: 2000
+    },
+
+    user: {
+        type: ObjectId,
+        ref: "User",
+        required: true
     },
 
 }, {timestamps: true});

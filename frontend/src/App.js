@@ -1,32 +1,42 @@
-import React from 'react'
+import {React, useState, useEffect} from 'react'
 import './App.css'
 import Home from './pages/Home'
-import Signin from './pages/Signin'
-import Signup from './pages/Signup'
-import Profile from './pages/user/profile/Profile'
+import Signin from './pages/signin/Signin'
+import Signup from './pages/signup/Signup'
+import Profile from './pages/profile/Profile'
 import {Route, Routes, useNavigate} from 'react-router-dom'
-import PrivateRoute from './components/route-components/Privateroute'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AddComponents from './pages/admin/AddComponents'
 import AdminDashboard from './pages/admin/AdminDashboard'
-import AdminRoute from './components/route-components/Adminroute'
 import UpdateComponents from './pages/admin/UpdateComponent'
-
+import MyCars from './pages/user/myCars/MyCars'
+import AddCar from './pages/user/addCar/AddCar'
+import SignUpUser from './pages/signup/SignUpUser'
+import SignUpService from './pages/signup/SignUpService'
+import Layout from './components/Layout'
 
 function App() {
   const navigate = useNavigate();
+
   return (
     <>
       <ToastContainer/>
         <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/signin" element={<Signin navigate={navigate}/>}/>
-          <Route path="/signup" element={<Signup/>}/>
-          <Route path="/dashboard" element={<PrivateRoute><Profile/></PrivateRoute>}/>
-          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
-          <Route path="/admin/component/add" element={<AdminRoute><AddComponents/></AdminRoute>}/>
-          <Route path="/admin/component/update" element={<AdminRoute><UpdateComponents/></AdminRoute>}/>
+          <Route path="/" element={<Layout/>}>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/signin" element={<Signin navigate={navigate}/>}/>
+            <Route path="/signup" element={<Signup navigate={navigate}/>}/>
+            <Route path="/signup/user" element={<SignUpUser navigate={navigate}/>}/>
+            <Route path="/signup/service" element={<SignUpService navigate={navigate}/>}/>
+
+                <Route path="/dashboard" element={<Profile/>}/>
+                <Route path="/mycars" element={<MyCars/>}/>
+                <Route path="/addcar" element={<AddCar/>}/>
+                <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
+                <Route path="/admin/component/add" element={<AddComponents/>}/>
+                <Route path="/admin/component/update" element={<UpdateComponents/>}/>
+          </Route>
         </Routes>
     </>
   )

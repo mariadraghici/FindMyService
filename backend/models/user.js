@@ -41,27 +41,73 @@ const userSchema = new mongoose.Schema({
             type: ObjectId,
             ref: "Car"
         }
+    ],
+
+    facilities: [
+        {
+            type: ObjectId,
+            ref: "Facility"
+        }
+    ],
+
+    location: {
+        type: ObjectId,
+    },
+
+    address: {
+        type: String,
+        trim: true,
+        maxlength: 200
+    },
+
+    phone: {
+        type: String,
+        trim: true,
+        maxlength: 15
+    },
+
+    rating: {
+        type: Number,
+        default: 0
+    },
+
+    reviews: [
+        {
+            type: ObjectId,
+            ref: "Review"
+        }
     ]
 
 }, {timestamps: true});
 
 // encrypt password before saving to database
 userSchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 12);
-    // next();
+    if (this.isModified("password") && !/^\$2[aby]\$\d{2}\$/.test(this.password)) {
+        // If the password is not already hashed, hash it
+        this.password = await bcrypt.hash(this.password, 12);
+    }
+
+    if (this.role === 2 && !this.address) {
+        return next(new Error("Address is required"));
+    }
+
+    if (this.role === 2 && !this.phone) {
+        return next(new Error("Phone is required"));
+    }
+    // Proceed to the next middleware
+    next();
 });
 
 // compare password
 userSchema.methods.comparePassword = async function(candidatePassword, next) {
-    return await bcrypt.compare(candidatePassword, this.password);
+    return bcrypt.compare(candidatePassword, this.password);
 };
 
-// generate token
-userSchema.methods.jwtGenerateToken = async function(next) {
-    return await jwt.sign({id: this.id}, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
-    });
-};
+// // generate token
+// userSchema.methods.jwtGenerateToken = async function(next) {
+//     return jwt.sign({id: this.id}, process.env.JWT_SECRET, {
+//         expiresIn: process.env.JWT_EXPIRES_IN
+//     });
+// };
 
 module.exports = mongoose.model("User", userSchema);

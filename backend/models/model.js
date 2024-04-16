@@ -9,6 +9,12 @@ const modelSchema = new mongoose.Schema({
         maxlength: 100
     },
 
+    brand: {
+        type: ObjectId,
+        ref: "Brand",
+        required: true
+    },
+
     engines: [{
         type: String,
     }],

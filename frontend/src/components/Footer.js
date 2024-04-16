@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
 function Footer() {
   return (
-    <div>
-        <div className="text-center p-4 footer">
-            @ 2024 Copyright: <a className='text-reset fw-bold' target="_blank" href="#">FindMyService</a>
-        </div>
-    </div>
+    <Container sx={{bottom: 0, position:'fixed', textAlign: 'center', minWidth: '100%', padding:'1%'}}>
+      <Typography variant="h9" sx={{textAlign:'center'}}>Copyright @ 2024 FindMyService </Typography>
+    </Container>
   )
 }
 

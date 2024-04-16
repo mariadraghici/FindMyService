@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useEffect, useState} from 'react';
 import './admin-sidebar.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 const AdminSidebar = () => {
     const navigate = useNavigate();
 
-    // console.log(props);
     const logout = () => {
         axios.get('/api/logout')
         .then(res => {
@@ -25,9 +24,7 @@ const AdminSidebar = () => {
 
     return (
      <div>
-        {/* <!--Main Navigation--> */}
         <header>
-        {/* <!-- Sidebar --> */}
         <nav id="sidebarMenu" className="collapse d-lg-block sidebar collapse bg-white">
             <div className="position-sticky">
                 <div className="list-group list-group-flush mx-3 mt-4">
@@ -55,7 +52,7 @@ const AdminSidebar = () => {
                     <a href="#" className="list-group-item separator-item">
                     <span>My Profile</span>
                     </a>
-                    <a href="" onClick={logout} className="list-group-item list-group-item-action py-2 ripple">
+                    <a href="/" onClick={logout} className="list-group-item list-group-item-action py-2 ripple">
                    <span>Logout</span>
                     </a>
                 </div>
@@ -63,7 +60,6 @@ const AdminSidebar = () => {
         </nav>
 
         </header>
-        {/* <!--Main Navigation--> */}
         </div>
     )
 }

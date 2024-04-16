@@ -2,22 +2,17 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ErrorResponse = require('../utils/errorResponse');
 
+
 // Check if user is logged in
 exports.isAuthenicated = async (req, res, next) => {
-    const {token} = req.cookies;
+    const token = req.cookies.access_token;
     
-    if (!token) {
-        return next(new ErrorResponse(`You need to loginnnn first!`, 401));
-    }
-
-    try {
-        // verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return next(new ErrorResponse("Access forbidden!", 403));
+        }
+        
+        req.user = decoded;
         next();
-
-    } catch (error) {
-        console.log(error);
-        return next(new ErrorResponse(`You need to login first!`, 401));
-    }
+    });
 };
