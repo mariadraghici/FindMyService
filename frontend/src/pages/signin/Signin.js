@@ -1,16 +1,18 @@
-import {React, useEffect, useRef, useState, useContext} from 'react'
-import {Link, useNavigate, useLocation} from 'react-router-dom'
+import {React, useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import {toast} from 'react-toastify'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import myAxios from '../../components/axios'
+import myAxios from '../../components/axios/axios'
+import {useContext} from 'react'
+import ProfileContext from '../../components/context/ProfileContext'
 
 const Signin = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const {setUser} = useContext(ProfileContext);
 
   const [values, setValues] = useState({
     email: '',
@@ -24,32 +26,32 @@ const Signin = () => {
     setValues({...values, [val]: event.target.value});
   }
 
+  const getProfile = async() => {
+    try {
+      const res = await myAxios.get('/api/profile');
+      if (res.status === 200) {
+        setUser(res.data.user);
+      }
+    } catch (error) {
+      toast.error(error.response.data.error);
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signin in");
     try {
       const signUser = await myAxios.post('api/signin', {
         email,
         password
       });
-
-      console.log(signUser);
       
       if (signUser.status === 200) {
-        const accessToken = signUser.data.accessToken;
-        const role = signUser.data.role;
-
-        console.log("role", role);
-        
-
-        // setAuth({email, password, accessToken, role});
         setValues({email: '', password: ''});
-        toast.success("User logged in successfully!"); 
-      
-        navigate('/');
-      } 
+        toast.success("User logged in successfully!");
+        getProfile();
+        navigate('/', {replace: true});
+      }
     } catch (error) {
-      // console.log(error);
       toast.error(error.response.data.error);
     }
   }
@@ -57,10 +59,10 @@ const Signin = () => {
   return (
       <Container>
         <Box sx={{display:'flex', flexDirection: 'column', alignItems:'center' }}>
-          <Typography sx={{margin: '2%'}} variant='h5'>Sign In</Typography>
+          <Typography sx={{margin: '2%'}} variant='h5'>Logare</Typography>
           <TextField value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '50%'}} type='text'/>
           <TextField value={password} onChange={handleChange('password')} label="Password" margin='normal' sx={{width: '50%'}} type='password'/>
-          <Button onClick={handleSubmit} variant='contained' sx={{width: '10%', marginTop: '2%'}}>Sign In</Button>
+          <Button onClick={handleSubmit} variant='contained' sx={{width: '15%', marginTop: '2%'}}>Loghează-te</Button>
         </Box>
       </Container>
   )

@@ -1,3 +1,7 @@
 .header {
     color: red;
 }
+
+.img-width {
+    max-width: 30%;
+}

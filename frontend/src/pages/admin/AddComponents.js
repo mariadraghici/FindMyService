@@ -2,21 +2,22 @@ import React, {useState, useEffect} from 'react'
 import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
 import {toast} from 'react-toastify';
 import axios from 'axios';
-import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import '../../components/admin/admin-sidebar/admin-sidebar.css';
+import { Autocomplete, Grid, Typography } from '@mui/material';
+import { Button, TextField, Stack } from '@mui/material';
 
 const AddComponents = () => {
 
       const [modelValues, setModelValues] = useState({
+        brand: '',
         name: '',
         engines: []
       });
 
       const [brandName, setBrandName] = useState('');
-      const [currentBrand, setCurrentBrand] = useState('');
 
-      const {name, engines} = modelValues;
+      const {name, engines, brand} = modelValues;
       const [brands, setBrands] = useState({});
 
       useEffect(() => {
@@ -40,9 +41,6 @@ const AddComponents = () => {
         setBrandName(event.target.value);
       }
 
-      const handleDropdownChange = (selected) => {
-        setCurrentBrand(selected.value);
-      }
 
       const handleBrandSubmit = async (e) => {
         e.preventDefault();
@@ -54,10 +52,6 @@ const AddComponents = () => {
           if (added.data.success === true) {
             setBrandName('');
             toast.success("Brand added successfully!"); 
-            
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('jwt', JSON.stringify(added.data));
-            }
           } 
         } catch (error) {
           toast.error(error.response.data.error);
@@ -65,71 +59,56 @@ const AddComponents = () => {
       }
 
       const handleModelSubmit = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         try {
+          // console.log(brands[brand]._id);
+          console.log(brand);
+          console.log(brands)
           const added = await axios.post('/api/model/create', {
             name: name,
-            brand: brands[currentBrand]._id,
+            brand: brands[brand]._id,
             engines: engines.split(',').map((engine) => engine.trim()),
           });
 
-          const updatedBrand = await axios.put('/api/brand/update/' + brands[currentBrand]._id, {
+          const updatedBrand = await axios.put('/api/brand/update/' + brands[brand]._id, {
             modelId: added.data.model._id,
           });
 
-          if (added.data.success === true && updatedBrand.data.success === true) {
-            setModelValues({name: '', engines: []});
-            toast.success("Model added successfully!"); 
-            
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('jwt', JSON.stringify(added.data));
-            }
-          } 
+          console.log(updatedBrand);
+          console.log(added);
+          // if (added.data.success === true && updatedBrand.data.success === true) {
+          //   setModelValues({name: '', engines: []});
+          //   toast.success("Model added successfully!"); 
+          // } 
         } catch (error) {
-          toast.error(error.response.data.error);
+          // toast.error(error.response.data.error);
+          console.log(error);
         }
       }
 
 
   return (
-    <div>
-      <div className="row justify-content-start">
-        <div className="col-3">
-          <AdminSidebar />
-        </div>
-        <div className="col-8">
-          <div className="form">
-            <h3>Add Models</h3>
-              <form>
-                <div className="input-container">
-                  <label>Name </label>
-                  <input onChange={handleModelChange("name")} type="text" name="name" value={name} required />
-                </div>
-                <Dropdown className="input-container" options={Object.keys(brands)} value={currentBrand} onChange={handleDropdownChange} placeholder={"Select a brand..."}/>
-                <div className="input-container">
-                  <label>Engines </label>
-                  <input onChange={handleModelChange("engines")} type="text" name="engines" value={engines} required />
-                </div>
-                <div className="button-container">
-                  <button onClick={handleModelSubmit} type="submit">Add Model</button>
-                </div>
-              </form>
-          </div>
-          <div className="form">
-            <h3>Add Brands</h3>
-              <form>
-                <div className="input-container">
-                  <label>Name </label>
-                  <input type="text" required onChange={handleBrandChange} value={brandName}/>
-                </div>
-                <div className="button-container">
-                  <button onClick={handleBrandSubmit} type="submit">Add Brand</button>
-                </div>
-              </form>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Grid container>
+      <Grid item xs={2}>
+        <AdminSidebar/>
+      </Grid>
+      <Grid item xs={8}>
+        {/* implement with MUI components */}
+        <Typography variant="h4" component="h4" sx={{margin: '5%'}}>
+          Add Components
+        </Typography>
+        <Stack spacing={2} sx={{margin: '5%'}}>
+        <TextField size="small" label="Brand Name" variant="outlined" value={brandName} onChange={handleBrandChange}/>
+        <Button variant="contained" sx={{width:'10%', alignSelf: 'center'}} onClick={handleBrandSubmit}>Add Brand</Button>
+        <Autocomplete size='small' options={Object.keys(brands)} onChange={(event, value) => 
+          setModelValues({...modelValues, brand: value})
+        } renderInput={(params) => <TextField {...params} label="Select Brand" variant="outlined" />} />
+        <TextField size="small" label="Model Name" variant="outlined" value={name} onChange={handleModelChange('name')}/>
+        <TextField size="small" label="Engines" variant="outlined" value={engines} onChange={handleModelChange('engines')}/>
+        <Button variant="contained" sx={{width:'10%', alignSelf:'center'}} onClick={handleModelSubmit}>Add Model</Button>
+        </Stack>
+      </Grid>
+    </Grid>
   )
 }
 

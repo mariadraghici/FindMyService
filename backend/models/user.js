@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { verify } = require('jsonwebtoken');
 const {ObjectId} = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
@@ -25,10 +25,6 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: [true, "Password is required"],
         minlength: [6, "Password must be at least 6 characters long"],
-        match: [
-            /^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]+$/,
-            "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
-        ]
     },
     
     role: {
@@ -52,6 +48,7 @@ const userSchema = new mongoose.Schema({
 
     location: {
         type: ObjectId,
+        ref: "Location"
     },
 
     address: {
@@ -76,38 +73,36 @@ const userSchema = new mongoose.Schema({
             type: ObjectId,
             ref: "Review"
         }
-    ]
+    ],
+
+    description: {
+        type: String,
+        trim: true,
+        maxlength: 2000
+    },
+
+    verified: {
+        type: Boolean,
+        default: false
+    }
 
 }, {timestamps: true});
 
 // encrypt password before saving to database
 userSchema.pre("save", async function(next) {
-    if (this.isModified("password") && !/^\$2[aby]\$\d{2}\$/.test(this.password)) {
-        // If the password is not already hashed, hash it
-        this.password = await bcrypt.hash(this.password, 12);
+    if (!this.isModified("password")) return next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        return next();
+    } catch (error) {
+        return next(error);
     }
-
-    if (this.role === 2 && !this.address) {
-        return next(new Error("Address is required"));
-    }
-
-    if (this.role === 2 && !this.phone) {
-        return next(new Error("Phone is required"));
-    }
-    // Proceed to the next middleware
-    next();
 });
 
-// compare password
+// // compare password
 userSchema.methods.comparePassword = async function(candidatePassword, next) {
     return bcrypt.compare(candidatePassword, this.password);
 };
-
-// // generate token
-// userSchema.methods.jwtGenerateToken = async function(next) {
-//     return jwt.sign({id: this.id}, process.env.JWT_SECRET, {
-//         expiresIn: process.env.JWT_EXPIRES_IN
-//     });
-// };
 
 module.exports = mongoose.model("User", userSchema);

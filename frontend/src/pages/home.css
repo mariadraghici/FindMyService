@@ -1,0 +1,27 @@
+.img-width-home {
+    max-width: 100%;
+}
+
+.big-logo {
+    max-width: 50%;
+    justify-self: center;
+}
+
+.big-text {
+    font-size: 1.5em !important;
+    color: white;
+    width: 55%;
+}
+
+/* for media phone resize font size */
+@media only screen and (max-width: 600px) {
+    .big-text {
+        font-size: 1em !important;
+    }
+}
+/* make font size resize with the window */
+@media only screen and (max-width: 800px) {
+    .big-text {
+        font-size: 1.2em !important;
+    }
+}

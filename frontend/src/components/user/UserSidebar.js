@@ -1,69 +1,40 @@
 import React from 'react';
 import './user-sidebar.css';
-import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
 
-function samePageLinkNavigation(event) {
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 || // ignore everything but left-click
-      event.metaKey ||
-      event.ctrlKey ||
-      event.altKey ||
-      event.shiftKey
-    ) {
-      return false;
-    }
-    return true;
+function useRouteMatch(patterns) {
+  const { pathname } = useLocation()
+
+  for (let i = 0; i < patterns.length; i += 1) {
+      const pattern = patterns[i]
+      const possibleMatch = matchPath(pattern, pathname)
+      if (possibleMatch !== null) {
+          return possibleMatch
+      }
   }
-  
-  function LinkTab(props) {
-    return (
-      <Tab
-        component="a"
-        aria-current={props.selected && 'page'}
-        {...props}
-      />
-    );
-  }
-  
-  LinkTab.propTypes = {
-    selected: PropTypes.bool,
-  };
+  return null
+};
 
 const UserSidebar = () => {
-    const [value, setValue] = React.useState(0);
+  const routeMatch = useRouteMatch(['/mycars', '/addcar', '/profile'])
+  const currentTab = routeMatch?.pattern?.path
 
-    const handleChange = (event, newValue) => {
-        // event.type can be equal to focus with selectionFollowsFocus.
-        if (
-        event.type !== 'click' ||
-        (event.type === 'click' && samePageLinkNavigation(event))
-        ) {
-        setValue(newValue);
-        }
-    };
-
-    return (
-        <Box sx={{ width: '100%' }}>
-        <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="nav tabs example"
-            role="navigation"
-            orientation='vertical'
-        >
-                    <LinkTab label="Profilul meu" href='/dashboard'/>
-                    <LinkTab label="Mașinile mele" href='/mycars'/>
-                    <LinkTab label="Adaugă o nouă mașină" href='/addcar'/>
-                    <LinkTab label="Feedback" href='/feedback'/>
-                </Tabs>
-            </Box>
-        );
+  return (
+      <Tabs value={currentTab}
+            orientation="vertical"
+            textColor="secondary"
+            indicatorColor="secondary"
+      >
+          <Tab label="Profilul meu" value="/profile" to="/profile" component={Link}/>
+          <Tab label="Adauga masina" value="/addcar" to="/addcar" component={Link} />
+          <Tab label="Masinile mele" value="/mycars" to="/mycars" component={Link} />
+          {/* <Tab label="Recenzii" value="/feedback" to="/feedback" component={Link}/> */}
+      </Tabs>
+  )
 }
 
 export default UserSidebar;

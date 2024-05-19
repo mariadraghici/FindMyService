@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react'
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 import UserSidebar from '../../../components/user/UserSidebar';
 import './addcar.css';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import axios from 'axios';
+import myAxios from '../../../components/axios/axios';
 import {toast} from 'react-toastify';
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import { Divider } from '@mui/material';
 
 const AddCar = () => {
 
@@ -18,16 +18,6 @@ const AddCar = () => {
     const [engines, setEngines] = useState([]);
     const [disableModel, setDisableModel] = useState(true);
     const [disableEngine, setDisableEngine] = useState(true);
-    const [profile, setProfile] = useState("");
-    
-    useEffect(() => {
-        fetch("/api/profile")
-        .then(res => res.json())
-        .then(result => {
-          setProfile(result.user);
-        })
-        .catch(err => console.log(err));
-    }, []);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -46,7 +36,7 @@ const AddCar = () => {
 
     const getBrands = async () => {
         try {
-            const res = await axios.get('/api/brand/all');
+            const res = await myAxios.get('/api/brand/all');
             setBrands(res.data.brands.reduce((acc, brand) => {
                 acc[brand.name] = brand;
                 return acc;
@@ -74,7 +64,7 @@ const AddCar = () => {
             year: parseInt(year), km: parseInt(km), transmission: transmission,
             fuel: fuel, brandName: brand, modelName: model};
 
-            const res = await axios.post('/api/car/add', sendFormData);
+            const res = await myAxios.post('/api/car/add', sendFormData);
 
             if (res.data.success) {
                 toast.success("Mașină adăugată cu succes!");
@@ -97,13 +87,16 @@ const AddCar = () => {
     }
 
   return (
-        <Container sx={{paddingTop: '5%'}}>
-            <Grid container spacing={2}>
-                <Grid item xs={4} sx={{paddingRight:"2%"}}>
+        <Container>
+            <Grid container spacing={2} sx={{marginTop: '3%'}}>
+                <Grid item xs={3}>
                 <UserSidebar/>
                 </Grid>
-                <Grid item xs={8}>
-                    <Grid container direction="column" spacing={2}>
+                <Grid item xs={9}>
+                    <Card sx={{padding: '3%', borderRadius: '7px'}}>
+                    <h4>Adaugă o mașină nouă</h4>
+                    <Divider sx={{opacity: 1}}/>
+                    <Grid container direction="column" spacing={2} sx={{marginTop: '2%'}}>
                         <Grid item>
                             <TextField size='small' onChange={handleChange("name")} type="text" name="name"
                             value={name} required fullWidth label='Nume (ex: Buburuza roșie)'/>
@@ -227,7 +220,9 @@ const AddCar = () => {
                             <Button variant="contained" onClick={addCar}>Adaugă mașină</Button>
                         </Grid>
                     </Grid>
+                    </Card>
                 </Grid>
+
             </Grid>
         </Container>
   )

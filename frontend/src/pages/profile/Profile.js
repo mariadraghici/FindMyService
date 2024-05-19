@@ -1,26 +1,16 @@
-import React, {useState, useEffect} from 'react'
+import React, {useContext} from 'react'
 import './profile.css';
 import UserProfile from '../user/UserProfile';
-import myAxios from '../../components/axios';
+import ProfileContext from '../../components/context/ProfileContext';
+import ServiceProfile from '../service/ServiceProfile';
 
 const Profile = () => {
-    const [profile, setProfile] = useState({});
-    const {name, email, role, createdAt} = profile;
-
-    useEffect(() => {
-        myAxios.get('api/profile')
-        .then(res => {
-            console.log(res.data);
-            setProfile(res.data.user);
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    }, []);
+  const {user} = useContext(ProfileContext);
 
   return (
     <>
-      {(role === 1 || role === 0) && <UserProfile name={name} email={email} createdAt={createdAt} role={role}/>}
+      {(user.role === 1 || user.role === 0) && <UserProfile/>}
+      {(user.role === 2) && <ServiceProfile/>}
     </>
   )
 }

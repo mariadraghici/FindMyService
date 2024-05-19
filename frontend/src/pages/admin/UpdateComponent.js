@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
 import {toast} from 'react-toastify';
-import {navigate} from 'react-router-dom';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 

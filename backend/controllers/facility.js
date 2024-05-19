@@ -13,3 +13,16 @@ exports.createFacility = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getFacilities = async (req, res, next) => {
+  try {
+    const facilities = await Facility.find();
+    res.status(200).json({
+      success: true,
+      facilities,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

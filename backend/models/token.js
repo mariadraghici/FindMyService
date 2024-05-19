@@ -5,8 +5,10 @@ const Schema = mongoose.Schema
 const tokenSchema = new Schema({
     username: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
+    
     token: {
       type: String,
       required: true
@@ -15,6 +17,10 @@ const tokenSchema = new Schema({
       type: Date,
       default: Date.now,
       index: { expires: 60*60*24 }
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     }
 })
 

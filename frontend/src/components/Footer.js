@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 
 function Footer() {
   return (
-    <Container sx={{bottom: 0, position:'fixed', textAlign: 'center', minWidth: '100%', padding:'1%'}}>
+    <Container sx={{bottom: 0, position:'absolute', textAlign: 'center', minWidth: '100%', padding:'1%'}}>
       <Typography variant="h9" sx={{textAlign:'center'}}>Copyright @ 2024 FindMyService </Typography>
     </Container>
   )

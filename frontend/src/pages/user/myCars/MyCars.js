@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 import UserSidebar from '../../../components/user/UserSidebar';
-import { Container, Grid, TextField } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import './mycars.css';
-import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import axios from 'axios';
+import myAxios from '../../../components/axios/axios';
 import { toast } from 'react-toastify';
 import CarCard from '../../../components/user/CarCard';
 
@@ -20,8 +17,12 @@ const MyCars = () => {
 
     const deleteCar = async () => {
         try {
-            const res = await axios.put(`/api/mycars/delete`, {id: car._id});
-            console.log(res);
+            const res = await myAxios.put(`/api/mycars/delete`, {id: car._id});
+
+            if (!res.data.success) {
+                toast.error("Error deleting car!");
+                return;
+            }
             toast.success("Car deleted successfully!");
             getMyCars();
             setPage(carsNumber);
@@ -33,11 +34,10 @@ const MyCars = () => {
 
     const getMyCars = async () => {
         try {
-            const res = await axios.get("/api/mycars");
+            const res = await myAxios.get("/api/mycars");
             setCars(res.data.cars);
             setCarsNumber(res.data.cars.length);
             setCar(res.data.cars[0]);
-            console.log(res.data.cars);
         } catch (error) {
             console.log(error);
         }
@@ -53,12 +53,12 @@ const MyCars = () => {
     };
 
   return (
-    <Container sx={{paddingTop: '5%'}}>
-        <Grid container spacing={2}>
-            <Grid item xs={4} sx={{paddingRight:"2%"}}>
+    <Container>
+        <Grid container spacing={2} sx={{marginTop: '3%'}}>
+            <Grid item xs={3}>
             <UserSidebar/>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={9}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
                         <CarCard car={car} deleteCar={deleteCar}/>
@@ -73,4 +73,4 @@ const MyCars = () => {
   )
 }
 
-export default MyCars
+export default MyCars;

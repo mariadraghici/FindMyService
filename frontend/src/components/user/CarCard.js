@@ -1,27 +1,21 @@
 import React from 'react';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 
 const CarCard = ({car, deleteCar}) => {
 
-    if (!car) return (<div>Loading...</div>);
+    if (!car) return (<div>No cars to show</div>);
 
     return (
         <>
-            <Card sx={{ maxWidth: '100%' }} variant='outlined'>
+            <Card sx={{ maxWidth: '100%', borderRadius: '7px' }} variant='outlined'>
             <CardContent>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography gutterBottom variant="h5" component="div">
-                    {car.name}
-                </Typography>
+                <h4>{car.name}</h4>
                 <Typography gutterBottom variant="h8" component="div">
                     {car.brandName} {car.modelName}
                 </Typography>
@@ -72,12 +66,9 @@ const CarCard = ({car, deleteCar}) => {
                 </Typography>
             </Stack>
             </CardContent>
-            {/* <CardActions > */}
                 <Stack direction="row" justifyContent="flex-end" alignItems="baseline" sx={{padding: '2%'}}>
                 <Button size="small" onClick={deleteCar}>ȘTERGE</Button>
-                {/* <Button size="small">Learn More</Button> */}
                 </Stack>
-            {/* </CardActions> */}
             </Card>
         </>
     )

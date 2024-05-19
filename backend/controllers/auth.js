@@ -2,6 +2,10 @@ const User = require('../models/user');
 const Token = require('../models/token');
 const ErrorResponse = require('../utils/errorResponse');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 exports.signup = async(req, res, next) => {
     const {email} = req.body;
@@ -11,17 +15,66 @@ exports.signup = async(req, res, next) => {
         return next(new ErrorResponse(`User already exists with email of ${email}`, 400));
     }
 
+    if (!req.body.password.match(regex)) {
+        return next(new ErrorResponse(`Password must contain at least one uppercase letter, one lowercase letter, one number and one special character`, 400));
+    }
+
     try {
         const user = await User.create(req.body);
+        const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
+        username: req.body.name,
+        expiresAt: Date.now() + 86400000,
+        userId: user._id
+        });
+
+        const msg = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: 'FindMy Service Account Activation Link',
+            text: `http://${req.headers.host}/api/verifyEmail?token=${token.token}`,
+            html: `<h1>Click the link below to activate your account</h1>
+             <a href=http://${req.headers.host}/api/verifyEmail?token=${token.token}>Activate Account</a>`
+        };
+
+        await sgMail.send(msg);
+
         res.status(201).json({
             success: true,
-            user
+            message: 'Account created successfully! Check your email to activate your account.'
         });
     } catch (error) {
         console.log(error);
         next(error);
     }
 };
+
+exports.verifyEmail = async(req, res, next) => {
+    try {
+        const token = await Token.findOne({ token: req.query.token });
+        if (!token) {
+            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
+        }
+
+        const user = await User.findById(token.userId);
+        if (!user) {
+            return next(new ErrorResponse(`User not found!`, 404));
+        }
+
+        user.verified = true;
+        await user.save();
+
+        await token.deleteOne({ token});
+
+        res.status(200).json({
+            success: true,
+            message: 'Account verified successfully!'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+        
 
 exports.signin = async(req, res, next) => {
     try{
@@ -30,7 +83,6 @@ exports.signin = async(req, res, next) => {
             return next(new ErrorResponse(`Email and Password are required!`, 400));
         }
 
-        // check if user exists
         const user = await User.findOne({email});
 
 
@@ -38,67 +90,38 @@ exports.signin = async(req, res, next) => {
             return next(new ErrorResponse(`User not found with email of ${email}`, 404));
         }
         
-        // check if password matches
         const isMatch = await user.comparePassword(password);
 
         if(!isMatch) {
             return next(new ErrorResponse(`Invalid credentials!`, 404));
         }
-        
-        const accessToken = jwt.sign({ "_id": user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60m' });
-        // const refreshToken = jwt.sign({ "_id": user._id }, process.env.RFRESH_TOKEN_SECRET, { expiresIn: '1d' });
-        
-        // const token = await Token.create({ token: refreshToken, username: user.name});
 
-        // if (!token) {
-        //     return next(new ErrorResponse(`Cannot create token!`, 400));
+        // if (!user.verified) {
+        //     return next(new ErrorResponse(`Account not verified!`, 400));
         // }
 
-        // const role = user.role;
+        const accessToken = jwt.sign({ "_id": user._id, "name": user.name }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
+        const refreshToken = jwt.sign({ "_id": user._id, "name": user.name }, process.env.RFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+        
+        const token = await Token.create({ token: refreshToken, username: user.name, expiresAt: Date.now() + 86400000, userId: user._id});
+
+        if (!token) {
+            return next(new ErrorResponse(`Cannot create token!`, 400));
+        }
+
+        const role = user.role;
         res
         .status(200)
         .cookie("access_token", accessToken, {
             httpOnly: true,
             secure: true,
           })
-        .send("Logged in successfully!");
+        .json({"role": role});
     } catch(error) {
         console.log(error);
         next(new ErrorResponse(`Cannot log in, check credentials!`, 400));
     }
 };
-
-exports.refreshToken = async (req, res, next) => {
-        const cookie = req.cookies;
-
-        if (!cookie?.jwt) {
-            return res.status(401).send('Access Denied. No token provided.');
-        }
-        
-        console.log(cookie.jwt);
-
-        const refreshToken = cookie.jwt;
-        // check if user exists
-        const token = await Token.findOne({ token: refreshToken });
-
-        if(!token) {
-            return res.status(403).send('Invalid User.');
-        }
-
-
-        jwt.verify(refreshToken, process.env.RFRESH_TOKEN_SECRET, async (err, decoded) => {
-            if (err || token._userId.toString() !== decoded._id) {
-                return res.status(403).send('Invalid Token.');
-            }
-            
-            const role = decoded.role;
-            const accessToken = jwt.sign({ "_id": decoded._id, "role": role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' });
-            res
-            .status(200)
-            .json({role, accessToken});
-        });
-};
-
 
 exports.logout = async (req, res) => {
     const cookie = req.cookies;
@@ -108,31 +131,31 @@ exports.logout = async (req, res) => {
         return;
     }
 
-    // const refreshToken = cookie.jwt;
+    jwt.verify(cookie.access_token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+        if (err && err.name !== 'TokenExpiredError') {
+            return res.status(401).send('Invalid Token.');
+        }
+        
+        const user = jwt.verify(cookie.access_token, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
+        const token = await Token.findOne({ username: user.name});
+        const logout = await token.deleteOne({ token: token.token });
 
+        if (!logout) {
+            return res.status(400).send('Cannot logout!');
+        }
 
-    // const token = await Token.findOne({ token: refreshToken });
-
-    // if (!token) {
-    //     return res.clearCookie('access_token', { httpOnly: true, sameSite: 'None', secure: true}).status(204);
-    // }
-
-    // // Delete refresh token
-    // await token.deleteOne({ token: refreshToken });
-
-    res.clearCookie('access_token', { httpOnly: true, sameSite: 'None', secure: true})
-    .status(200)
-    .send('Logged out successfully!');
+        res.clearCookie('access_token', { httpOnly: true, sameSite: 'None', secure: true})
+        .status(200)
+        .send('Logged out successfully!');
+    });
 };
 
 // User profile
 exports.userProfile = async (req, res, next) => {
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).populate('location');
 
-    console.log(req);
-
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         user
     });

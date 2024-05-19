@@ -7,15 +7,19 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 const cors = require('cors');
+const multer = require('multer');
+
 
 // Import Routes
 const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/product');
 const brandRoutes = require('./routes/brand');
 const modelRoutes = require('./routes/model');
 const carRoutes = require('./routes/car');
 const userRoutes = require('./routes/user');
 const facilityRoutes = require('./routes/facility');
+const locationRoutes = require('./routes/location');
+const serviceRoutes = require('./routes/service');
+const reviewRoutes = require('./routes/review');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DATABASE, {
@@ -40,16 +44,27 @@ app.use(cors(corsOptions));
 
 // Routes Middleware
 app.use("/api", authRoutes);
-app.use("/api", productRoutes);
 app.use("/api", brandRoutes);
 app.use("/api", modelRoutes);
 app.use("/api", carRoutes);
 app.use("/api", userRoutes);
 app.use("/api", facilityRoutes);
-
+app.use("/api", locationRoutes);
+app.use("/api", serviceRoutes);
+app.use("/api", reviewRoutes)
 // Error Handler Middleware
 app.use(errorHandler);
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({ storage: storage })
 const port = process.env.PORT || 8000;
 
 

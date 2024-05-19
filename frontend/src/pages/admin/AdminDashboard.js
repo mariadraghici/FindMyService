@@ -1,6 +1,4 @@
 import React from 'react'
-import Header from '../../components/Header'
-import Footer from '../../components/Footer'
 import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
 
 const AdminDashboard = () => {
@@ -32,7 +30,6 @@ const AdminDashboard = () => {
                 </div>
             </div>
         </div> */}
-        <Footer />
         </div>
   )
 }
