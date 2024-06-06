@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { verify } = require('jsonwebtoken');
+const address = require('./address');
 const {ObjectId} = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
@@ -42,13 +42,13 @@ const userSchema = new mongoose.Schema({
     facilities: [
         {
             type: ObjectId,
-            ref: "Facility"
+            ref: "ServiceFacility"
         }
     ],
 
-    location: {
+    city: {
         type: ObjectId,
-        ref: "Location"
+        ref: "City"
     },
 
     address: {
@@ -84,6 +84,22 @@ const userSchema = new mongoose.Schema({
     verified: {
         type: Boolean,
         default: false
+    },
+
+    images: [
+        {
+            type: ObjectId,
+            ref: "Image"
+        }
+    ],
+
+    schedule: {
+        type: String,
+    },
+
+    address: {
+        type: ObjectId,
+        ref: "Address",
     }
 
 }, {timestamps: true});

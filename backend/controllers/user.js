@@ -12,3 +12,18 @@ exports.userCars = async (req, res, next) => {
         cars: user.cars
     });
 };
+
+exports.addImage = async (req, res, next) => {
+    const image = await Image.create(req.body);
+
+    const user = await User.findById(req.user._id);
+
+    user.images.push(image._id);
+
+    await user.save();
+
+    return res.status(201).json({
+        success: true,
+        image
+    });
+}

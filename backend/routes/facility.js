@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createFacility, getFacilities } = require('../controllers/facility');
 
-router.route('/facility/create').post(createFacility);
-router.route('/facility/all').get(getFacilities);
+router.post('/facility/create', createFacility);
+router.get('/facility/:id', getFacilities);
 
 module.exports = router;

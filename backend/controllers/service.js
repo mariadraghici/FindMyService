@@ -2,12 +2,13 @@ const User = require('../models/user');
 const Review = require('../models/review');
 const Car = require('../models/car');
 const ErrorResponse = require('../utils/errorResponse');
-const Location = require('../models/location');
+const City = require('../models/city');
 const Facility = require('../models/facility');
+const serviceFacility = require('../models/serviceFacility');
 
 exports.allServices = async(req, res, next) => {
     try {
-        const services = await User.find({role: 2}).populate('location');
+        const services = await User.find({role: 2}).populate('city').populate('facilities').populate('address');
         res.status(200).json({
             success: true,
             services
@@ -20,7 +21,7 @@ exports.allServices = async(req, res, next) => {
 exports.getServiceByName = async(req, res, next) => {
     try {
         const {name} = req.params;
-        const service = await User.findOne({name}).populate('location');
+        const service = await User.findOne({name}).populate('city').populate('facilities').populate('address');
         if (!service) {
             return next(new ErrorResponse('Service not found', 404));
         }
@@ -53,7 +54,9 @@ exports.getReviews = async(req, res, next) => {
 
 exports.serviceFilter = async(req, res, next) => {
     try {
-        let {cars, locations, facilities} = req.body;
+        let {cars, cities, serviceFacilities} = req.body;
+
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const cars_info = await Car.find({_id: {$in: cars}});
         let reviews = [];
         let all_reviews = [];
@@ -63,7 +66,7 @@ exports.serviceFilter = async(req, res, next) => {
             all_reviews = all_reviews.concat(reviews);
         }));
 
-        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, location: {$in: locations}, facilities: {$in: facilities}}).populate('location');
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}, facilities: {$in: facilities}}).populate('city');
         
         res.status(200).json({
             success: true,
@@ -74,9 +77,9 @@ exports.serviceFilter = async(req, res, next) => {
     }
 };
 
-exports.serviceFilterOnlyByLocationAndCars = async(req, res, next) => {
+exports.serviceFilterOnlyByCityAndCars = async(req, res, next) => {
     try {
-        let {cars, locations} = req.body;
+        let {cars, cities} = req.body;
         const cars_info = await Car.find({_id: {$in: cars}});
         let reviews = [];
         let all_reviews = [];
@@ -86,7 +89,7 @@ exports.serviceFilterOnlyByLocationAndCars = async(req, res, next) => {
             all_reviews = all_reviews.concat(reviews);
         }));
 
-        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, location: {$in: locations}}).populate('location');
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}}).populate('city');
         
         res.status(200).json({
             success: true,
@@ -99,7 +102,9 @@ exports.serviceFilterOnlyByLocationAndCars = async(req, res, next) => {
 
 exports.serviceFilterOnlyByFacilityAndCars = async(req, res, next) => {
     try {
-        let {cars, facilities} = req.body;
+        let {cars, serviceFacilities} = req.body;
+
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const cars_info = await Car.find({_id: {$in: cars}});
         let reviews = [];
         let all_reviews = [];
@@ -109,7 +114,7 @@ exports.serviceFilterOnlyByFacilityAndCars = async(req, res, next) => {
             all_reviews = all_reviews.concat(reviews);
         }));
 
-        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}}).populate('location');
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}}).populate('city');
         
         res.status(200).json({
             success: true,
@@ -132,7 +137,7 @@ exports.serviceFilterOnlyByCars = async(req, res, next) => {
             all_reviews = all_reviews.concat(reviews);
         }));
 
-        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}}).populate('location');
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}}).populate('city');
         
         res.status(200).json({
             success: true,
@@ -143,11 +148,11 @@ exports.serviceFilterOnlyByCars = async(req, res, next) => {
     }
 };
 
-exports.serviceFilterOnlyByLocation = async(req, res, next) => {
+exports.serviceFilterOnlyByCity = async(req, res, next) => {
     try {
-        const {locations} = req.body;
+        const {cities} = req.body;
         
-        const services = await User.find({role: 2, location: {$in: locations}}).populate('location');
+        const services = await User.find({role: 2, city: {$in: cities}}).populate('city');
 
         res.status(200).json({
             success: true,
@@ -160,9 +165,12 @@ exports.serviceFilterOnlyByLocation = async(req, res, next) => {
 
 exports.serviceFilterOnlyByFacility = async(req, res, next) => {
     try {
-        const {facilities} = req.body;
+        const {serviceFacilities} = req.body;
+        console.log(serviceFacilities);
 
-        const services = await User.find({role: 2, facilities: {$in: facilities}}).populate('location');
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
+
+        const services = await User.find({role: 2, facilities: {$in: facilities}}).populate('city');
         res.status(200).json({
             success: true,
             services
@@ -172,16 +180,166 @@ exports.serviceFilterOnlyByFacility = async(req, res, next) => {
     }
 };
 
-exports.serviceFilterOnlyByLocationAndFacility = async(req, res, next) => {
+exports.serviceFilterOnlyByCityAndFacility = async(req, res, next) => {
     try {
-        const {locations, facilities} = req.body;
-        const services = await User.find({role: 2, location: {$in: locations}, facilities: {$in: facilities}}).populate('location');
+        const {cities, serviceFacilities} = req.body;
+
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
+        const services = await User.find({role: 2, city: {$in: cities}, facilities: {$in: facilities}}).populate('city');
 
         res.status(200).json({
             success: true,
             services
         });
     } catch (error) {
+        next(error);
+    }
+}
+
+exports.serviceFilterOnlyByCityAndOthers = async(req, res, next) => {
+    try {
+        const {cities, others} = req.body;
+        const {brand, model, engine} = others;
+        let reviews = [];
+        let all_reviews = [];
+
+        if (brand !== '' && model !== '' && engine !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model, engine: engine});
+            all_reviews = all_reviews.concat(reviews);
+        } else if (brand !== '' && model !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model});
+            all_reviews = all_reviews.concat(reviews);
+        } else {
+            reviews = await Review.find({brandName: brand})
+            all_reviews = all_reviews.concat(reviews);
+        }
+
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}}).populate('city');
+        res.status(200).json({
+            success: true,
+            services
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.serviceFilterOnlyByFacilityAndOthers = async(req, res, next) => {
+    try {
+        const {others, serviceFacilities} = req.body;
+
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
+        const {brand, model, engine} = others;
+        let reviews = [];
+        let all_reviews = [];
+
+        if (brand !== '' && model !== '' && engine !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model, engine: engine});
+            all_reviews = all_reviews.concat(reviews);
+        } else if (brand !== '' && model !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model});
+            all_reviews = all_reviews.concat(reviews);
+        } else {
+            reviews = await Review.find({brandName: brand})
+            all_reviews = all_reviews.concat(reviews);
+        }
+
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}}).populate('city');
+        res.status(200).json({
+            success: true,
+            services
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.serviceFilterOnlyByCityAndFacilityAndOthers = async(req, res, next) => {
+    try {
+        const {cities, others, serviceFacilities} = req.body;
+
+        let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
+        const {brand, model, engine} = others;
+        let reviews = [];
+        let all_reviews = [];
+
+        if (brand !== '' && model !== '' && engine !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model, engine: engine});
+            all_reviews = all_reviews.concat(reviews);
+        } else if (brand !== '' && model !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model});
+            all_reviews = all_reviews.concat(reviews);
+        } else {
+            reviews = await Review.find({brandName: brand})
+            all_reviews = all_reviews.concat(reviews);
+        }
+
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}, facilities: {$in: facilities}}).populate('city');
+        res.status(200).json({
+            success: true,
+            services
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.serviceFilterOnlyByOthers = async(req, res, next) => {
+    try {
+        const {others} = req.body;
+        const {brand, model, engine} = others;
+        let reviews = [];
+        let all_reviews = [];
+
+        if (brand !== '' && model !== '' && engine !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model, engine: engine});
+            all_reviews = all_reviews.concat(reviews);
+        } else if (brand !== '' && model !== '') {
+            reviews = await Review.find({brandName: brand, modelName: model});
+            all_reviews = all_reviews.concat(reviews);
+        } else {
+            reviews = await Review.find({brandName: brand})
+            all_reviews = all_reviews.concat(reviews);
+        }
+
+        const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}}).populate('city');
+        res.status(200).json({
+            success: true,
+            services
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.editDescription = async(req, res, next) => {
+    try {
+        const {description} = req.body;
+        const user = await User.findById(req.user._id);
+        user.description = description;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.editSchedule = async(req, res, next) => {
+    try {
+        const {schedule} = req.body;
+        const user = await User.findById(req.user._id);
+
+        user.schedule = schedule;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            user
+        });
+    }
+    catch (error) {
         next(error);
     }
 }

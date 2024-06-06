@@ -7,7 +7,7 @@ const {isAuthenicated} = require('../middleware/auth');
 router.post('/signup', signup);
 router.post('/signin', signin);
 router.get('/logout', logout);
-router.get('/user/:id', singleUser);
+router.get('/user/:id', isAuthenicated, singleUser);
 router.get('/profile', isAuthenicated, userProfile);
 router.get('/verifyEmail', verifyEmail);
 

@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const {allServices, getServiceByName, getReviews, serviceFilter, serviceFilterOnlyByFacility,
-    serviceFilterOnlyByLocation, serviceFilterOnlyByLocationAndFacility,
-serviceFilterOnlyByFacilityAndCars, serviceFilterOnlyByLocationAndCars, serviceFilterOnlyByCars} = require('../controllers/service');
+    serviceFilterOnlyByCity, serviceFilterOnlyByCityAndFacility,
+serviceFilterOnlyByFacilityAndCars, serviceFilterOnlyByCityAndCars, serviceFilterOnlyByCars,
+serviceFilterOnlyByCityAndOthers, serviceFilterOnlyByFacilityAndOthers,
+serviceFilterOnlyByCityAndFacilityAndOthers,
+serviceFilterOnlyByOthers, editDescription, editSchedule} = require('../controllers/service');
 const {isAuthenicated} = require('../middleware/auth');
 
 
@@ -11,10 +14,16 @@ router.get('/service/page/:name', isAuthenicated, getServiceByName);
 router.get('/service/reviews/:name', isAuthenicated, getReviews);
 router.post('/service/filter', isAuthenicated, serviceFilter);
 router.post('/service/filter/facility', isAuthenicated, serviceFilterOnlyByFacility);
-router.post('/service/filter/location', isAuthenicated, serviceFilterOnlyByLocation);
-router.post('/service/filter/locationfacility', isAuthenicated, serviceFilterOnlyByLocationAndFacility);
+router.post('/service/filter/location', isAuthenicated, serviceFilterOnlyByCity);
+router.post('/service/filter/locationfacility', isAuthenicated, serviceFilterOnlyByCityAndFacility);
 router.post('/service/filter/facilitycars', isAuthenicated, serviceFilterOnlyByFacilityAndCars);
-router.post('/service/filter/locationcars', isAuthenicated, serviceFilterOnlyByLocationAndCars);
+router.post('/service/filter/locationcars', isAuthenicated, serviceFilterOnlyByCityAndCars);
 router.post('/service/filter/cars', isAuthenicated, serviceFilterOnlyByCars);
+router.post('/service/filter/locationothers', isAuthenicated, serviceFilterOnlyByCityAndOthers);
+router.post('/service/filter/facilityothers', isAuthenicated, serviceFilterOnlyByFacilityAndOthers);
+router.post('/service/filter/locationfacilityothers', isAuthenicated, serviceFilterOnlyByCityAndFacilityAndOthers);
+router.post('/service/filter/others', isAuthenicated, serviceFilterOnlyByOthers);
+router.put('/service/edit/:id', isAuthenicated, editDescription);
+router.put('/service/schedule/:id', isAuthenicated, editSchedule);
 
 module.exports = router;

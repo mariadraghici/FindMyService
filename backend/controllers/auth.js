@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Token = require('../models/token');
+const Address = require('../models/address');
 const ErrorResponse = require('../utils/errorResponse');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -20,23 +21,35 @@ exports.signup = async(req, res, next) => {
     }
 
     try {
-        const user = await User.create(req.body);
-        const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
-        username: req.body.name,
-        expiresAt: Date.now() + 86400000,
-        userId: user._id
-        });
 
-        const msg = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: 'FindMy Service Account Activation Link',
-            text: `http://${req.headers.host}/api/verifyEmail?token=${token.token}`,
-            html: `<h1>Click the link below to activate your account</h1>
-             <a href=http://${req.headers.host}/api/verifyEmail?token=${token.token}>Activate Account</a>`
-        };
+        const {role} = req.body;
+        let user;
 
-        await sgMail.send(msg);
+        if (role === 2) {
+            const {lat, lng, address, name, email, password, role, phone, city} = req.body;
+            const addressRecord = await Address.create({lat, lng, address})
+            console.log(addressRecord);
+            user = await User.create({name, email, password, role, phone, city, address: addressRecord._id});
+        } else {
+            user = await User.create(req.body);
+        }
+
+        // const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
+        // username: req.body.name,
+        // expiresAt: Date.now() + 86400000,
+        // userId: user._id
+        // });
+
+        // const msg = {
+        //     from: process.env.SENDER_EMAIL,
+        //     to: email,
+        //     subject: 'FindMy Service Account Activation Link',
+        //     text: `http://${req.headers.host}/api/verifyEmail?token=${token.token}`,
+        //     html: `<h1>Click the link below to activate your account</h1>
+        //      <a href=http://${req.headers.host}/api/verifyEmail?token=${token.token}>Activate Account</a>`
+        // };
+
+        // await sgMail.send(msg);
 
         res.status(201).json({
             success: true,
@@ -96,6 +109,12 @@ exports.signin = async(req, res, next) => {
             return next(new ErrorResponse(`Invalid credentials!`, 404));
         }
 
+        const initial_token = await Token.findOne({ username: user.name});
+
+        if (initial_token) {
+            await initial_token.deleteOne({ token: initial_token.token });
+        }
+
         // if (!user.verified) {
         //     return next(new ErrorResponse(`Account not verified!`, 400));
         // }
@@ -153,12 +172,21 @@ exports.logout = async (req, res) => {
 // User profile
 exports.userProfile = async (req, res, next) => {
 
-    const user = await User.findById(req.user._id).populate('location');
-
-    return res.status(200).json({
-        success: true,
-        user
-    });
+    try {
+        const user = await User.findById(req.user._id).populate('city').populate('address');
+        
+        if (!user) {
+            return next(new ErrorResponse(`User not found!`, 404));
+        }
+        
+        return res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        console.log(error);
+        new ErrorResponse(`Cannot get user profile!`, 400);
+    }
 };
 
 exports.singleUser = async(req, res, next) => {

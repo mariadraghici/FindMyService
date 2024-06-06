@@ -1,6 +1,12 @@
-.input-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 10px;
-  }
+.signup-stack {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+
+.signup-button {
+  display: flex;
+  flex-wrap: wrap;
+}
