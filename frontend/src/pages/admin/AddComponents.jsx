@@ -61,9 +61,6 @@ const AddComponents = () => {
       const handleModelSubmit = async (e) => {
         // e.preventDefault();
         try {
-          // console.log(brands[brand]._id);
-          console.log(brand);
-          console.log(brands)
           const added = await axios.post('/api/model/create', {
             name: name,
             brand: brands[brand]._id,
@@ -74,8 +71,6 @@ const AddComponents = () => {
             modelId: added.data.model._id,
           });
 
-          console.log(updatedBrand);
-          console.log(added);
           // if (added.data.success === true && updatedBrand.data.success === true) {
           //   setModelValues({name: '', engines: []});
           //   toast.success("Model added successfully!"); 

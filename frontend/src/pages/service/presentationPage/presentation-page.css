@@ -1,0 +1,89 @@
+.grey-box {
+  background-color: #373737;
+  z-index: -1;
+  width: 100%;
+}
+
+.add-facility-card {
+  width: 50%;
+  align-self: center;
+}
+
+.map-box {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.offer-box {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  margin-left: 10%;
+}
+
+.facility-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #323232 !important;
+  width: 90%;
+  align-self: center;
+  margin-top: 2%;
+  padding: 3%;
+}
+
+.card-content-map {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 5% 5% 5% !important;
+  background-color:  #EEEEEE !important;
+}
+
+@media screen and (max-width: 768px) {
+  .grey-box {
+    height: 100%;
+  }
+
+  .add-facility-card {
+    width: 100%;
+    align-self: center;
+    margin-top: 5%;
+  }
+
+  .facility-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #323232 !important;
+    width: 100%;
+    align-self: center;
+    margin-top: 5%;
+    padding: 3%;
+  }
+
+  .card-content-map {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5% 5% 5%;
+  }
+
+  .map-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .offer-box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-left: 0%;
+  }
+}

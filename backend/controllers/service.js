@@ -343,3 +343,34 @@ exports.editSchedule = async(req, res, next) => {
         next(error);
     }
 }
+
+exports.updateAndGetNewOffers = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.body.userId);
+        console.log(user);
+        user.newOffers = user.newOffers + 1;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.resetNewOffers = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.newOffers = 0;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        next(error);
+    }
+}

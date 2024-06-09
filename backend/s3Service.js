@@ -1,10 +1,10 @@
 // const {S3} = require("aws-sdk");
-const {S3Client, PutObjectCommand, GetObjectCommand} = require("@aws-sdk/client-s3");
+const {S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand} = require("@aws-sdk/client-s3");
 const uuid = require("uuid").v4;
 const Image = require('./models/image');
 const User = require('./models/user');
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-
+const sharp = require('sharp');
 
 // exports.s3Uploadv2 = async (files) => {
 //     const s3 = new S3();
@@ -30,7 +30,15 @@ exports.s3Uploadv3 = async (files, username) => {
     for (let i = 0; i < length; i++) {
         fileNames.push(`uploads/${username}-${uuid()}-${files[i].originalname}`);
     }
-    const params = files.map((file, index) => {
+
+    // Resize images with Sharp
+    const resizedImages = await Promise.all(files.map(file => {
+        return sharp(file.buffer)
+            .resize({ width: 600, height: 400, fit: 'contain'})
+            .toBuffer();
+    }));
+
+    const params = resizedImages.map((file, index) => {
         return {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: fileNames[index],
@@ -72,3 +80,34 @@ exports.s3GetImages = async (serviceName) => {
 
     return images;
 }
+
+exports.s3DeleteImages = async (serviceName, imageId) => {
+    const s3client = new S3Client();
+    const user = await User.findOne({ name: serviceName }).populate('images');
+    
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const image = user.images.find(image => image._id == imageId);
+
+    if (!image) {
+        throw new Error("Image not found");
+    }
+
+    // Delete the image from S3
+    const deleteObjectParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: image.imageName,
+    };
+    await s3client.send(new DeleteObjectCommand(deleteObjectParams));
+
+    // Remove the image reference from the user's images array
+    user.images.pull(imageId);
+    await user.save();
+
+    // Delete the image document from the database
+    await Image.findByIdAndDelete(imageId);
+
+    return { message: "Image deleted successfully" };
+};

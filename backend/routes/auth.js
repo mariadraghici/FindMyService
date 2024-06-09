@@ -10,5 +10,8 @@ router.get('/logout', logout);
 router.get('/user/:id', isAuthenicated, singleUser);
 router.get('/profile', isAuthenicated, userProfile);
 router.get('/verifyEmail', verifyEmail);
+router.get('/isAuthenicated', isAuthenicated, (req, res) => {
+    res.status(200).send('Authenticated!');
+});
 
 module.exports = router;

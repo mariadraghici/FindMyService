@@ -7,11 +7,28 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Stack, Typography, Box, Container, Button } from "@mui/material";
 import myAxios from "../../components/axios/axios";
 import { toast } from "react-hot-toast";
+import NotificationsCounter from "../../components/context/NotificationsCounter";
 
 const OffersPage = () => {
     const {user, setUser} = useContext(ProfileContext);
     const [offers, setOffers] = useState([]);
     const [currentId, setCurrentId] = useState(null);
+    const {notifications, setNotifications} = useContext(NotificationsCounter);
+
+    const resetNewOffers = async () => {
+        try {
+            const res = await myAxios.put('/api/service/resetOffers', {userId: user._id});
+            console.log(res.data);
+            setNotifications(res.data.user.newOffers);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setNotifications(0);
+        resetNewOffers();
+    }, []);
 
     const navigate = useNavigate();
 
@@ -61,16 +78,19 @@ const OffersPage = () => {
     }, [currentId]);
 
     return (
-        <Container>
-        <Stack direction='row' spacing={2} sx={{display: 'flex', justifyContent:'center', marginTop: '2%'}} >
+        <Container sx={{display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center', marginTop: '2%'}}>
+        <Typography variant="h4" component="div">
+            {notifications} Oferte noi
+        </Typography>
+       
         {offers?.map(offer => (
-            <Card key={offer._id} sx={{ width: '100%' }}>
+            <Card key={offer._id} sx={{ width: '100%', marginTop: '2%' }}>
                 <CardContent>
                     <Typography variant="h6" component="div">
-                        {offer.userFrom.email}
+                        Email: {offer.userFrom.email}
                     </Typography>
                     <Typography variant="body">
-                        {offer.text}
+                        Mesaj: {offer.text}
                     </Typography>
                 </CardContent>
                 <Stack direction='row' spacing={2} sx={{display: 'flex-end', justifyContent:'flex-end', marginBottom: '2%', paddingRight: '5%'}} >
@@ -82,7 +102,6 @@ const OffersPage = () => {
                 </Stack>
             </Card>
         ))}
-        </Stack>
         </Container>
     )
 

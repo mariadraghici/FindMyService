@@ -29,6 +29,20 @@ const io = new Server(server, {
   }
 });
 
+io.on('connection', (socket) => {
+  socket.on('join-room', (data) => {
+    socket.join(data);
+  });
+
+  socket.on('offer-request', (data) => {
+    // console.log(message);
+    // io.emit('receive-message', message);
+    console.log(data);
+    socket.to(data.room).emit('receive-message', data.message);
+  });
+});
+
+
 // Import Routes
 const authRoutes = require('./routes/auth');
 const brandRoutes = require('./routes/brand');
@@ -43,7 +57,7 @@ const serviceFacilityRoutes = require('./routes/serviceFacility');
 const offerRoutes = require('./routes/offer');
 const addressRoutes = require('./routes/address');
 const ErrorResponse = require('./utils/errorResponse');
-const { s3Upload, s3Uploadv3, s3GetImages} = require('./s3Service');
+const { s3Upload, s3Uploadv3, s3GetImages, s3DeleteImages} = require('./s3Service');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DATABASE, {
@@ -116,72 +130,38 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: 1024 * 1024 * 5, files: 5}});
 
 // decoment for amazon s3
-// app.post('/api/upload', upload.array("file"), async (req, res) => {
-//   const files = req.files;
-//   const username = req.body.name;
-
-//   try {
-//     const results = await s3Uploadv3(files, username);
-//     console.log(results);
-//   } catch (error) {
-//     console.log(error);
-//   }
-//   res.json({ status: 'success' });
-
-// });
-
-// app.get('/api/images/service/:serviceName', async (req, res) => {
-//   const serviceName = req.params.serviceName;
-//   console.log(serviceName);
-//   try {
-//     const images = await s3GetImages(serviceName);
-//     res.json({ images });
-//   } catch (error) {
-//     console.log(error);
-//   }
-//   res.json({ images: [] });
-// });
-
 app.post('/api/upload', upload.array("file"), async (req, res) => {
+  const files = req.files;
+  const username = req.body.name;
+
   try {
-    const files = req.files;
-    const username = req.body.name;
-    const length = files.length;
-    const fileNames = [];
-
-    if (!files) {
-      return res.status(400).json({ error: 'No files were uploaded.' });
-    }
-
-    for (let i = 0; i < length; i++) {
-      fileNames.push(`${files[i].originalname}`);
-  }
-
-    const promises = files.map(async (file, index) => {
-      const buffer = await sharp(file.buffer)
-        .resize({ width: 600, height: 400, fit: 'contain'  }) // Resize the image to 800px width, adjust as needed
-        .toBuffer();
-
-      const filePath = path.join(__dirname, 'public', 'uploads', `${fileNames[index]}`);
-
-      // Ensure the uploads directory exists
-      fs.mkdirSync(path.dirname(filePath), { recursive: true });
-
-      // Write the resized image to the disk
-      fs.writeFileSync(filePath, buffer);
-    });
-
-    // Wait for all file processing to complete
-    await Promise.all(promises);
-
-    res.status(200).json({status: 'success'})
+    const results = await s3Uploadv3(files, username);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: error.message });
   }
+  res.json({ status: 'success' });
+
 });
 
 app.get('/api/images/service/:serviceName', async (req, res) => {
+  const serviceName = req.params.serviceName;
+  try {
+    const images = await s3GetImages(serviceName);
+    res.json({ images });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Route to delete an image
+app.delete('/api/delete/:serviceName/:imageId', async (req, res) => {
+  const { serviceName, imageId } = req.params;
+  try {
+      const result = await s3DeleteImages(serviceName, imageId);
+      res.status(200).json(result);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
 });
 
 app.use((error, req, res, next) => {
@@ -203,4 +183,8 @@ const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
   console.log(`Server running on port: ${port}`);
+});
+
+server.listen(3001, () => {
+  console.log('Socket.io server running on port 3001');
 });

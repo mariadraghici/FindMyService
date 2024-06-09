@@ -4,7 +4,6 @@ import UserProfile from '../user/UserProfile';
 import ProfileContext from '../../components/context/ProfileContext';
 import ServiceProfile from '../service/ServiceProfile';
 import { getProfile } from '../../api/profileApi';
-import { Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -13,9 +12,11 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = await getProfile();
-      if (user) {
-        setUser(user);
+      const res = await getProfile();
+      if (res) {
+        setUser(res);
+      } else {
+        setUser(null);
       }
     }
 
@@ -27,8 +28,8 @@ const Profile = () => {
 
   return (
     <>
-      {(user.role === 1 || user.role === 0) && <UserProfile/>}
-      {(user.role === 2) && <ServiceProfile/>}
+      {user && (user.role === 1 || user.role === 0) && <UserProfile/>}
+      {user && (user.role === 2) && <ServiceProfile/>}
     </>
   )
 }

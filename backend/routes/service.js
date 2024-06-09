@@ -5,7 +5,7 @@ const {allServices, getServiceByName, getReviews, serviceFilter, serviceFilterOn
 serviceFilterOnlyByFacilityAndCars, serviceFilterOnlyByCityAndCars, serviceFilterOnlyByCars,
 serviceFilterOnlyByCityAndOthers, serviceFilterOnlyByFacilityAndOthers,
 serviceFilterOnlyByCityAndFacilityAndOthers,
-serviceFilterOnlyByOthers, editDescription, editSchedule} = require('../controllers/service');
+serviceFilterOnlyByOthers, editDescription, editSchedule, updateAndGetNewOffers, resetNewOffers} = require('../controllers/service');
 const {isAuthenicated} = require('../middleware/auth');
 
 
@@ -25,5 +25,7 @@ router.post('/service/filter/locationfacilityothers', isAuthenicated, serviceFil
 router.post('/service/filter/others', isAuthenicated, serviceFilterOnlyByOthers);
 router.put('/service/edit/:id', isAuthenicated, editDescription);
 router.put('/service/schedule/:id', isAuthenicated, editSchedule);
+router.put('/service/offers/', isAuthenicated, updateAndGetNewOffers);
+router.put('/service/resetOffers', isAuthenicated, resetNewOffers);
 
 module.exports = router;

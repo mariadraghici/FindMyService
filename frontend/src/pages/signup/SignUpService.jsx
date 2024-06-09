@@ -18,13 +18,9 @@ import SignupLayout from "../../components/utils/SignUpLayout";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";
-import StyledPopper from "../../components/utils/StyledPopper";
+import StyledPopperWhite from "../../components/utils/StyledPopperWhite";
 import './signup.css';
-import Popper from '@mui/material/Popper';
-import Fade from '@mui/material/Fade';
-import Paper from '@mui/material/Paper';
-import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
-import Card from '@mui/material/Card';
+import FormHelperText from "@mui/material/FormHelperText";
 
 const SignUpService = () => {
       const [showPassword, setShowPassword] = React.useState(false);
@@ -33,11 +29,13 @@ const SignUpService = () => {
       const [lat, setLat] = useState(0);
       const [lng, setLng] = useState(0);
       const handleClickShowPassword = () => setShowPassword((show) => !show);
-      const [cityChosen, setCityChosen] = useState(false);
+      const [allFieldsCompleted, setAllFieldsCompleted] = useState(false);
       const [anchorEl, setAnchorEl] = useState(null);
+      const [firstPage, setFirstPage] = useState(true);
       const handleMouseDownPassword = (event) => {
         event.preventDefault();
       };
+
       const [values, setValues] = useState({
           role: 2,
           name: '',
@@ -54,7 +52,6 @@ const SignUpService = () => {
       const getcities = async () => {
         try {
           const cities = await myAxios.get('/api/city/all');
-          console.log(cities.data.cities);
           setCities(cities.data.cities);
         } catch (error) {
           toast.error(error.response.data.error);
@@ -63,12 +60,21 @@ const SignUpService = () => {
 
       useEffect(() => {
         getcities();
+        // set values address to ''
       }, []);
+      
     
       const handleChange = val => event => {
-        // console.log(event.target.value);
         setValues({...values, [val]: event.target.value});
       }
+
+      useEffect(() => {
+        if (name && email && password && phone && city) {
+          setAllFieldsCompleted(true);
+        } else {
+          setAllFieldsCompleted(false);
+        }
+      }, [name, email, password, address, phone, city]);
     
       const handleSubmit = async (e) => {
         e.preventDefault();
@@ -97,35 +103,40 @@ const SignUpService = () => {
             navigate('/signin');
           }
         } catch (error) {
-          console.log(error);
+          toast.error(error.response.data.error);
         }
       }
 
-      const handleChooseLocationClick = (event) => {
-        setChooseLocation(true);
+      const handleNextStepClick = (event) => {
+        setFirstPage(false);
       }
 
       const open = Boolean(anchorEl);
-      const id = open ? 'simple-popup' : undefined;
     
     return (
         <SignupLayout>
             <Stack direction='column' spacing={5} sx={{alignItems: 'center', marginTop: '6%'}}>
-              <Typography sx={{margin: '2%'}} color='text.primary' variant='h5'>Înregistrează-te ca Service</Typography>
-              <TextField value={name} onChange={handleChange('name')} label="Nume" margin='normal' sx={{width: '50%'}} type='text'
-              color='primary' InputLabelProps={{style: { color: '#8E8E8E' },}}/>
-              <TextField required value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '50%'}} type='text'
+              {firstPage && <>
+              <Typography sx={{margin: '2%', textAlign: 'center'}} variant='h5'>Înregistrează-te ca Service</Typography>
+              <TextField required value={name} onChange={handleChange('name')} label="Nume" margin='normal' sx={{width: '100%'}} type='text'
               color='primary' InputLabelProps={{style: { color: '#8E8E8E' },}}
+              InputProps={{
+                style: { color: 'black' }
+              }}/>
+              <TextField required value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '100%'}} type='text'
+              color='primary' InputLabelProps={{style: { color: '#8E8E8E' },}}
+              InputProps={{
+                style: { color: 'black' }
+              }}
               />
-                  {/* <TextField required value={password} onChange={handleChange('password')} label="Parola" margin='normal' sx={{width: '50%'}} type='password'/> */}
-                  <FormControl variant="outlined" sx={{width: '50%'}}>
-                  <InputLabel htmlFor="outlined-adornment-password" sx={{color: 'placeholder.primary'}}>Password</InputLabel>
+                  <FormControl variant="outlined" sx={{width: '100%'}}>
+                  <InputLabel required htmlFor="outlined-adornment-password" sx={{color: 'placeholder.primary'}}>Password</InputLabel>
                   
                   <OutlinedInput
                     value={password} onChange={handleChange('password')}
                     id="outlined-adornment-password"
                     inputProps={{
-                      style: { color: 'white' }
+                      style: { color: 'black' }
                     }}
                     type={showPassword ? 'text' : 'password'}
                     endAdornment={
@@ -142,33 +153,48 @@ const SignUpService = () => {
                     }
                     label="Password"
                   />
+                   <FormHelperText sx={{margin: '0'}}>
+                    Parola trebuie să conțină cel puțin o literă mare, o cifră și un caracter special (?,!,#,..)</FormHelperText>
                 </FormControl>
-                  <TextField required value={phone} onChange={handleChange('phone')} label="Numar de telefon" margin='normal' sx={{width: '50%'}} type='text'
-                  color='primary' InputLabelProps={{style: { color: '#8E8E8E' },}} />
+                  <TextField required value={phone} onChange={handleChange('phone')} label="Numar de telefon" margin='normal' sx={{width: '100%'}} type='text'
+                  color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}
+                  InputProps={{
+                    style: { color: 'black' }
+                  }}
+                  />
                   <Autocomplete
-                              sx={{width: '50%', marginTop: '2%'}}
+                              sx={{width: '100%', marginTop: '2%'}}
                               id="combo-box-fuel"
                               options={cities.map((option) => option.name)}
-                              renderInput={(params) => <TextField {...params} label="Selectați judetul" color='primary' InputLabelProps={{style: { color: '#8E8E8E' },}}/>}
+                              renderInput={(params) => <TextField required {...params} label="Selectați judetul"
+                               color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}
+                               InputProps={{
+                                ...params.InputProps,
+                                sx: {
+                                  '& .MuiAutocomplete-input': {
+                                    color: 'black', // Change text color to black
+                                  },
+                                },
+                              }}
+                               />}
                               isOptionEqualToValue={(option, value) => option === value || value === ""}
                               value={city}
                               onChange={(event, newValue) => {
                                   setValues({...values, city: newValue});
                                   setLat(cities.find(loc => loc.name === newValue).lat);
                                   setLng(cities.find(loc => loc.name === newValue).lng);
-                                  setCityChosen(true);
                               }}
-                              PopperComponent={StyledPopper}
+                              PopperComponent={StyledPopperWhite}
                               />
-                  {chooseLocation === false &&
                   <Button
-                  onClick={handleChooseLocationClick}
+                  onClick={handleNextStepClick}
                   variant='contained'
                   sx={{width: '50%', marginTop: '2%'}}
-                  disabled={!cityChosen}>
-                    Alegeți locația pe hartă
-                    </Button>}
-                  {chooseLocation && <LocationChooseOnMap setChooseLocation={setChooseLocation}
+                  disabled={!allFieldsCompleted}>
+                    pasul urmator
+                    </Button>
+                  </>}
+                  {firstPage === false && <LocationChooseOnMap setChooseLocation={setChooseLocation}
                   lng={lng}
                   setLat={setLat}
                   setLng={setLng}
@@ -177,7 +203,10 @@ const SignUpService = () => {
                   setValues={setValues}
                   address={address}
                   handleChange={handleChange}/> }
-                  <Button onClick={handleSubmit} variant='contained' className="signup-service-button">Înregistrează-te</Button>
+                  {firstPage === false && <Stack direction='row' spacing={2} sx={{alignItems: 'center'}}>
+                  <Button onClick={() => {setFirstPage(true); setValues({...values, address: ''})}} variant='contained' sx={{backgroundColor: '#565656'}}>Pasul anterior</Button>
+                  <Button onClick={handleSubmit} variant='contained'>Înregistrează-te</Button>
+                  </Stack>}
             </Stack>
         </SignupLayout>
     );

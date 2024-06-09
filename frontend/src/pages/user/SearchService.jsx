@@ -15,6 +15,8 @@ import { getAllBrands } from '../../api/brandApi';
 import { getAllFacilities } from '../../api/facilityApi';
 import { getAllCities } from '../../api/cityApi';
 import StyledPopper from '../../components/utils/StyledPopper';
+import './searchService.css';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const SearchService = () => {
     const [services, setServices] = useState([]);
@@ -31,6 +33,7 @@ const SearchService = () => {
     const [disableEngine, setDisableEngine] = useState(true);
     const [models, setModels] = useState({});
     const [engines, setEngines] = useState([]);
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -80,7 +83,6 @@ const SearchService = () => {
     const handleFiltre = async () => {
         try {
             const res = await filter(selectedCars, selectedFacilities, selectedCities, formData);
-            console.log(res);   
             setServices(res);
         } catch (error) {
             console.log(error);
@@ -126,8 +128,8 @@ const SearchService = () => {
 
     return (
         <Container>
-            <Grid container spacing={2} sx={{marginTop: '5%'}}>
-                <Grid item xs={3}  sx={{alignItems: 'center'}}>
+            <Grid container direction={isSmallScreen ? 'column' : 'row'} spacing={2} className='grid-container'>
+                <Grid item xs={3} sx={{alignItems: 'center'}}>
                     <Stack spacing={2}>
                         <Card sx={{padding: '10%', borderRadius: '7px', backgroundColor: 'blacks.light'}}>
                             <Stack spacing={2}>
@@ -151,12 +153,12 @@ const SearchService = () => {
                                             />
                                         </div>
                                     ))}
+                                    <Typography variant="h7" component="div">
+                                        Sau
+                                    </Typography>
                                 </>
                             )}
 
-                            <Typography variant="h6" component="div">
-                                Sau
-                            </Typography>
                             <Typography variant="h6" component="div">
                                 Selectează marca:
                             </Typography>
@@ -207,7 +209,6 @@ const SearchService = () => {
                                 style: { color: '#8E8E8E' },
                             }}/>}
                             onChange={(event, newValue) => {
-                                console.log(newValue);
                                 if (newValue === "" || newValue === null) {
                                     setFormData({...formData, model: "", engine: ""});
                                     setEngines([]);

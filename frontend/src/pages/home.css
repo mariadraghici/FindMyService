@@ -18,6 +18,14 @@
     .big-text {
         font-size: 1em !important;
     }
+
+    .box-home {
+        margin-top: 50%;
+    }
+
+    .img-width-home {
+        display: none;
+    }
 }
 /* make font size resize with the window */
 @media only screen and (max-width: 800px) {

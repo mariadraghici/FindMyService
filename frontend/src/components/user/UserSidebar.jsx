@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { matchPath } from 'react-router-dom';
+import  useMediaQuery from '@mui/material/useMediaQuery';
 
 function useRouteMatch(patterns) {
   const { pathname } = useLocation()
@@ -22,16 +23,20 @@ function useRouteMatch(patterns) {
 const UserSidebar = () => {
   const routeMatch = useRouteMatch(['/mycars', '/addcar', '/profile'])
   const currentTab = routeMatch?.pattern?.path
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
 
   return (
       <Tabs value={currentTab}
-            orientation="vertical"
-            textColor="secondary"
-            indicatorColor="secondary"
+            orientation="horizontal"
+            textColor="primary"
+            variant={isSmallScreen ? "fullWidth" : "standard"}
+            indicatorColor="primary"
+            sx={{marginTop: '2%'}}
       >
-          <Tab label="Profilul meu" value="/profile" to="/profile" component={Link}/>
-          <Tab label="Adauga masina" value="/addcar" to="/addcar" component={Link} />
-          <Tab label="Masinile mele" value="/mycars" to="/mycars" component={Link} />
+          <Tab label="Profilul meu" value="/profile" to="/profile" component={Link} sx={{fontSize: 'large'}}/>
+          <Tab label="Adauga masina" value="/addcar" to="/addcar" component={Link} sx={{fontSize: 'large'}}/>
+          <Tab label="Masinile mele" value="/mycars" to="/mycars" component={Link} sx={{fontSize: 'large'}}/>
       </Tabs>
   )
 }

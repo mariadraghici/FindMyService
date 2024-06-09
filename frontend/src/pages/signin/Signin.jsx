@@ -11,26 +11,17 @@ import {useContext} from 'react'
 import ProfileContext from '../../components/context/ProfileContext'
 import signinImage from '../../img/signin_photo.png'
 import './signin.css'
-import HeaderPositionContext from '../../components/context/HeaderPosition'
 import { Card, CardContent, Icon, Stack } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { getProfile } from '../../api/profileApi';
+import CardLayout from '../../components/utils/CardLayout';
 
 const Signin = () => {
   const navigate = useNavigate();
   const {setUser} = useContext(ProfileContext);
-  const {setHeaderPosition} = useContext(HeaderPositionContext);
-
-  // useEffect(() => {
-  //   setHeaderPosition('absolute');
-
-  //   return () => {
-  //     setHeaderPosition('static');
-  //   }
-  // }, []);
-
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -47,19 +38,25 @@ const Signin = () => {
   const {email, password} = values;
 
   const handleChange = val => event => {
-    // console.log(event.target.value);
     setValues({...values, [val]: event.target.value});
   }
 
-  const getProfile = async() => {
-    try {
-      const res = await myAxios.get('/api/profile');
-      if (res.status === 200) {
-        setUser(res.data.user);
+  // const getProfile = async() => {
+  //   try {
+  //     const res = await myAxios.get('/api/profile');
+  //     if (res.status === 200) {
+  //       setUser(res.data.user);
+  //     }
+  //   } catch (error) {
+  //     // toast.error(error.response.data.error);
+  //   }
+  // }
+
+  const fetchProfile = async () => {
+    const user = await getProfile();
+      if (user) {
+          setUser(user);
       }
-    } catch (error) {
-      // toast.error(error.response.data.error);
-    }
   }
 
   const handleSubmit = async (e) => {
@@ -73,11 +70,12 @@ const Signin = () => {
       if (signUser.status === 200) {
         setValues({email: '', password: ''});
         toast.success("User logged in successfully!");
-        getProfile();
+        // getProfile();
+        fetchProfile();
         navigate('/', {replace: true});
       }
     } catch (error) {
-      toast.error(error.response.data.error);
+      toast.error("Invalid email or password!");
     }
   }
 
@@ -87,19 +85,30 @@ const Signin = () => {
           <img src={signinImage} alt="signin_img" className="img-width-signin-photo" />
           
           <Stack direction='column' spacing={2} className='card-stack'>
-            <Card className='card-signin'>
+            <CardLayout additionalClasses='card-signin'>
               <CardContent className='card-content'>
                 <Stack direction='column' spacing={3} sx={{justifyContent: 'center', alignItems: 'center'}}>
-                <AccountCircleIcon sx={{fontSize: '100px'}} color='primary'/>
-                <Typography sx={{margin: '2%', color: 'black'}} variant='h5'>Logare</Typography>
-                <TextField value={email} onChange={handleChange('email')} label="Email" type='text' sx={{width: '100%'}}
+                <AccountCircleIcon className='signin-icon'/>
+                <Typography variant='h5' color='secondary' className='login-text'>Logare</Typography>
+                <TextField value={email}
+                onChange={handleChange('email')}
+                label="Email"
+                InputLabelProps={
+                  {style: {color: 'black'}}
+                }
+                type='text'
                 InputProps={{
-                  style: { color: 'black' }
+                  style: { color:'black' }
                 }}
+                sx={{ width: '100%'}}
+                className='outlinedInput'
                 />
-                {/* <TextField value={password} onChange={handleChange('password')} label="Password" type='password'/> */}
                 <FormControl variant="outlined" sx={{width: '100%'}}>
-                  <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-password"
+                  style={{color: 'black'}}
+                  >
+                  Password
+                  </InputLabel>
                   
                   <OutlinedInput
                     value={password} onChange={handleChange('password')}
@@ -107,6 +116,7 @@ const Signin = () => {
                     inputProps={{
                       style: { color: 'black' }
                     }}
+
                     type={showPassword ? 'text' : 'password'}
                     endAdornment={
                       <InputAdornment position="end">
@@ -126,7 +136,7 @@ const Signin = () => {
                 <Button onClick={handleSubmit} variant='contained'>Loghează-te</Button>
                 </Stack>
               </CardContent>
-            </Card>
+            </CardLayout>
           </Stack>
         </Box>
       </Container>

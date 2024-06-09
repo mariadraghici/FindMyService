@@ -218,7 +218,7 @@ const AboutCard = ({service, user, onOwnPage, textModified, allFacilities}) => {
                 {description}
             </Typography>}
             {editButton === true && onOwnPage &&
-            <TextField size='medium' variant="filled" onChange={(e) => {console.log("here", textFieldDescription); setTextFieldDescription(e.target.value)}} type="text" name="name"
+            <TextField size='medium' variant="filled" onChange={(e) => setTextFieldDescription(e.target.value)} type="text" name="name"
                 value={textFieldDescription} fullWidth label='Descriere' multiline
             />}
             {editButton === true && onOwnPage &&

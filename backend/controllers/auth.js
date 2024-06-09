@@ -25,13 +25,23 @@ exports.signup = async(req, res, next) => {
         const {role} = req.body;
         let user;
 
+        const latestUser = await User.findOne().sort({ socketNumber: -1 });
+
+        if (latestUser) {
+            socketNumber = latestUser.socketNumber + 1;
+          } else {
+            socketNumber = 1; // Starting number if no users exist
+          }
+
         if (role === 2) {
             const {lat, lng, address, name, email, password, role, phone, city} = req.body;
             const addressRecord = await Address.create({lat, lng, address})
             console.log(addressRecord);
-            user = await User.create({name, email, password, role, phone, city, address: addressRecord._id});
+
+            user = await User.create({name, email, password, role, phone, city, address: addressRecord._id, socketNumber});
         } else {
-            user = await User.create(req.body);
+            const {name, email, password, role} = req.body;
+            user = await User.create({name, email, password, role, socketNumber});
         }
 
         // const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
@@ -146,7 +156,7 @@ exports.logout = async (req, res) => {
     const cookie = req.cookies;
 
     if (!cookie?.access_token) {
-        res.status(200).send('Not logged in!');
+        res.status(400).send('Not logged in!');
         return;
     }
 
@@ -156,10 +166,16 @@ exports.logout = async (req, res) => {
         }
         
         const user = jwt.verify(cookie.access_token, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
-        const token = await Token.findOne({ username: user.name});
-        const logout = await token.deleteOne({ token: token.token });
+        try {
+            const token = await Token.findOne({ username: user.name});
+            const logout = await token.deleteOne({ token: token.token });
 
-        if (!logout) {
+            if (!token || !logout) {
+                return res.status(400).send('Cannot logout!');
+            }
+
+        } catch (error) {
+            console.log(error);
             return res.status(400).send('Cannot logout!');
         }
 

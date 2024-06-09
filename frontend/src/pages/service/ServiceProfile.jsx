@@ -24,7 +24,6 @@ const ServiceProfile = () => {
             navigate('/signin', {replace: true});
         }
 
-        console.log(user);
     }, []);
 
 

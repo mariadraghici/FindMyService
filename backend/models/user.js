@@ -100,6 +100,16 @@ const userSchema = new mongoose.Schema({
     address: {
         type: ObjectId,
         ref: "Address",
+    },
+
+    socketNumber: {
+        type: Number,
+        required: true
+    },
+
+    newOffers: {
+        type: Number,
+        default: 0
     }
 
 }, {timestamps: true});

@@ -10,9 +10,10 @@ import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/material";
 import './signup.css';
 import SignupLayout from "../../components/utils/SignUpLayout";
+import { useNavigate } from "react-router-dom";
 
-const SignUpUser = ({navigate}) => {
-
+const SignUpUser = ({}) => {
+    const navigate = useNavigate();
     const [values, setValues] = useState({
         name: '',
         email: '',
@@ -49,14 +50,14 @@ const SignUpUser = ({navigate}) => {
     
     return (
         <SignupLayout>
-          <Stack direction='column' spacing={5} sx={{alignItems: 'center', marginTop: '20%'}}>
-            <Typography color='text.primary' sx={{margin: '2%'}} variant='h5'>Înregistrează-te ca și Client</Typography>
-            <TextField required value={name} onChange={handleChange('name')} label="Nume" margin='normal' sx={{width: '50%'}} type='text'
-             color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}/>
-            <TextField required value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '50%'}} type='text'
-              color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}/>
-            <TextField  required value={password} onChange={handleChange('password')} label="Parola" margin='normal' sx={{width: '50%'}} type='password'
-              color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}/>
+          <Stack direction='column' spacing={5} sx={{alignItems: 'center'}}>
+            <Typography color='secondary' sx={{textAlign: 'center'}}  variant='h5'>Înregistrează-te ca și Client</Typography>
+            <TextField required value={name} onChange={handleChange('name')} label="Nume" margin='normal' sx={{width: '100%'}} type='text'
+             InputLabelProps={{style: { color: '#8E8E8E' }}}/>
+            <TextField required value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '100%'}} type='text'
+             InputLabelProps={{style: { color: '#8E8E8E' }}}/>
+            <TextField  required value={password} onChange={handleChange('password')} label="Parola" margin='normal' sx={{width: '100%'}} type='password'
+              InputLabelProps={{style: { color: '#8E8E8E' }}}/>
             <Button onClick={handleSubmit} variant='contained' className="signup-button">Înregistrează-te</Button>
           </Stack>
         </SignupLayout>

@@ -16,8 +16,8 @@ const theme = createTheme({
         },
 
         text: {
-            primary: '#ffffff',
-            secondary: '#000000',
+            primary: '#000000',
+            secondary: '#ffffff',
             light: '#565656'
         },
 
@@ -29,6 +29,10 @@ const theme = createTheme({
 
         placeholder: {
             primary: '#8E8E8E'
+        },
+
+        cream: {
+            primary: '#EEEEEE'
         }
     },
 });

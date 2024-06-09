@@ -1,13 +1,11 @@
 .img-width-signin-photo {
     max-width: 100%;
-    /* position: absolute; */
-    /* z-index: -1; */
 }
 
 .card-signin {
-    width: 20%;
+    width: 20vw;
     padding: 1%;
-    position: absolute;
+    position: absolute !important;
 }
 
 .card-stack {
@@ -15,7 +13,12 @@
     align-items: center;
 }
 
-@media only screen and (max-width: 1200px) and (min-width: 800px) {
+.signin-icon {
+    color: #e60049;
+    font-size: 90px !important;
+}
+
+@media only screen and (max-width: 1300px) and (min-width: 800px) {
     .card-signin {
         width: 40%;
         padding: 1%;
@@ -30,24 +33,10 @@
     }
 }
 
-@media only screen and (max-width: 800px) {
-    .card-signin {
-        width: 50%;
-        padding: 1%;
-        /* position: relative; */
-        align-self: center;
-    }
 
-    .card-stack {
-        justify-content: center;
-        align-items: center;
-        margin-top: 20%;
-    }
-}
-
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
     .card-signin {
-        width: 50%;
+        width: 70%;
         padding: 1%;
         align-self: center;
     }
@@ -55,17 +44,23 @@
     .card-stack {
         justify-content: center;
         align-items: center;
-        margin-top: 40%;
+        margin-top: 20vh;
     }
 
     .img-width-signin-photo {
         max-width: 100%;
-        /* position: absolute; */
-        /* z-index: -1; */
     }
 
     .card-content {
         padding: 10%;
     }
-    
+
+    .signin-icon {
+        font-size: 50px !important;
+    }
+
+    .login-text {
+        font-size: large !important;
+    }
+
 }

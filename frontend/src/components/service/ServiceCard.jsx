@@ -10,7 +10,7 @@ const ServiceCard = ({service}) => {
 
     return (
         <>
-            <Card sx={{ maxWidth: '100%',  backgroundColor: 'blacks.light' }} variant='outlined'>
+            <Card sx={{ maxWidth: '100%',  backgroundColor: 'white' }} variant='outlined'>
             <CardContent>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Stack direction="column" justifyContent="space-between" alignItems="start" paddingRight={5} >

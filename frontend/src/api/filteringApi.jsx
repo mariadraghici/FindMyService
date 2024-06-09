@@ -44,8 +44,6 @@ export const filter = async (selectedCars, selectedFacilities, selectedcities, f
                     cars: Object.keys(selectedCars).filter(car => selectedCars[car])
                 });
             } else if (selectedcities.length === 0 && selectedFacilities.length === 0) {
-                console.log('here');
-                console.log(Object.keys(selectedCars).filter(car => selectedCars[car]));
                 res = await myAxios.post('/api/service/filter/cars', {
                     cars: Object.keys(selectedCars).filter(car => selectedCars[car])
                 });

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import Container from '@mui/material/Container';
-import myAxios from "../../components/axios/axios";
+import myAxios from "../../../components/axios/axios";
 import { useParams} from 'react-router-dom';
-import { Divider, Grid } from "@mui/material";
+import { Box, CardHeader, Divider, Grid } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -13,33 +13,27 @@ import Rating from '@mui/material/Rating';
 import Pagination from '@mui/material/Pagination';
 import {Autocomplete, Popper, Paper} from "@mui/material";
 import toast from 'react-hot-toast';
-import ProfileContext from "../../components/context/ProfileContext";
-import ReviewCard from "../../components/ReviewCard";
+import ProfileContext from "../../../components/context/ProfileContext";
+import ReviewCard from "../../../components/ReviewCard";
 import 'leaflet/dist/leaflet.css';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import { getAllImagesOfService } from "../../api/imageApi";
-import { getProfile } from "../../api/profileApi";
-import { getAllFacilities } from "../../api/facilityApi";
+import { getAllImagesOfService } from "../../../api/imageApi";
+import { getProfile } from "../../../api/profileApi";
+import { getAllFacilities } from "../../../api/facilityApi";
 import { useNavigate } from "react-router-dom";
-import LeafletMap from "../../components/LeafletMap";
-import MyTextField from "../../components/utils/MyTextField";
-import StyledPopper from "../../components/utils/StyledPopper";
+import LeafletMap from "../../../components/LeafletMap";
+import MyTextField from "../../../components/utils/MyTextField";
+import StyledPopper from "../../../components/utils/StyledPopper";
+import SocketContext from "../../../components/context/SocketContext";
+import './presentation-page.css';
+import AboutService from "./AboutService";
+import FacilityTypography from "./FacilityTypography";
+import RoomRoundedIcon from '@mui/icons-material/RoomRounded';
+import ImageCarousel from "./ImageCarousel";
+import Reviews from "./Reviews";
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
-  
-
-  const convertNewlinesToBreaks = (text) => {
+const convertNewlinesToBreaks = (text) => {
     if (!text) {
         return (
             <React.Fragment>
@@ -70,9 +64,8 @@ const PresentationPage = () => {
     const [sendReview, setSendReview] = useState(0);
     const [rating, setRating] = useState(0);
     const [file, setFile] = useState(null);
-    // const [images, setImages] = useState([]);
+    const [images, setImages] = useState([]);
     const [editButton, setEditButton] = useState(false);
-    const [images, setImages] = useState(['uploads/img1.jpg', '/uploads/img2.jpg', '/uploads/img3.jpg', '/uploads/img4.jpg', '/uploads/img5.jpg']);
     const [page, setPage] = React.useState(1);
     const [imageUrl, setImageUrl] = useState(images[0]);
     const [textFieldDescription, setTextFieldDescription] = useState('');
@@ -92,11 +85,12 @@ const PresentationPage = () => {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
     const [location, setLocation] = useState('');
+    const socket = useContext(SocketContext);
+    const [serviceSocket, setServiceSocket] = useState(0);
 
     const handleChangePage = (event, value) => {
         setPage(value);
         setImageUrl(images[value - 1]);
-        console.log(value);
     };
 
     // useEffect(() => {
@@ -110,6 +104,7 @@ const PresentationPage = () => {
               setUser(user);
             } else {
                 navigate('/signin', {replace: true});
+                return;
             }
           }
       
@@ -120,13 +115,14 @@ const PresentationPage = () => {
                 const res = await myAxios.get(`/api/service/page/${URLserviceName}`);
                 
                 setService(res.data.service);
-                console.log(res.data.service);
                 setTextFieldDescription(res.data.service.description);
                 setSchedule(res.data.service.schedule);
                 setLat(res.data.service.address.lat);
                 setLng(res.data.service.address.lng);
                 setLocation(res.data.service.address.address);
-                //     const images = await getAllImagesOfService(res.data.service.name);
+                setServiceSocket(res.data.service.socketNumber);
+                const imagesService = await getAllImagesOfService(res.data.service.name);
+                setImages(imagesService);
             } catch (error) {
                 console.log(error);
             }
@@ -159,7 +155,6 @@ const PresentationPage = () => {
             const getFacilities = async() => {
                 try {
                     const res = await getAllFacilities();
-                    console.log(res);
                     setAllFacilities(res);
                 } catch (error) {
                     console.log(error);
@@ -203,9 +198,7 @@ const PresentationPage = () => {
                 title: reviewTitle
             }
             
-            console.log(reviewData);
             const res = await myAxios.post('api/feedback/create', reviewData);
-            console.log(res.data);
 
             if (res.data.success) {
                 toast.success('Recenzia a fost adaugata cu succes!');
@@ -232,19 +225,6 @@ const PresentationPage = () => {
 
     const handleRating = (e) => {
         setRating(e.target.value);
-    }
-
-    const handleFileUpload = async (e) => {
-        if (images.length === 5) {
-            toast.error('Nu poti incarca mai mult de 5 imagini!');
-            return;
-        }
-        if (e.target.files.length === 0) {
-            return;
-        }
-
-        setFile(e.target.files);
-        console.log(e.target.files);
     }
 
     const handleDoneEditing = async () => {
@@ -317,39 +297,6 @@ const PresentationPage = () => {
         }
     }
 
-    useEffect(() => {
-        if (file) {
-            const uploadFile = async () => {
-                try {
-                    const formData = new FormData();
-
-                    for (let i = 0; i < file.length; i++) {
-                        formData.append('file', file[i]);
-                    }
-                    
-                    // Add the username to the formData object
-                    formData.append('name', user.name);
-                    const res = await myAxios.post('/api/upload', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-
-                    if (res.data.status === 'success') {
-                        toast.success("Fisierul a fost incarcat cu succes!");
-                        setFile(null);
-                    } else {
-                        toast.error("Fisierul nu a putut fi incarcat!");
-                    }
-                }   catch (error) {
-                    console.log(error);
-                    toast.error(error.response.data.message);
-                }
-            }
-            uploadFile();
-        }
-
-    }, [file, user.name]);
 
     const handleOfferRequest = async () => {
         if (!emailOffer) {
@@ -372,6 +319,11 @@ const PresentationPage = () => {
             });
 
             if (res.data.success) {
+                console.log(res.data);
+                socket.emit('join-room', serviceSocket)
+                console.log('I joined the room', serviceSocket);
+                socket.emit('offer-request', {message: res.data.offer._id, room: serviceSocket})
+                console.log('I sent the message');
                 toast.success('Cererea a fost trimisa cu succes!');
                 setEmailOffer('');
                 setPhoneOffer('');
@@ -381,75 +333,56 @@ const PresentationPage = () => {
             console.log(error);
             toast.error('Cererea nu a putut fi trimisa!');
         }
-    }
-        
+    }   
 
     const { name, description, phone, email, facilities} = service;
 
     return (
-        <Container>
-            <Grid container spacing={2} sx={{marginTop: '3%'}}>
-                <Grid item xs={7}>
-                    <Card sx={{padding: '3%', borderRadius: '7px', backgroundColor: 'blacks.light'}}>
-                        <CardContent>
-                            <Stack spacing={2} direction="row" justifyContent="space-between">
-                            <Typography gutterBottom variant="h5" component="div">
-                                {name}
-                            </Typography>
-                            {editButton === false && onOwnPage && <Button onClick={() => setEditButton(true)}>Editează</Button>}
-                            </Stack>
-                            <Typography gutterBottom variant="h8" component="div">
-                                {location}
-                            </Typography>
-                            <Typography gutterBottom variant="h8" component="div">
-                                {phone}
-                            </Typography>
-                            <Typography gutterBottom variant="h8" component="div">
-                                {email}
-                            </Typography>
-                            <Stack spacing={2} direction="row" justifyContent="center">
-                            {/* {images.length > 0 && images.map(image => {
-                                return (
-                                    <img key={image._id} src={image.url} alt="service" style={{width: '100%', height: 'auto'}}/>
-                                )
-                            })} */}
-                             <img src={imageUrl} alt=""/>
-                             <Pagination count={images.length} page={page} onChange={handleChangePage} sx={{padding: '5%'}}/>
-                            </Stack>
-                             <Typography variant="h6">Despre {name}</Typography>
-                             {editButton === false && <Typography gutterBottom variant="h8" component="div">
-                                {description ? convertNewlinesToBreaks(description) : 'Nicio descriere disponibila!'}
-                            </Typography>}
-                            {editButton === true && onOwnPage &&
-                            <TextField size='medium' variant="filled" onChange={(e) => setTextFieldDescription(e.target.value)} type="text" name="name"
-                            value={textFieldDescription} fullWidth label='Descriere' multiline/>}
-                            {editButton === true && onOwnPage && <Stack spacing={2} direction="row" justifyContent="space-between" sx={{padding: '5%'}}>
-                                <Stack spacing={2} direction="row" justifyContent="flex-start">
-                                    <Button
-                                        component="label"
-                                        role={undefined}
-                                        variant="contained"
-                                        tabIndex={-1}
-                                        startIcon={<CloudUploadIcon />}
-                                        >
-                                        Încarcă poză
-                                        <VisuallyHiddenInput type="file" onChange={handleFileUpload}  multiple="multiple"/>
-                                    </Button>
-                                    <Button>Șterge</Button>
-                                </Stack>
-                                <Button onClick={handleDoneEditing} >Gata</Button>
-                            </Stack>}
-                            <Divider sx={{opacity: 1, padding: '2%'}} />
-                            <Stack spacing={2} direction="row" justifyContent="space-between" sx={{marginTop: '2%'}}>
-                                <Typography gutterBottom variant="h5" component="div">
-                                    Servicii
-                                </Typography>
-                                {editFacility === false && onOwnPage && <Button onClick={() => setEditFacility(true)}>Editează</Button>}
-                            </Stack>
-                            {editFacility === true && <Stack spacing={2} direction="column" >
-                            <Typography gutterBottom variant="h8" component="div">
+        <Container maxWidth={false} sx={{padding: "0 !Important"}}>
+            <Box className='grey-box'>
+                <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                    <ImageCarousel images={images} user={user} file={file} setFile={setFile} onOwnPage={onOwnPage}
+                    setTextModified={setTextModified} textModified={textModified}/>
+                    <AboutService service={service} location={location}
+                    schedule={schedule}
+                    scheduleEditButton={scheduleEditButton} onOwnPage={onOwnPage}
+                    setScheduleEditButton={setScheduleEditButton} setSchedule={setSchedule}
+                    file={file} user={user} setFile={setFile}
+                    handleScheduleEditing={handleScheduleEditing}/>
+                </Container>
+            </Box>
+                <Container sx={{display:'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '2%' }}>
+                    <Stack spacing={2} direction="row" justifyContent="space-between">
+                    <Typography variant="h5" component="div" sx={{color: 'white'}}>
+                        Despre noi
+                    </Typography>
+                    {editButton === false && onOwnPage && <Button onClick={() => setEditButton(true)}>Editează</Button>}
+                    </Stack>
+                    {editButton === false &&
+                    <Typography gutterBottom variant="h8" component="div" sx={{color: 'white', fontWeight: 'light'}}>
+                    {description ? convertNewlinesToBreaks(description) : 'Nicio descriere disponibila!'}
+                    </Typography>}
+                    {editButton === true && onOwnPage &&
+                        <TextField size='medium' variant="filled" onChange={(e) => setTextFieldDescription(e.target.value)} type="text" name="name"
+                        value={textFieldDescription} InputProps={{
+                            style: { color: 'white' }
+                          }} fullWidth label='Descriere' multiline/>}
+                    {editButton === true && onOwnPage && <Button onClick={handleDoneEditing} >Gata</Button>}
+                    <Divider sx={{opacity: 1, backgroundColor: '#e60049', marginTop: '2%'}} />
+                    <Stack spacing={2} direction="row" justifyContent="space-between" sx={{marginTop: '2%'}}>
+                    <Typography variant="h5" component="div" sx={{color: 'white', marginTop: '2%'}}>
+                        Servicii
+                    </Typography>
+                    {editFacility === false && onOwnPage && <Button onClick={() => setEditFacility(true)}>Editează</Button>}
+                    </Stack>
+
+                    {editFacility === true &&
+                    <Card className="add-facility-card">
+                        <CardContent sx={{ display:'flex', flexDirection: 'column'}}>
+                            <Typography variant="h5" component="div" sx={{marginTop: '2%', alignSelf: 'center'}}>
                                 Adaugă serviciu nou *
                             </Typography>
+                            <Divider sx={{opacity: 1}} />
                             <Autocomplete 
                                 size='small'
                                 options={allFacilities.map(facility => facility.name)}
@@ -462,112 +395,86 @@ const PresentationPage = () => {
                                 }}
                                 getOptionLabel={(option) => option || ''}
                                 isOptionEqualToValue={(option, value) => option === value || value === ""}
-                                PopperComponent={StyledPopper}
                                 
                             />
-                            <Typography gutterBottom variant="h8" component="div">
-                                Preț pornire (RON)
-                            </Typography>
+                            <FacilityTypography text="Preț pornire (RON)"/>
                             <TextField size='small' type="number" name="priceLow" fullWidth
                             value={priceLow}
                             onChange={(event) => {
                               setPriceLow(event.target.value);
                             }}/>
-                             <Typography gutterBottom variant="h8" component="div">
-                                Preț maxim (RON)
-                            </Typography>
+                            <FacilityTypography text="Preț maxim (RON)"/>
                             <TextField size='small' type="number" name="priceHigh" fullWidth
                             value={priceHigh}
                             onChange={(event) => {
                               setPriceHigh(event.target.value);
                             }}/>
-                            <Button onClick={handleAddFacility}>Adaugă</Button>
-                            </Stack>}
-                            {facilities && facilities.map(facility => {
-                                return (
-                                    <div key={facility._id}>
-                                        <Stack spacing={2} direction="row" justifyContent="space-between" sx={{marginTop: '2%'}}>
-                                        <Typography gutterBottom variant="h8" component="div">
-                                            {facility.name}
-                                        </Typography>
-                                        <Typography gutterBottom variant="h8" component="div">
-                                            {facility.priceLow === 0 ? '' : facility.priceLow} - {facility.priceHigh === 0 ? '' : facility.priceHigh} RON
-                                        </Typography>
-                                        {onOwnPage && editFacility && <Button onClick={() => 
-                                            {handleDeleteFacility(facility._id);}
-                                        }>Șterge</Button>}               
-                                        </Stack>
-                                    </div>
-                                )
-                            })}
-                            <Stack spacing={2} direction="row" justifyContent="center" sx={{marginTop: '5%'}}>
-                            {editFacility === true && onOwnPage === true && <Button variant='contained' color='primary' onClick={() => setEditFacility(false)}>Gata</Button>}
-                            </Stack>
+                            <Button onClick={handleAddFacility} sx={{marginTop: '2%', alignSelf: 'center !important'}}>Adaugă</Button>
                         </CardContent>
+                    </Card>}
+
+                    {facilities && facilities.length !== 0 &&
+                    <Card className="facility-card">
+                     {facilities.map(facility => {
+                        return (                           
+                                <Box key={facility._id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+                                    <Typography gutterBottom variant="h8" component="div" sx={{color: 'white', fontWeight: 'light', width: '40%'}}>
+                                        {facility.name}
+                                    </Typography>
+                                    <Typography gutterBottom variant="h8" component="div" sx={{color: 'white', fontWeight: 'light', width: '40%'}}>
+                                        {facility.priceLow === 0 ? '' : facility.priceLow} - {facility.priceHigh === 0 ? '' : facility.priceHigh} RON
+                                    </Typography>
+                                    {onOwnPage && editFacility && <Button sx={{fontWeight: 'regular', color: '#fff'}} onClick={() =>
+                                        {handleDeleteFacility(facility._id);}
+                                    }>Șterge</Button>}
+                                </Box>
+                        )
+                    })}
+                    
+                    {editFacility === true && onOwnPage === true && <Button variant='contained' color='primary' sx={{marginTop: '5%'}}
+                    onClick={() => setEditFacility(false)}>Gata</Button>}
+                    </Card>}
+                    <Card sx={{marginTop: '5%', backgroundColor: '#EEEEEE'}}>
+                    <CardContent className="card-content-map">
+
+                    <Box className='map-box'>
+                        <Stack direction="row">
+                            <RoomRoundedIcon sx={{color: 'primary.main', marginTop: '5%'}}/>
+                            <Typography gutterBottom variant="h8" component="div" sx={{marginTop: '5%'}}>
+                                {location}
+                            </Typography>
+                        </Stack>
+
+                    <LeafletMap lat={lat} lng={lng} location={location}/>
+                    </Box>
+                    
+                    <Box className='offer-box'>
                         
-                    </Card>
-                </Grid>
-                <Grid item xs={5}>
-                    <Card sx={{padding: '3%', borderRadius: '7px', backgroundColor: 'blacks.light'}}>
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
-                                Harta cu adresa
-                            </Typography>
-                            <LeafletMap lat={lat} lng={lng} location={location}/>
-                            <Divider sx={{opacity: 1}} />
-                            <Stack spacing={2} direction="row" justifyContent="space-between" sx={{marginTop: "5%"}}>
-                            <Typography gutterBottom variant="h5" component="div">
-                                Program
-                            </Typography>
-                            {scheduleEditButton === false && onOwnPage && <Button onClick={() => setScheduleEditButton(true)}>EDITEAZĂ</Button>}
-                            </Stack>
-                             {scheduleEditButton === false &&
-                             <Typography gutterBottom variant="h8" component="div">
-                             {convertNewlinesToBreaks(schedule)}
-                            </Typography>}
-                            {scheduleEditButton === true && onOwnPage &&
-                            <TextField
-                            size='medium' variant="filled" onChange={(e) => setSchedule(e.target.value)}
-                            type="text" name="program"
-                            value={schedule}
-                            fullWidth
-                            label='Program'
-                            InputLabelProps={{
-                                style: { color: '#8E8E8E' },
-                            }}
-                            multiline/>}
-                            <Stack spacing={2} direction="row" justifyContent="flex-end" sx={{marginTop: '5%'}}>
-                            {scheduleEditButton === true && <Button onClick={handleScheduleEditing} variant='contained' color='primary'>Gata</Button>}
-                            </Stack>
-                            <Divider sx={{opacity: 1, marginTop: '5%'}} />
-                            <Typography gutterBottom variant="h5" component="div" sx={{marginTop: "3%"}}>
+                        <Typography gutterBottom variant="h5" component="div" sx={{marginTop: "3%", alignSelf: 'center'}} color='primary'>
                                 Cere oferta
-                            </Typography>
-                            <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "3%"}}>
+                        </Typography>
+                        <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "7%"}}>
                                 Email-ul pe care doriti sa primiti oferta
-                            </Typography>
-                            <MyTextField label='Email' name='email' value={emailOffer} type='email' changeFunction={setEmailOffer} variant={'standard'}/>
-                            <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "3%"}}>
+                        </Typography>
+                        <MyTextField label='Email' name='email' value={emailOffer} type='email' functionType='setter' changeFunction={setEmailOffer} variant={'standard'}/>
+                        <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "7%"}}>
                                 Trimite un mesaj service-ului
-                            </Typography>
-                            {/* <TextField size='small' required type="text" name="name" fullWidth label='Scrie un mesaj' value={offerText}
-                            color='secondary'
-                            onChange={(e) => setOfferText(e.target.value)}
-                            InputLabelProps={{
-                                style: { color: '#8E8E8E' },
-                              }}/> */}
-                            <MyTextField label='Scrie un mesaj' name='offerRequest' value={offerText} type='text' changeFunction={setOfferText} variant={'standard'}/>
-                            <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "3%"}}>
+                        </Typography>
+                        <MyTextField label='Scrie un mesaj' name='offerRequest' value={offerText} functionType='setter' type='text' changeFunction={setOfferText} variant={'standard'}/>
+                            <Typography gutterBottom variant="h8" component="div" sx={{marginTop: "7%"}}>
                                 Numar de telefon
                             </Typography>
-                            <MyTextField label='Numar de telefon' name='phone' value={phoneOffer} type='text' changeFunction={setPhoneOffer} variant={'standard'}/>
+                        <MyTextField label='Numar de telefon' name='phone' value={phoneOffer} functionType='setter' type='text' changeFunction={setPhoneOffer} variant={'standard'}/>
                             <Stack spacing={2} direction="row" justifyContent="center" sx={{marginTop: "10%"}}>
                                 <Button variant='contained' onClick={handleOfferRequest} disabled={onOwnPage} color='primary'>Trimite</Button>
                             </Stack>
-                        </CardContent>
+                    </Box>
+                    </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+
+                    <Reviews serviceReviews={serviceReviews}/>
+                </Container>
+            
 
             {user.role !== 2 && <Button onClick={() => setWriteReview(true)} >Scrie recenzie</Button>}
             {writeReview && <Card sx={{padding: '3%', borderRadius: '7px'}}>
@@ -619,21 +526,6 @@ const PresentationPage = () => {
                     </Stack>
                 </CardContent>
             </Card>}
-            <Card sx={{padding: '3%', borderRadius: '7px', margin: '5%', backgroundColor: 'blacks.light'}}>
-                <CardContent>
-                    <Typography variant="h5" component="div">
-                        Recenzii
-                    </Typography>
-                    <Divider sx={{opacity: 1}} />
-                    {serviceReviews.map(review => {
-                        return (
-                            <div key={review._id}>
-                            <ReviewCard review={review} />
-                            </div>
-                        )
-                    })}
-                </CardContent>
-            </Card>
         </Container>
     )
 }

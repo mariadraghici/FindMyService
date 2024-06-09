@@ -24,8 +24,9 @@ const CityChooseOnMap = ({lng, lat, setLat, setLng, setChooseLocation, values, s
 
     return (
         <>
+        <Typography variant="h6" color='black'>Alege locatia pe harta</Typography>
         <Autocomplete
-        style={{width: '48%', padding: '15px', backgroundColor: '#222222', borderRadius: '5px', color: 'white', border: '1px solid #222222',
+        style={{width: '100%', padding: '2%', backgroundColor: 'white', borderRadius: '5px', color: 'black', border: '1px solid #222222',
             fontFamily: "Roboto", fontSize: '16px'
         }}
         apiKey={import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY}
@@ -47,7 +48,7 @@ const CityChooseOnMap = ({lng, lat, setLat, setLng, setChooseLocation, values, s
             <Map
                 defaultZoom={13}
                 center={{lat: lat, lng: lng}}
-                style={{width: '50%', height: '30vh'}}
+                style={{width: '100%', height: '35vh'}}
                 mapId={"Map"}
                 >
                     <AdvancedMarker position={{lat: lat, lng: lng}} />

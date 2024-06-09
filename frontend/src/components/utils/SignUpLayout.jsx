@@ -1,12 +1,10 @@
 import React from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
 import { Grid } from '@mui/material'
-import signupImg from '../../img/signup-img.png'
+import signupImg from '../../img/signup-img.jpg'
 import './signup-layout.css'
+import CardLayout from './CardLayout'
 
 const SignupLayout = ({children}) => {
 
@@ -18,8 +16,10 @@ const SignupLayout = ({children}) => {
             <img src={signupImg} alt='signup' className='signup-img'/>
           </Box>
         </Grid>
-        <Grid item md={7} xs={12}>
-          {children}
+        <Grid item md={7} xs={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CardLayout additionalClasses='card-signup'>
+            {children}
+          </CardLayout>
         </Grid>
       </Grid>
     </Container>

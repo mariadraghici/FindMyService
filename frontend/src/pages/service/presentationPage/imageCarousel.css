@@ -1,0 +1,83 @@
+.delete-button {
+    z-index: 1;
+}
+
+.image-styled {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px 10px 0px 0;
+}
+
+.carousel {
+    height: 55vh;
+    width: 100%;
+    margin-top: 5%;
+}
+
+@media screen and (max-width: 950px ) {
+    .carousel {
+        height: 45vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}
+
+@media screen and (max-width: 780px) {
+    .carousel {
+        height: 35vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}
+
+@media screen and (max-width: 600px) {
+    .carousel {
+        height: 30vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}
+
+@media screen and (max-width: 500px) {
+    .carousel {
+        height: 25vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}
+
+@media screen and (max-width: 450px) {
+    .carousel {
+        height: 20vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}
+
+
+@media screen and (max-width: 350px) {
+    .carousel {
+        height: 15vh;
+    }
+
+    .buttons {
+        width: 30%
+    }
+    
+}

@@ -33,8 +33,6 @@ const UpdateComponents = () => {
         });
     }, []);
 
-    console.log(models);
-
     return (
         <div>
             <div className="row justify-content-start">

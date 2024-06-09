@@ -1,10 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react'
-import myAxios from './axios/axios';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import ProfileContext from './context/ProfileContext';
-import './header.css';
-import NotificationsCounter from './context/NotificationsCounter';
+import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,17 +9,17 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Link } from 'react-router-dom';
-import logo from '../img/light_logo_mic.png';
-import './utils/responsive-appbar.css';
+import logo from '../../img/light_logo_mic.png';
+import './responsive-appbar.css';
 import { Grid } from '@mui/material';
 import Badge from '@mui/material/Badge';
-import { getProfile, isAuth } from '../api/profileApi';
+import { useContext } from 'react';
+import ProfileContext from '../context/ProfileContext';
 
-const Header = () => {
-  const navigate = useNavigate();
-  const {user, setUser} = useContext(ProfileContext);
-  const {notifications} = useContext(NotificationsCounter);
+function ResponsiveAppBar({logout, notifications}) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const {user, setUser} = useContext(ProfileContext)
+  console.log(user);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -35,20 +29,6 @@ const Header = () => {
     setAnchorElNav(null);
   };
 
-
-  const logout = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await myAxios.get('/api/logout');
-      if (res.status === 200) {
-        setUser(null);
-        toast.success(res.data);
-        navigate('/');
-      }
-    } catch (error) {
-      toast.error(error.response.data);
-    }
-  }
 
   return (
     <AppBar position="static" color='transparent'>
@@ -151,7 +131,6 @@ const Header = () => {
         </Toolbar>
       </Container>
     </AppBar>
-  )
+  );
 }
-
-export default Header;
+export default ResponsiveAppBar;
