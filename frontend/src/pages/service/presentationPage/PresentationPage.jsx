@@ -2,36 +2,33 @@ import React, { useContext, useEffect, useState } from "react";
 import Container from '@mui/material/Container';
 import myAxios from "../../../components/axios/axios";
 import { useParams} from 'react-router-dom';
-import { Box, CardHeader, Divider, Grid } from "@mui/material";
+import { Box, Divider, Grid } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
-import Rating from '@mui/material/Rating';
-import Pagination from '@mui/material/Pagination';
 import {Autocomplete, Popper, Paper} from "@mui/material";
 import toast from 'react-hot-toast';
 import ProfileContext from "../../../components/context/ProfileContext";
-import ReviewCard from "../../../components/ReviewCard";
 import 'leaflet/dist/leaflet.css';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { styled } from '@mui/material/styles';
 import { getAllImagesOfService } from "../../../api/imageApi";
 import { getProfile } from "../../../api/profileApi";
 import { getAllFacilities } from "../../../api/facilityApi";
 import { useNavigate } from "react-router-dom";
 import LeafletMap from "../../../components/LeafletMap";
 import MyTextField from "../../../components/utils/MyTextField";
-import StyledPopper from "../../../components/utils/StyledPopper";
 import SocketContext from "../../../components/context/SocketContext";
 import './presentation-page.css';
-import AboutService from "./AboutService";
-import FacilityTypography from "./FacilityTypography";
+import AboutService from "../../../components/service/presentationPage/AboutService";
+import FacilityTypography from "../../../components/service/presentationPage/FacilityTypography";
 import RoomRoundedIcon from '@mui/icons-material/RoomRounded';
-import ImageCarousel from "./ImageCarousel";
-import Reviews from "./Reviews";
+import ImageCarousel from "../../../components/service/presentationPage/ImageCarousel";
+import Reviews from "../../../components/service/presentationPage/Reviews";
+import AddReviewCard from "../../../components/service/presentationPage/AddReviewCard";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import NewOffers from "../../../components/context/NewOffers";
 
 const convertNewlinesToBreaks = (text) => {
     if (!text) {
@@ -54,7 +51,6 @@ const PresentationPage = () => {
     const [service, setService] = useState('');
     const params = useParams();
     const URLserviceName = params.name;
-    const [writeReview, setWriteReview] = useState(false);
     const [reviewText, setReviewText] = useState('');
     const [reviewTitle, setReviewTitle] = useState('');
     const {user, setUser} = useContext(ProfileContext);
@@ -87,15 +83,35 @@ const PresentationPage = () => {
     const [location, setLocation] = useState('');
     const socket = useContext(SocketContext);
     const [serviceSocket, setServiceSocket] = useState(0);
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
+    const {setNewOffers} = useContext(NewOffers);
 
     const handleChangePage = (event, value) => {
         setPage(value);
         setImageUrl(images[value - 1]);
     };
 
-    // useEffect(() => {
-    //     console.log(images);
-    // }, [images]);
+    useEffect(() => {
+        if (!user) {
+            return;
+        }
+        
+        const resetNewOffers = async () => {
+            try {
+                const res = await myAxios.put('/api/service/resetOffers', {userId: user._id});
+    
+                if (res.status === 200) {
+                    setNewOffers([]);
+                } else {
+                    console.log(res.data.message);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        resetNewOffers();
+    }, []);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -131,14 +147,14 @@ const PresentationPage = () => {
     }, [URLserviceName, textModified]);
 
     useEffect(() => {
-        if (user.role === 2 && service.name === user.name) {
+        if (user && user.role === 2 && service && service.name === user.name) {
             setOnOwnPage(true);
         }
-    }, [user.role, service.name, user.name]);
+    }, [user?.role, service?.name, user?.name]);
 
 
     useEffect(() => {
-        if (user.role !== 2) {
+        if (user && user.role !== 2) {
             const getUserCars = async() => {
                 try {
                     const res = await myAxios.get('/api/getUserCars');
@@ -173,7 +189,7 @@ const PresentationPage = () => {
         }
         
         getServiceReviews();
-    }, [sendReview, URLserviceName, user.role, onOwnPage]);
+    }, [sendReview, URLserviceName, user?.role, onOwnPage]);
 
 
     const addReview = async () => {
@@ -221,10 +237,6 @@ const PresentationPage = () => {
 
     const handleReviewTitle = (e) => {
         setReviewTitle(e.target.value);
-    }
-
-    const handleRating = (e) => {
-        setRating(e.target.value);
     }
 
     const handleDoneEditing = async () => {
@@ -333,14 +345,19 @@ const PresentationPage = () => {
             console.log(error);
             toast.error('Cererea nu a putut fi trimisa!');
         }
-    }   
+    }
+
+    const handleSelectReviewCar = (event, newValue) => {
+        setSelectedCar(userCars.filter(car => car.name === newValue)[0]);
+    }
 
     const { name, description, phone, email, facilities} = service;
 
     return (
         <Container maxWidth={false} sx={{padding: "0 !Important"}}>
             <Box className='grey-box'>
-                <Container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <Container className="for-container">
+                    <Box className='box-carousel-about-card'>
                     <ImageCarousel images={images} user={user} file={file} setFile={setFile} onOwnPage={onOwnPage}
                     setTextModified={setTextModified} textModified={textModified}/>
                     <AboutService service={service} location={location}
@@ -349,6 +366,7 @@ const PresentationPage = () => {
                     setScheduleEditButton={setScheduleEditButton} setSchedule={setSchedule}
                     file={file} user={user} setFile={setFile}
                     handleScheduleEditing={handleScheduleEditing}/>
+                    </Box>
                 </Container>
             </Box>
                 <Container sx={{display:'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '2%' }}>
@@ -472,60 +490,22 @@ const PresentationPage = () => {
                     </CardContent>
                     </Card>
 
-                    <Reviews serviceReviews={serviceReviews}/>
-                </Container>
-            
-
-            {user.role !== 2 && <Button onClick={() => setWriteReview(true)} >Scrie recenzie</Button>}
-            {writeReview && <Card sx={{padding: '3%', borderRadius: '7px'}}>
-                <CardContent>
-                    <Stack spacing={2}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Typography gutterBottom variant="h6" component="div">
-                            Selecteaza masina cu care ai fost la service
-                        </Typography>
-                        <Button onClick={() =>
-                            {setWriteReview(false);
-                            setReviewText('');
-                            setReviewTitle('');
-                            setRating(0);
-                            setSelectedCar('')
-                        }}>Anuleaza</Button>
+                    <Stack direction={isSmallScreen ? 'column' : 'row'} mt={7} spacing={10}>
+                        <Stack className="add-review-stack">
+                            <AddReviewCard
+                            user={user}
+                            handleReviewTitle={handleReviewTitle}
+                            handleTextChange={handleChange}
+                            addReview={addReview} selectedCar={selectedCar} userCars={userCars}
+                            rating={rating} reviewTitle={reviewTitle} reviewText={reviewText}
+                            setRating={setRating} setReviewTitle={setReviewTitle} setReviewText={setReviewText}
+                            handleSelectReviewCar={handleSelectReviewCar}/>
                         </Stack>
-                        <Autocomplete
-                            size='small'
-                            value={selectedCar ? selectedCar.name : ''}
-                            id="combo-box-transmission"
-                            options={userCars.map(car => car.name)}
-                            renderInput={(params) => <TextField {...params} label="Selectați masina"/>}
-                            isOptionEqualToValue={(option, value) => option === value || value === ''}
-                            onChange={(event, newValue) => {
-                                setSelectedCar(userCars.filter(car => car.name === newValue)[0]);
-                            }}
-                            />
-                        <Typography gutterBottom variant="h6" component="div">
-                            Titlu
-                        </Typography>
-                        <TextField size='large' onChange={handleReviewTitle} type="text" name="name"
-                            value={reviewTitle} fullWidth label='Scrie un titlu'/>
-                        <Typography gutterBottom variant="h6" component="div">
-                            Recenzie
-                        </Typography>
-                        <TextField size='large' onChange={handleChange} type="text" name="name"
-                            value={reviewText} fullWidth label='Scrie un comentariu'/>
-                        <Typography variant="h6" component="div">
-                            Rating
-                        </Typography>
-                        <Rating
-                            name="simple-controlled"
-                            value={rating}
-                            onChange={handleRating}
-                        />
-                        <Button onClick={addReview}>Trimite</Button>
-
+                        <Stack className="reviews-stack">
+                            <Reviews serviceReviews={serviceReviews}/>
+                        </Stack>
                     </Stack>
-                </CardContent>
-            </Card>}
+                </Container> 
         </Container>
     )
 }

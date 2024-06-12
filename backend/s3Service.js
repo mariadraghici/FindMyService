@@ -81,6 +81,26 @@ exports.s3GetImages = async (serviceName) => {
     return images;
 }
 
+
+exports.s3GetImage = async (serviceName) => {
+    const s3 = new S3Client();
+    const user = await User.find({name: serviceName}).populate('images');
+    const images = user[0].images;
+    // console.log(images);
+    const image = images[0];
+
+    
+    const getObjectParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: image.imageName,
+    };
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    image.url = url;
+
+    return image;
+}
+
 exports.s3DeleteImages = async (serviceName, imageId) => {
     const s3client = new S3Client();
     const user = await User.findOne({ name: serviceName }).populate('images');

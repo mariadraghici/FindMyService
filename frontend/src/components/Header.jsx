@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import ProfileContext from './context/ProfileContext';
 import './header.css';
-import NotificationsCounter from './context/NotificationsCounter';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,17 +14,16 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Link } from 'react-router-dom';
-import logo from '../img/light_logo_mic.png';
-import './utils/responsive-appbar.css';
+import logo from '/img/light_logo_mic.webp';
 import { Grid } from '@mui/material';
 import Badge from '@mui/material/Badge';
-import { getProfile, isAuth } from '../api/profileApi';
+import OffersNotificationsCounter from './context/OffersNotificationsCounter';
 
 const Header = () => {
   const navigate = useNavigate();
   const {user, setUser} = useContext(ProfileContext);
-  const {notifications} = useContext(NotificationsCounter);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const {offersNotificationsCounter} = useContext(OffersNotificationsCounter);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -100,9 +98,9 @@ const Header = () => {
                 {!user && <MenuItem key={'signin'} onClick={handleCloseNavMenu}>
                 <Button color="inherit" ><Link to='/signin' style={{ color: '#FFF' }}>Logare</Link></Button>
                 </MenuItem>}
-              {user && user.role !== 2 && <MenuItem key={'profile'} onClick={handleCloseNavMenu}>
+              {/* {user && user.role !== 2 && <MenuItem key={'profile'} onClick={handleCloseNavMenu}>
               <Button color="inherit" ><Link to='/profile' style={{ color: '#FFF' }}>Contul meu</Link></Button>
-                </MenuItem>}
+                </MenuItem>} */}
               {user && (user.role === 0 || user.role === 1) && <MenuItem key={'search'} onClick={handleCloseNavMenu}>
               <Button color="inherit" ><Link to='/search' style={{ color: '#FFF' }}>Caută Service</Link></Button>
                 </MenuItem>}
@@ -113,11 +111,26 @@ const Header = () => {
               <Button color="inherit" >
                 <Link to='/service/offers' style={{ color: '#FFF' }}>
              
-              <Badge badgeContent={notifications} color="error">
+              <Badge badgeContent={offersNotificationsCounter} color="error">
                 Oferte
               </Badge>
               </Link></Button>
                 </MenuItem>}
+              
+              {user && user.role !== 2 && <MenuItem key={'profilulMeu'} onClick={handleCloseNavMenu}>
+              <Button color='inherit' LinkComponent={Link} to='/profile' sx={{color: '#FFF'}}>Profilul meu</Button>
+              </MenuItem>}
+              {user && user.role !== 2 && <MenuItem key={'adaugaMasina'} onClick={handleCloseNavMenu}>
+              <Button color='inherit' LinkComponent={Link} to={`/addcar`} sx={{color: '#FFF'}}>Adauga masina</Button>
+              </MenuItem>}
+              {user && user.role !== 2 && <MenuItem key={'masinileMele'} onClick={handleCloseNavMenu}>
+              <Button color="inherit" LinkComponent={Link} to='/mycars' sx={{color: '#FFF'}}> Masinile mele
+              </Button>
+              </MenuItem>}
+
+              {user && user.role === 0 && <MenuItem key={'admin'} onClick={handleCloseNavMenu}>
+              <Button color='inherit' LinkComponent={Link} to='/admin/dashboard' sx={{color: '#FFF'}}>ADMIN DASHBOARD</Button>
+              </MenuItem>}
 
               {user && <MenuItem key={'logout'} onClick={handleCloseNavMenu}>
                <Button color="inherit" onClick={logout} sx={{ color: '#FFF' }}>Deconectează-te</Button>
@@ -142,10 +155,13 @@ const Header = () => {
             {user && user.role === 2 && <Button color="inherit" ><Link to={`/service/page/${user.name}`} style={{ color: '#FFF' }}>Pagina mea</Link></Button>}
             {user && user.role === 2 && <Button color="inherit" >
               <Link to='/service/offers' style={{ color: '#FFF' }}>
-                <Badge badgeContent={notifications} color="error">
+                <Badge badgeContent={offersNotificationsCounter} color="error">
                   Oferte
                 </Badge>
               </Link></Button>}
+              {user && user.role === 0 &&
+              <Button color='inherit' LinkComponent={Link} to='/admin/dashboard' sx={{color: '#FFF'}}>ADMIN DASHBOARD</Button>
+              }
             {user && <Button color="inherit" onClick={logout} sx={{ color: '#FFF' }}>Deconectează-te</Button>}
           </Box>
         </Toolbar>

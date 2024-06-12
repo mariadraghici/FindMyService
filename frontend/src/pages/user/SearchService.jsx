@@ -3,20 +3,23 @@ import myAxios from '../../components/axios/axios';
 import ServiceCard from '../../components/service/ServiceCard';
 import Container from '@mui/material/Container';
 import {Link} from 'react-router-dom';
-import { Autocomplete, Card, Divider, FormControlLabel, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Card, Divider, FormControlLabel, Grid, Stack, Typography } from '@mui/material';
 import ProfileContext from '../../components/context/ProfileContext'
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { toast } from 'react-hot-toast';
-import Chip from '@mui/material/Chip';
 import { filter } from '../../api/filteringApi';
 import { getAllServices } from '../../api/serviceApi';
 import { getAllBrands } from '../../api/brandApi';
 import { getAllFacilities } from '../../api/facilityApi';
 import { getAllCities } from '../../api/cityApi';
-import StyledPopper from '../../components/utils/StyledPopper';
 import './searchService.css';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import bgImage from '/img/search-img.png';
+import Box from '@mui/material/Box';
+import Pagination from '@mui/material/Pagination';
+import MyAutocomplete from '../../components/utils/MyAutocomplete';
+import MyAutocompleteWithCheckboxes from '../../components/utils/AutocompleteWithCheckboxes';
 
 const SearchService = () => {
     const [services, setServices] = useState([]);
@@ -33,13 +36,21 @@ const SearchService = () => {
     const [disableEngine, setDisableEngine] = useState(true);
     const [models, setModels] = useState({});
     const [engines, setEngines] = useState([]);
-    const isSmallScreen = useMediaQuery('(max-width:1000px)');
+    const isSmallScreen = useMediaQuery('(max-width:899px)');
+    const [page, setPage] = useState(1);
+    const [pageNo, setPageNo] = useState(1);
+    const [filterButtonActivated, setFilterButtonActivated] = useState(false);
+    console.log('i am in search service');
 
     const [formData, setFormData] = useState({
         brand: "",
         model: "",
         engine: "",
     });
+
+    const handlePageChange = (event, value) => {
+        setPage(value);
+    };
 
     const setAllBrands = async () => {
         try {
@@ -55,8 +66,10 @@ const SearchService = () => {
     }
     const setAllServices = async () => {
         try {
-            const services = await getAllServices();
-            setServices(services);
+            const res = await getAllServices();
+            setServices(res);
+            console.log(res);
+            setPageNo(Math.ceil(services.length / 5));
         } catch (error) {
             console.error(error);
         }
@@ -84,6 +97,7 @@ const SearchService = () => {
         try {
             const res = await filter(selectedCars, selectedFacilities, selectedCities, formData);
             setServices(res);
+            setFilterButtonActivated(false);
         } catch (error) {
             console.log(error);
         }
@@ -126,12 +140,62 @@ const SearchService = () => {
         }
     }
 
+    const handleBrandChange = (event, newValue) => {
+        if (newValue === "" || newValue === null) {
+            setModels({});
+            setEngines([]);
+            setFormData({...formData, brand: "", model: "", engine: ""});
+            setDisableModel(true);
+            setDisableEngine(true);
+            return;
+        } else {
+            setFormData({...formData, brand: newValue, model: "", engine: ""});
+            setModels(brands[newValue].models.reduce((acc, brand) => {
+                acc[brand.name] = brand;
+                return acc;
+                }, {}));
+            setEngines([]);
+            setDisableModel(false);
+        }
+    }
+
+    const handleModelChange = (event, newValue) => {
+        if (newValue === "" || newValue === null) {
+            setFormData({...formData, model: "", engine: ""});
+            setEngines([]);
+            setDisableEngine(true);
+            return;
+        } else {
+            setFormData({...formData, model: newValue, engine: ""});
+            setEngines(models[newValue].engines);
+            setDisableEngine(false);
+        }
+    }
+
+    const handleEngineChange = (event, newValue) => {
+        setFormData({...formData, engine: newValue});
+    }
+
+    const handleCityChange = (event, newValue) => {
+        setSelectedCities(newValue);
+    }
+
+    const handleFacilityChange = (event, newValue) => {
+        setSelectedFacilities(newValue);
+    }
+
+
     return (
-        <Container>
-            <Grid container direction={isSmallScreen ? 'column' : 'row'} spacing={2} className='grid-container'>
-                <Grid item xs={3} sx={{alignItems: 'center'}}>
-                    <Stack spacing={2}>
-                        <Card sx={{padding: '10%', borderRadius: '7px', backgroundColor: 'blacks.light'}}>
+        <Container maxWidth={false} sx={{padding: "0 !Important"}}>
+            <Box sx={{display:'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                 <img src={bgImage} alt="img-profile" className="img-style-search" />
+            <Container>
+            <Grid container direction='row' spacing={2} className='grid-container-search'>
+                <Grid item xs={12} md={3} sx={{alignItems: 'center'}}>
+                    {isSmallScreen && filterButtonActivated === false &&
+                    <Button onClick={() => setFilterButtonActivated(true)} variant='contained' color='primary' sx={{width: '100%'}}>Filtre</Button>}
+                    {(isSmallScreen && filterButtonActivated || !isSmallScreen) && <Stack spacing={2}>
+                        <Card sx={{padding: '10%', borderRadius: '7px', backgroundColor: '#EEEEEE'}}>
                             <Stack spacing={2}>
                             <Typography variant="h5" component="div">
                                 Filtrează după:
@@ -144,16 +208,17 @@ const SearchService = () => {
                                     {cars.map(car => (
                                         <div key={car._id}>
                                             <FormControlLabel control={
-                                            <Checkbox
-                                                onChange={handleCarChange}
-                                                checked={selectedCars[car._id]}
-                                                value={car._id}
-                                            />}
+                                            <Checkbox onChange={handleCarChange} checked={selectedCars[car._id]} value={car._id}
+                                                sx={{
+                                                    color: 'secondary.main',
+                                                    '&.Mui-checked': {
+                                                      color: 'primary.main',
+                                                    },}}/>}
                                             label={car.name}
                                             />
                                         </div>
                                     ))}
-                                    <Typography variant="h7" component="div">
+                                    <Typography variant="h6" component="div">
                                         Sau
                                     </Typography>
                                 </>
@@ -162,186 +227,61 @@ const SearchService = () => {
                             <Typography variant="h6" component="div">
                                 Selectează marca:
                             </Typography>
-                            <Autocomplete
-                                size='small'
-                                id="combo-box-brands"
-                                options={Object.keys(brands)}
-                                disabled={disableBrand}
-                                renderInput={(params) => <TextField {...params} label="Selectați o marcă" InputLabelProps={{
-                                    style: { color: '#8E8E8E' },
-                                  }}
-                                  color='secondary'/>}
-                                value={formData.brand}
-                                getOptionLabel={(option) => option || ""}
-                                onChange={(event, newValue) => {
-                                    if (newValue === "" || newValue === null) {
-                                        setModels({});
-                                        setEngines([]);
-                                        setFormData({...formData, brand: "", model: "", engine: ""});
-                                        setDisableModel(true);
-                                        setDisableEngine(true);
-                                        return;
-                                    } else {
-                                        setFormData({...formData, brand: newValue, model: "", engine: ""});
-                                        setModels(brands[newValue].models.reduce((acc, brand) => {
-                                            acc[brand.name] = brand;
-                                            return acc;
-                                            }, {}));
-                                        setEngines([]);
-                                        setDisableModel(false);
-                                    }
-                                    }}
-                                isOptionEqualToValue={(option, value) => option === value || value === ""}
-                                PopperComponent={StyledPopper}
-                            />
-
+                            <MyAutocomplete options={Object.keys(brands)} label="Selectați o marcă" value={formData.brand} onChange={handleBrandChange} disabled={disableBrand}/>
                             <Typography variant="h6" component="div">
                                 Selectează modelul:
                             </Typography>
-                            <Autocomplete
-                            PopperComponent={StyledPopper}
-                            size='small'
-                            id="combo-box-models"
-                            options={Object.keys(models)}
-                            value={formData.model}
-                            disabled={disableModel}
-                            renderInput={(params) => <TextField {...params} label="Selectați un model" InputLabelProps={{
-                                style: { color: '#8E8E8E' },
-                            }}/>}
-                            onChange={(event, newValue) => {
-                                if (newValue === "" || newValue === null) {
-                                    setFormData({...formData, model: "", engine: ""});
-                                    setEngines([]);
-                                    setDisableEngine(true);
-                                    return;
-                                } else {
-                                    setFormData({...formData, model: newValue, engine: ""});
-                                    setEngines(models[newValue].engines);
-                                    setDisableEngine(false);
-                                }
-                            }}
-                            isOptionEqualToValue={(option, value) => option.name === value.name || option.name === ""}
-                            />
+                            <MyAutocomplete options={Object.keys(models)} label="Selectați un model" value={formData.model} onChange={handleModelChange} disabled={disableModel}/>
                             <Typography variant="h6" component="div">
                                 Selectează motorizarea:
                             </Typography>
-                            <Autocomplete
-                            size='small'
-                            id="combo-box-engines"
-                            PopperComponent={StyledPopper}
-                            options={engines}
-                            disabled={disableEngine}
-                            renderInput={(params) => <TextField {...params} label="Selectați motorizarea" InputLabelProps={{
-                                style: { color: '#8E8E8E' },
-                            }}/>}
-                            value={formData.engine}
-                            onChange={(event, newValue) => {
-                                setFormData({...formData, engine: newValue});
-                            }}
-                            isOptionEqualToValue={(option, value) => option === value || value === ""}
-                            />
+                            <MyAutocomplete options={engines} label="Selectați un motor" value={formData.engine} onChange={handleEngineChange} disabled={disableEngine}/>
                             <Divider sx={{ opacity: 1, margin: '8% 0% 8% 0%' }} />
                             <Typography variant="h6" component="div">
                                 Selectează județul:
                             </Typography>
-                            <Autocomplete
-                                multiple
-                                size='small'
-                                PopperComponent={StyledPopper}
-                                id="cities-standard"
-                                options={cities}
-                                disableCloseOnSelect
-                                getOptionLabel={(option) => option.name}
-                                isOptionEqualToValue={(option, value) => option._id === value._id}
-                                onChange={(event, value) => {
-                                    setSelectedCities(value);
-                                }}
-                                renderOption={(props, option, { selected }) => {
-                                    const { key, ...rest } = props;
-
-                                    return (<li key={option.name} {...rest}>
-                                        <Checkbox
-                                            checked={selected}
-                                        />
-                                        {option.name}
-                                    </li>);
-                                }}
-                                renderTags={(tagValue, getTagProps) =>
-                                    tagValue.map((option, index) => {
-                                        const { key, ...rest } = getTagProps({ index });
-                                        return (
-                                            <Chip
-                                                label={option.name}
-                                                {...rest}
-                                                key={key}
-                                            />
-                                        );
-                                    })
-                                }
-                                renderInput={(params) => (
-                                    <TextField {...params} placeholder="Judet" />
-                                )}
-                            />
+                            <MyAutocompleteWithCheckboxes options={cities} placeholder="Judet" onChange={handleCityChange}/>
                             <Divider sx={{ opacity: 1, margin: '8% 0% 8% 0%' }} />
                             <Typography variant="h6" component="div">
                                 Selectează serviciile:
                             </Typography>
-                            <Autocomplete
-                                size='small'
-                                multiple
-                                PopperComponent={StyledPopper}
-                                id="tags-standard"
-                                limitTags={1}
-                                options={facilities}
-                                disableCloseOnSelect
-                                getOptionLabel={(option) => option.name}
-                                isOptionEqualToValue={(option, value) => option._id === value._id}
-                                onChange={(event, value) => {
-                                    setSelectedFacilities(value);
-                                }}
-                                renderOption={(props, option, { selected }) => {
-                                    const { key, ...rest } = props;
-
-                                    return (<li key={option.name} {...rest}>
-                                        <Checkbox
-                                            checked={selected}
-                                        />
-                                        {option.name}
-                                    </li>);
-                                }}
-                                renderTags={(tagValue, getTagProps) =>
-                                    tagValue.map((option, index) => {
-                                        const { key, ...rest } = getTagProps({ index });
-                                        return (
-                                            <Chip
-                                                label={option.name}
-                                                {...rest}
-                                                key={key}
-                                            />
-                                        );
-                                    })
-                                }
-                                renderInput={(params) => (
-                                    <TextField {...params} placeholder="Servicii" />
-                                )}
-                            />
-                            <Button color="primary" sx={{margin: '3%'}} onClick={handleFiltre} >Cauta</Button>
+                            <MyAutocompleteWithCheckboxes options={facilities} placeholder="Servicii" onChange={handleFacilityChange}/>
+                            <Button color="primary" variant='contained' sx={{margin: '3%'}} onClick={handleFiltre} >Cauta</Button>
                             </Stack>
                         </Card>
-                    </Stack>
+                    </Stack>}
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item md={9} xs={12}>
                     <Stack sx={{justifyContent: 'center'}} spacing={2}>
-                    {services?.map(service => (
+                    {services?.slice((page - 1) * 5, (page - 1) * 5 + 5).map(service => (
                         <div key={service._id}>
                             <Link to={`/service/page/${service.name}`}>
                             <ServiceCard service={service} />
                             </Link>
                         </div>
                     ))}
+
                     </Stack>
+                    <Grid container justifyContent="flex-end" sx={{ bottom: '10px', right: '10px' }}>
+                        {services.length !== 0 && <Pagination
+                        sx={{
+                            '& .MuiPaginationItem-root': {
+                            color: 'white', // Change the color of the numbers to white
+                            },
+                            '& .Mui-selected': {
+                            backgroundColor: 'primary.main', // Ensure selected item has appropriate contrast
+                            color: 'white', // Selected item color
+                            },
+                            '& .MuiPaginationItem-root.Mui-selected': {
+                            backgroundColor: 'primary.main', // Selected item background color
+                            },
+                        }}
+                        variant='outlined' count={pageNo} page={page} onChange={handlePageChange} />}
+                    </Grid>
                 </Grid>
             </Grid>
+        </Container>
+        </Box>
         </Container>
     )
 }

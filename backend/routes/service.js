@@ -25,7 +25,7 @@ router.post('/service/filter/locationfacilityothers', isAuthenicated, serviceFil
 router.post('/service/filter/others', isAuthenicated, serviceFilterOnlyByOthers);
 router.put('/service/edit/:id', isAuthenicated, editDescription);
 router.put('/service/schedule/:id', isAuthenicated, editSchedule);
-router.put('/service/offers/', isAuthenicated, updateAndGetNewOffers);
+router.put('/service/updateAndGetNewOffers/', isAuthenicated, updateAndGetNewOffers);
 router.put('/service/resetOffers', isAuthenicated, resetNewOffers);
 
 module.exports = router;

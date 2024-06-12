@@ -2,7 +2,7 @@ import React from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import { Grid } from '@mui/material'
-import signupImg from '../../img/signup-img.jpg'
+import signupImg from '/img/signup-img.jpg'
 import './signup-layout.css'
 import CardLayout from './CardLayout'
 

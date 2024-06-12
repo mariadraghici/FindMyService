@@ -2,7 +2,7 @@ import './profileLayout.css';
 import { Box, Container } from '@mui/material';
 import { Grid } from '@mui/material';
 import UserSidebar from '../user/UserSidebar';
-import bgImage from '../../img/profile-car-img.png';
+import bgImage from '/img/profile-car-img.png';
 import CardLayout from './CardLayout';
 
 const ProfileLayout = ({ children }) => {

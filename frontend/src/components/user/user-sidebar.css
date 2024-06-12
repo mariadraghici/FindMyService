@@ -1,28 +1,10 @@
-/* Global Styles */
-body {
-    background-color: #fbfbfb;
+.user-sidebar-tabs {
+    margin-top: 2%;
 }
 
-/* Media Query for Larger Screens */
-@media (min-width: 991.98px) {
-    main {
-        padding-left: 240px; /* Adding padding to the left of the main content */
-    }
-}
 
-/* Sidebar Styles */
-.user-sidebar {
-    position: relative; /* Fixed position */
-    padding: 2vh 0 18vh; /* Height of navbar */
-    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%); /* Box shadow */
-    width: 300px; /* Sidebar width */
-    z-index: 0; /* Z-index */
-    /* margin-bottom: 3vh; */
-}
-
-/* Media Query for Smaller Screens */
-@media (max-width: 991.98px) {
-    .sidebar {
-        width: 100%; /* Sidebar takes full width on smaller screens */
-    }
+@media screen and (max-width: 899px) {
+    .user-sidebar-tabs {
+        display: none !important;
+    } 
 }

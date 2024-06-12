@@ -107,10 +107,12 @@ const userSchema = new mongoose.Schema({
         required: true
     },
 
-    newOffers: {
-        type: Number,
-        default: 0
-    }
+    newOffers: [
+        {
+            type: ObjectId,
+            ref: "Offer"
+        }
+    ],
 
 }, {timestamps: true});
 

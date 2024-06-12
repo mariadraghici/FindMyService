@@ -10,6 +10,8 @@ import CarCard from '../../../components/user/CarCard';
 import {useNavigate} from 'react-router-dom';
 import ProfileContext from '../../../components/context/ProfileContext';
 import { getProfile } from '../../../api/profileApi';
+import ProfileLayout from '../../../components/utils/ProfileLayout';
+import Button from '@mui/material/Button';
 
 const MyCars = () => {
 
@@ -19,6 +21,8 @@ const MyCars = () => {
     const [carsNumber, setCarsNumber] = useState(0);
     const {user, setUser} = React.useContext(ProfileContext);
     const navigate = useNavigate();
+    console.log('am in mycars');
+
   
     useEffect(() => {
       const fetchProfile = async () => {
@@ -56,6 +60,7 @@ const MyCars = () => {
         try {
             const res = await myAxios.get("/api/mycars");
             setCars(res.data.cars);
+            console.log(res.data.cars);
             setCarsNumber(res.data.cars.length);
             setCar(res.data.cars[0]);
         } catch (error) {
@@ -73,23 +78,13 @@ const MyCars = () => {
     };
 
   return (
-    <Container>
-        <Grid container spacing={2} sx={{marginTop: '3%'}}>
-            <Grid item xs={3}>
-            <UserSidebar/>
-            </Grid>
-            <Grid item xs={9}>
-                <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                        <CarCard car={car} deleteCar={deleteCar}/>
-                        <Stack direction="row" justifyContent="flex-end" alignItems="baseline">
-                            <Pagination count={carsNumber} page={page} onChange={handleChange} />
-                        </Stack>
-                    </Grid>                   
-                </Grid>
-            </Grid>
-        </Grid>
-    </Container>
+    <ProfileLayout>
+         <CarCard car={car} deleteCar={deleteCar}/>
+         {carsNumber !== 0 && <Stack direction="row" justifyContent="space-between" alignItems="baseline" marginTop="2%">
+                <Button size="small" variant='contained' onClick={deleteCar}>ȘTERGE</Button>
+                <Pagination count={carsNumber} page={page} onChange={handleChange} />
+            </Stack>}
+    </ProfileLayout>
   )
 }
 

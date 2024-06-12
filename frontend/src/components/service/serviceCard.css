@@ -1,0 +1,10 @@
+.service-image {
+    width: 30%;
+    /* width: 10%; */
+}
+
+@media screen and (max-width: 600px) {
+    .service-image {
+        width: 100%;
+    }  
+}

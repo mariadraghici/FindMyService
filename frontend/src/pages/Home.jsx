@@ -1,16 +1,41 @@
 import React, { useContext } from 'react'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
-import ServiceContext from '../components/context/ServiceContext'
 import './home.css'
 import { Grid, Typography } from '@mui/material'
-import landingpage from '../img/landing_page.png'
-import logo from '../img/logo_light_mare.png'
-import  ProfileContext from '../components/context/ProfileContext'
+import landingpage from '/img/landing_page.png'
+import logo from '/img/logo_light_mare.png'
+import NewOffers from '../components/context/NewOffers'
+import { useEffect } from 'react'
+import myAxios from '../components/axios/axios'
+import ProfileContext from '../components/context/ProfileContext'
 
 const Home = () => {
-  // const {service} = React.useContext(ServiceContext);
+  const {setNewOffers} = useContext(NewOffers);
   const {user} = useContext(ProfileContext);
+  console.log('am in home');
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+  
+    const resetNewOffers = async () => {
+        try {
+            const res = await myAxios.put('/api/service/resetOffers', {userId: user._id});
+
+            if (res.status === 200) {
+                setNewOffers([]);
+            } else {
+                console.log(res.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    resetNewOffers();
+  }, []);
   
   return (
     <Container maxWidth={false} sx={{padding: "0 !Important"}}>

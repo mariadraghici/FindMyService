@@ -14,6 +14,9 @@ exports.createReview = async (req, res, next) => {
         service.reviews.push(review._id);
         await service.save();
 
+        service.rating = (service.rating + req.body.rating) / service.reviews.length;
+        await service.save();
+
         res.status(201).json(
             {
                 success: true,

@@ -1,12 +1,9 @@
-import {APIProvider,useMapsLibrary, Map, AdvancedMarker} from '@vis.gl/react-google-maps';
-import {TextField} from "@mui/material";
-import {useJsApiLoader, GoogleMap} from "@react-google-maps/api";
-import React, { useEffect, useRef } from "react";
+import {APIProvider, Map, AdvancedMarker} from '@vis.gl/react-google-maps';
+import {useJsApiLoader} from "@react-google-maps/api";
+import React from "react";
 import { useState } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
-import { Button } from "@mui/material";
+import { Typography } from "@mui/material";
 import Autocomplete from "react-google-autocomplete";
-import { Popper } from '@mui/base/Popper';
 
 const libraries = ['places'];
 

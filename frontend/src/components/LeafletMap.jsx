@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import { Icon } from 'leaflet'
-import pin from '../img/pin.png'
+import pin from '/img/pin.png'
 
 const LeafletMap = ({lat, lng, location}) => {
     const locationIcon = new Icon({

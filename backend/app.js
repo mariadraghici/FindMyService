@@ -35,8 +35,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('offer-request', (data) => {
-    // console.log(message);
-    // io.emit('receive-message', message);
     console.log(data);
     socket.to(data.room).emit('receive-message', data.message);
   });
@@ -57,7 +55,7 @@ const serviceFacilityRoutes = require('./routes/serviceFacility');
 const offerRoutes = require('./routes/offer');
 const addressRoutes = require('./routes/address');
 const ErrorResponse = require('./utils/errorResponse');
-const { s3Upload, s3Uploadv3, s3GetImages, s3DeleteImages} = require('./s3Service');
+const { s3Upload, s3Uploadv3, s3GetImages, s3DeleteImages, s3GetImage} = require('./s3Service');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DATABASE, {
@@ -100,23 +98,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 // Error Handler Middleware
 app.use(errorHandler);
 
-
-// single file upload
-// app.post('/api/upload', upload.single("file"), (req, res) => {
-//   res.json({ status: 'success' });
-// });
-
-// customizing the file name
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'public/uploads/');
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, `ServiceAuto-${file.originalname}`);
-//   }
-// });
-
-// decomment for amazon s3
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -129,7 +110,6 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: 1024 * 1024 * 5, files: 5}});
 
-// decoment for amazon s3
 app.post('/api/upload', upload.array("file"), async (req, res) => {
   const files = req.files;
   const username = req.body.name;
@@ -153,7 +133,17 @@ app.get('/api/images/service/:serviceName', async (req, res) => {
   }
 });
 
-// Route to delete an image
+
+app.get('/api/image/service/:serviceName', async (req, res) => {
+  const serviceName = req.params.serviceName;
+  try {
+    const image = await s3GetImage(serviceName);
+    res.json({ image });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.delete('/api/delete/:serviceName/:imageId', async (req, res) => {
   const { serviceName, imageId } = req.params;
   try {

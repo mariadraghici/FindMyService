@@ -8,3 +8,12 @@ export const getAllImagesOfService = async (serviceName) => {
         console.log(error);
     }
 }
+
+export const getImageOfService = async (serviceName) => {
+    try {
+        const res = await myAxios.get(`/api/image/service/${serviceName}`);
+        return res.data.image;
+    } catch (error) {
+        console.log(error);
+    }
+}

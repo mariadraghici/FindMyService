@@ -4,8 +4,12 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 // import 'react-dropdown/style.css';
 import '../../components/admin/admin-sidebar/admin-sidebar.css';
-import { Autocomplete, Grid, Typography } from '@mui/material';
+import { Autocomplete, CardContent, Grid, Typography } from '@mui/material';
 import { Button, TextField, Stack } from '@mui/material';
+import Container from '@mui/material/Container';
+import CardLayout from '../../components/utils/CardLayout';
+import MyTextField from '../../components/utils/MyTextField';
+import myAxios from '../../components/axios/axios';
 
 const AddComponents = () => {
 
@@ -20,17 +24,32 @@ const AddComponents = () => {
       const {name, engines, brand} = modelValues;
       const [brands, setBrands] = useState({});
 
+      // useEffect(() => {
+      //   axios.get('/api/brand/all')
+      //   .then(res => {
+      //     setBrands(res.data.brands.reduce((acc, brand) => {
+      //       acc[brand.name] = brand;
+      //       return acc;
+      //     }, {}));
+      //   })
+      //   .catch(err => {
+      //     toast.error(err.response.data.error);
+      //   });
+      // }, [brandName]);
+
       useEffect(() => {
-        axios.get('/api/brand/all')
-        .then(res => {
-          setBrands(res.data.brands.reduce((acc, brand) => {
-            acc[brand.name] = brand;
-            return acc;
-          }, {}));
-        })
-        .catch(err => {
-          toast.error(err.response.data.error);
-        });
+        const fetchBrands = async () => {
+          try {
+            const res = await myAxios.get('/api/brand/all');
+            setBrands(res.data.brands.reduce((acc, brand) => {
+              acc[brand.name] = brand;
+              return acc;
+            }, {}));
+          } catch (error) {
+            toast.error(error.response.data.error);
+          }
+        }
+        fetchBrands();
       }, [brandName]);
 
       const handleModelChange = val => event => {
@@ -83,27 +102,34 @@ const AddComponents = () => {
 
 
   return (
-    <Grid container>
-      <Grid item xs={2}>
-        <AdminSidebar/>
-      </Grid>
-      <Grid item xs={8}>
-        {/* implement with MUI components */}
-        <Typography variant="h4" component="h4" sx={{margin: '5%'}}>
-          Add Components
-        </Typography>
-        <Stack spacing={2} sx={{margin: '5%'}}>
-        <TextField size="small" label="Brand Name" variant="outlined" value={brandName} onChange={handleBrandChange}/>
-        <Button variant="contained" sx={{width:'10%', alignSelf: 'center'}} onClick={handleBrandSubmit}>Add Brand</Button>
-        <Autocomplete size='small' options={Object.keys(brands)} onChange={(event, value) => 
-          setModelValues({...modelValues, brand: value})
-        } renderInput={(params) => <TextField {...params} label="Select Brand" variant="outlined" />} />
-        <TextField size="small" label="Model Name" variant="outlined" value={name} onChange={handleModelChange('name')}/>
-        <TextField size="small" label="Engines" variant="outlined" value={engines} onChange={handleModelChange('engines')}/>
-        <Button variant="contained" sx={{width:'10%', alignSelf:'center'}} onClick={handleModelSubmit}>Add Model</Button>
+    <Container>
+      <Stack direction='row' justifyContent='center' mt={5}>
+        <Stack direction='column' justifyContent='center'>
+          <CardLayout >
+            <CardContent >
+              <Stack direction='column' justifyContent='center' spacing={2}>
+              <Typography variant="h5">
+                Add Components
+              </Typography>
+              {/* <TextField size="small" label="Brand Name" variant="outlined" value={brandName} onChange={handleBrandChange}/> */}
+              <MyTextField size="small" label="Brand Name" variant="outlined" value={brandName}  changeFunction={handleBrandChange}/>
+              <Button variant="contained" onClick={handleBrandSubmit}>Add Brand</Button>
+              <Autocomplete size='small' options={Object.keys(brands)} onChange={(event, value) => 
+                setModelValues({...modelValues, brand: value})
+              } renderInput={(params) => <TextField {...params} label="Select Brand" variant="outlined"
+                InputLabelProps={{style: {color: 'grey'}}} color='secondary'
+               />} />
+              {/* <TextField size="small" label="Model Name" variant="outlined" value={name} onChange={handleModelChange('name')}/> */}
+              <MyTextField size="small" label="Model Name" variant="outlined" value={name} changeFunction={handleModelChange('name')}/>
+              {/* <TextField size="small" label="Engines" variant="outlined" value={engines} onChange={handleModelChange('engines')}/> */}
+              <MyTextField size="small" label="Engines" variant="outlined" value={engines} changeFunction={handleModelChange('engines')}/>
+              <Button variant="contained" onClick={handleModelSubmit}>Add Model</Button>
+              </Stack>
+            </CardContent>
+          </CardLayout>
         </Stack>
-      </Grid>
-    </Grid>
+      </Stack>
+    </Container>
   )
 }
 

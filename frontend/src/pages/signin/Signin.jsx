@@ -9,15 +9,17 @@ import Typography from '@mui/material/Typography'
 import myAxios from '../../components/axios/axios'
 import {useContext} from 'react'
 import ProfileContext from '../../components/context/ProfileContext'
-import signinImage from '../../img/signin_photo.png'
+import signinImage from '/img/signin_photo.png'
+// import signinImage from '/img/signin_photo.webp'
 import './signin.css'
-import { Card, CardContent, Icon, Stack } from '@mui/material';
+import { CardContent, Stack } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { getProfile } from '../../api/profileApi';
 import CardLayout from '../../components/utils/CardLayout';
+
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -41,17 +43,6 @@ const Signin = () => {
     setValues({...values, [val]: event.target.value});
   }
 
-  // const getProfile = async() => {
-  //   try {
-  //     const res = await myAxios.get('/api/profile');
-  //     if (res.status === 200) {
-  //       setUser(res.data.user);
-  //     }
-  //   } catch (error) {
-  //     // toast.error(error.response.data.error);
-  //   }
-  // }
-
   const fetchProfile = async () => {
     const user = await getProfile();
       if (user) {
@@ -70,7 +61,6 @@ const Signin = () => {
       if (signUser.status === 200) {
         setValues({email: '', password: ''});
         toast.success("User logged in successfully!");
-        // getProfile();
         fetchProfile();
         navigate('/', {replace: true});
       }
@@ -82,27 +72,14 @@ const Signin = () => {
   return (
       <Container maxWidth={false} sx={{padding: "0 !Important"}}>
         <Box sx={{display:'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <img src={signinImage} alt="signin_img" className="img-width-signin-photo" />
-          
+          <img src={signinImage} alt="signin_img" className="img-width-signin-photo"/>       
           <Stack direction='column' spacing={2} className='card-stack'>
             <CardLayout additionalClasses='card-signin'>
               <CardContent className='card-content'>
                 <Stack direction='column' spacing={3} sx={{justifyContent: 'center', alignItems: 'center'}}>
                 <AccountCircleIcon className='signin-icon'/>
                 <Typography variant='h5' color='secondary' className='login-text'>Logare</Typography>
-                <TextField value={email}
-                onChange={handleChange('email')}
-                label="Email"
-                InputLabelProps={
-                  {style: {color: 'black'}}
-                }
-                type='text'
-                InputProps={{
-                  style: { color:'black' }
-                }}
-                sx={{ width: '100%'}}
-                className='outlinedInput'
-                />
+                <TextField value={email} onChange={handleChange('email')} label="Email" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
                 <FormControl variant="outlined" sx={{width: '100%'}}>
                   <InputLabel htmlFor="outlined-adornment-password"
                   style={{color: 'black'}}

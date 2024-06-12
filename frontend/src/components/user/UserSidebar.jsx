@@ -32,7 +32,7 @@ const UserSidebar = () => {
             textColor="primary"
             variant={isSmallScreen ? "fullWidth" : "standard"}
             indicatorColor="primary"
-            sx={{marginTop: '2%'}}
+            className='user-sidebar-tabs'
       >
           <Tab label="Profilul meu" value="/profile" to="/profile" component={Link} sx={{fontSize: 'large'}}/>
           <Tab label="Adauga masina" value="/addcar" to="/addcar" component={Link} sx={{fontSize: 'large'}}/>

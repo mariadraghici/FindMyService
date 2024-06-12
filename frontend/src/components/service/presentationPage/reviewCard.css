@@ -1,0 +1,14 @@
+.review-card {
+    background-color: #EEEEEE;
+    border-radius: 10px;
+    padding: 3%;
+    width: 100%;
+}
+
+@media screen and (max-width: 868px) {
+    .review-card {
+        width: 90%;
+        padding: 5%;
+        height: 90%;
+    }
+}
