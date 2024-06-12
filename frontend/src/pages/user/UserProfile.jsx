@@ -2,7 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import ProfileContext from "../../components/context/ProfileContext";
 import { Typography } from "@mui/material";
-import ProfileLayout from "../../components/utils/ProfileLayout";
+import ProfileLayout from "../../components/user/profile/ProfileLayout";
 
 const UserProfile = () => {
     const {user} = useContext(ProfileContext);

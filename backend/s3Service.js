@@ -1,4 +1,3 @@
-// const {S3} = require("aws-sdk");
 const {S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand} = require("@aws-sdk/client-s3");
 const uuid = require("uuid").v4;
 const Image = require('./models/image');
@@ -32,13 +31,13 @@ exports.s3Uploadv3 = async (files, username) => {
     }
 
     // Resize images with Sharp
-    const resizedImages = await Promise.all(files.map(file => {
-        return sharp(file.buffer)
-            .resize({ width: 600, height: 400, fit: 'contain'})
-            .toBuffer();
-    }));
+    // const resizedImages = await Promise.all(files.map(file => {
+    //     return sharp(file.buffer)
+    //         .resize({ width: 600, height: 400, fit: 'contain'})
+    //         .toBuffer();
+    // }));
 
-    const params = resizedImages.map((file, index) => {
+    const params = files.map((file, index) => {
         return {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: fileNames[index],

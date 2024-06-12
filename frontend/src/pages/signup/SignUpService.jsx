@@ -14,7 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LocationChooseOnMap from "../../components/service/LocationChooseOnMap";
 import { useNavigate } from "react-router-dom";
 import ProfileContext from "../../components/context/ProfileContext";
-import SignupLayout from "../../components/utils/SignUpLayout";
+import SignupLayout from "../../components/signup/SignUpLayout";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";

@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import React from 'react'
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import myAxios from "../../axios/axios";
 import { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
@@ -27,6 +27,12 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
     const [editPhotos, setEditPhotos] = React.useState(false);
     const [currentImage, setCurrentImage] = React.useState(null);
     const isSmallScreen = useMediaQuery('(max-width:780px)');
+
+    useEffect(() => {
+        if (images.length > 0) {
+            setCurrentImage(images[0]);
+        }
+    }, [images]);
 
     const handleFileUpload = async (e) => {
         if (images.length === 5) {
@@ -94,11 +100,11 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
     return (
         <>
         {!editPhotos && onOwnPage &&
-        <Grid container direction='row' justifyContent='flex-end' sx={{marginTop: '2%'}}>
+        <Grid container direction='row' justifyContent='flex-end' >
             <Button onClick={() => setEditPhotos(true)} >Editeaza</Button>
         </Grid>}
         {editPhotos === true && onOwnPage &&
-        <Grid container direction='row' justifyContent='flex-end' sx={{marginTop: '5%', marginBottom: '2%'}}>
+        <Grid container direction='row' justifyContent='flex-end' sx={{marginBottom: '2%'}}>
             <Stack spacing={2} direction="row" justifyContent="space-between">
                     <Button component="label" variant="contained" tabIndex={-1} className='buttons' startIcon={<CloudUploadIcon />}>
                         {isSmallScreen ? '' : 'Încarcă poză'}
@@ -116,15 +122,14 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
                 <Carousel
                 indicators={false}
                 stopAutoPlayOnHover={true}
+                swipe={true}
+                autoPlay={false}
+                animation='slide'
                 navButtonsAlwaysVisible={true}
-                changeOnFirstRender={true}
                 onChange={(index) => {
                     setCurrentImage(images[index])
                 }}
-                // height={'70vh'}
-                //  className='carousel'
-                sx={{width: '100%'}}
-                 >
+                 className='carousel'>
                     {
                         images.map((image, i) => (
                             <Item
@@ -143,7 +148,9 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
 
 function Item({ item, editPhotos, handleFileDelete }) {
     return (
+        <Box className='image-box'>
         <img className='image-styled' src={item.url} alt="service" />
+        </Box>
     )
 }
 export default ImageCarousel

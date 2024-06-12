@@ -4,9 +4,9 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Button from '@mui/material/Button';
-import MyTextField from '../utils/MyTextField';
+import MyTextField from '../../utils/MyTextField';
 import toast from 'react-hot-toast';
-import myAxios from '../axios/axios';
+import myAxios from '../../axios/axios';
 
 const CarCard = ({car}) => {
     const isSmallScreen = useMediaQuery('(max-width:899px)');

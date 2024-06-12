@@ -6,11 +6,11 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import myAxios from '../../../components/axios/axios';
 import { toast } from 'react-hot-toast';
-import CarCard from '../../../components/user/CarCard';
+import CarCard from '../../../components/user/myCars/CarCard';
 import {useNavigate} from 'react-router-dom';
 import ProfileContext from '../../../components/context/ProfileContext';
 import { getProfile } from '../../../api/profileApi';
-import ProfileLayout from '../../../components/utils/ProfileLayout';
+import ProfileLayout from '../../../components/user/profile/ProfileLayout';
 import Button from '@mui/material/Button';
 
 const MyCars = () => {

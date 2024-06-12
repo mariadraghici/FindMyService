@@ -26,6 +26,7 @@ import io from "socket.io-client";
 import OffersNotificationsCounter from './components/context/OffersNotificationsCounter'
 import { getProfile } from './api/profileApi'
 import NewOffers from './components/context/NewOffers'
+import Posts from './pages/Posts'
 
 const socket = io.connect("http://localhost:3001");
 
@@ -101,6 +102,7 @@ function App() {
                       <Route path="/admin/component/add" element={<AddComponents/>}/>
                       <Route path="/admin/component/update" element={<UpdateComponents/>}/>
                       <Route path="/service/offers" element={<OffersPage/>}/>
+                      <Route path="/auctions" element={<Posts/>}/>
                     </Route>
                   </Routes>
               </ProfileContext.Provider>

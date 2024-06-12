@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import { Grid } from '@mui/material'
 import signupImg from '/img/signup-img.jpg'
 import './signup-layout.css'
-import CardLayout from './CardLayout'
+import CardLayout from '../utils/CardLayout'
 
 const SignupLayout = ({children}) => {
 

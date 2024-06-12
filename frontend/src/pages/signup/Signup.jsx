@@ -3,7 +3,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Stack from '@mui/material/Stack'
 import './signup.css'
-import SignupLayout from '../../components/utils/SignUpLayout'
+import SignupLayout from '../../components/signup/SignUpLayout'
 import { Link } from 'react-router-dom'
 
 const Signup = () => {

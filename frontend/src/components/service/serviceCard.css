@@ -1,10 +1,27 @@
+.box-img-search {
+    width: 50%;
+    height: 200px;
+    display: flex;
+    justify-content: flex-end;
+    margin: auto;
+    background-color: black
+}
+
 .service-image {
-    width: 30%;
-    /* width: 10%; */
+    width: 100%;
+    object-fit: contain;
 }
 
 @media screen and (max-width: 600px) {
-    .service-image {
+    .box-img-search {
         width: 100%;
-    }  
+        display: flex ;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+    }
+
+    .service-image {
+        width: 50%;
+    }
 }

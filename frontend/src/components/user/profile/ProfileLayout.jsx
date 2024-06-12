@@ -1,9 +1,9 @@
 import './profileLayout.css';
 import { Box, Container } from '@mui/material';
 import { Grid } from '@mui/material';
-import UserSidebar from '../user/UserSidebar';
+import UserSidebar from '../UserSidebar';
 import bgImage from '/img/profile-car-img.png';
-import CardLayout from './CardLayout';
+import CardLayout from '../../utils/CardLayout';
 
 const ProfileLayout = ({ children }) => {
     return (

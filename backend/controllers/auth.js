@@ -36,7 +36,6 @@ exports.signup = async(req, res, next) => {
         if (role === 2) {
             const {lat, lng, address, name, email, password, role, phone, city} = req.body;
             const addressRecord = await Address.create({lat, lng, address})
-            console.log(addressRecord);
 
             user = await User.create({name, email, password, role, phone, city, address: addressRecord._id, socketNumber});
         } else {

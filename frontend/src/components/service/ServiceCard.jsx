@@ -10,6 +10,7 @@ import RoomRoundedIcon from '@mui/icons-material/RoomRounded';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Box from '@mui/material/Box';
 
 const ServiceCard = ({service}) => {
     const [image, setImage] = React.useState(null);
@@ -37,7 +38,7 @@ const ServiceCard = ({service}) => {
     return (
             <Card sx={{ maxWidth: '100%',  backgroundColor: 'white' }} variant='outlined'>
             <CardContent>
-            <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" alignItems={isSmallScreen ? 'flex-start' : 'center'}>
+            <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" spacing={3} alignItems={isSmallScreen ? 'flex-start' : 'center'}>
                 <Stack direction="column" alignItems="start" spacing={1}>
                     <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
                         <Typography gutterBottom variant="h5" component="div" fontWeight='bold'>
@@ -67,7 +68,9 @@ const ServiceCard = ({service}) => {
                         </Typography>
                     </Stack>
                 </Stack>
-                {image && <img src={image.url} alt="service" className="service-image"/>}
+                <Box className='box-img-search'>
+                    {image && <img src={image.url} alt="service" className="service-image"/>}
+                </Box>
             </Stack>
             </CardContent>
             </Card>

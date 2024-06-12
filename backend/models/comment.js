@@ -11,9 +11,14 @@ const commentSchema = new mongoose.Schema({
         required: [true, "Please add a comment"],
         maxlength: 1000
     },
-    post: {
+    auction: {
         type: ObjectId,
-        ref: "Post"
+        ref: "Auction"
+    },
+
+    price : {
+        type: Number,
+        required: [true, "Please add a price"]
     }
 }, {timestamps: true});
 

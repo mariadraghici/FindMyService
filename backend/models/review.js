@@ -12,28 +12,16 @@ const reviewSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    // priceRating: {
-    //     type: Number,
-    //     required: true
-    // },
-
-    // facilitiesRating: {
-    //     type: Number,
-    //     required: true
-    // },
-
-    // promptitudeRating: {
-    //     type: Number,
-    //     required: true
-    // },
 
     rating: {
         type: Number,
         required: true
     },
+
     reviewText: {
         type: String,
     },
+
     model: {
         type: ObjectId,
         ref: 'Model',

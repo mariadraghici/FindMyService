@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import './addcar.css';
-import TextField from '@mui/material/TextField';
 import myAxios from '../../../components/axios/axios';
 import toast from 'react-hot-toast';
 import Grid from '@mui/material/Grid';
@@ -11,7 +10,7 @@ import { useContext } from 'react';
 import ProfileContext from '../../../components/context/ProfileContext';
 import { useNavigate } from 'react-router-dom';
 import AddCarAutocomplete from '../../../components/utils/MyAutocomplete';
-import ProfileLayout from '../../../components/utils/ProfileLayout';
+import ProfileLayout from '../../../components/user/profile/ProfileLayout';
 import MyTextField from '../../../components/utils/MyTextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -167,8 +166,6 @@ const AddCar = () => {
             {isSmallScreen && <Typography fontWeight="bold" variant='h6' color='primary'>Adăugare mașină</Typography>}
             </Grid>
                 <Grid item>
-                    {/* <TextField size='small' onChange={handleChange("name")} type="text" name="name"
-                    value={name} required fullWidth label='Nume (ex: Buburuza roșie)'/> */}
                     <MyTextField label='Nume (ex: Buburuza roșie)' name='name' value={name} type='text' changeFunction={handleNameChange} variant='outlined'/>
                 </Grid>
                 <Grid item>
@@ -180,11 +177,9 @@ const AddCar = () => {
                     <AddCarAutocomplete options={engines} label="Selectați un motor" value={engine} onChange={handleEngineChange} disabled={disableEngine}/>
                 </Grid>
                 <Grid item>
-                    {/* <TextField size='small' onChange={handleChange("year")} type="text" name="year" value={year} fullWidth label="An fabricație"/> */}
                     <MyTextField label='An fabricație' name='year' value={year} type='number' changeFunction={handleChange('year')} variant='outlined'/>
                 </Grid>
                 <Grid item>
-                    {/* <TextField size='small' onChange={handleChange("km")} type="text" name="km" value={km} fullWidth label="Kilometraj"/> */}
                     <MyTextField label='Kilometraj' name='km' value={km} type='number' changeFunction={handleChange('km')} variant='outlined'/>
                 </Grid>
                 <Grid item>
@@ -197,7 +192,6 @@ const AddCar = () => {
                     <AddCarAutocomplete options={["FWD", "RWD", "AWD"]} label="Selectați tipul de tracțiune" value={traction} onChange={handleTractionChange} disabled={false}/>
                 </Grid>
                 <Grid item>
-                    {/* <TextField size='medium' onChange={handleChange("description")} type="text" name="description" value={description} fullWidth label="Descriere"/> */}
                     <MyTextField label='Descriere' name='description' value={description} type='text' changeFunction={handleChange('description')} variant='outlined'/>
                 </Grid>
                 <Grid item sx={{alignSelf: "center"}}>

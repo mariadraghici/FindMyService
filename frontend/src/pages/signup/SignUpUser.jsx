@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/material";
 import './signup.css';
-import SignupLayout from "../../components/utils/SignUpLayout";
+import SignupLayout from "../../components/signup/SignUpLayout";
 import { useNavigate } from "react-router-dom";
 
 const SignUpUser = ({}) => {

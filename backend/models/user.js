@@ -114,6 +114,13 @@ const userSchema = new mongoose.Schema({
         }
     ],
 
+    auctions: [
+        {
+            type: ObjectId,
+            ref: "Auction"
+        }
+    ],
+
 }, {timestamps: true});
 
 // encrypt password before saving to database
