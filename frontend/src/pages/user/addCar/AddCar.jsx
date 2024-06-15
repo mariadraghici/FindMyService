@@ -4,15 +4,13 @@ import myAxios from '../../../components/axios/axios';
 import toast from 'react-hot-toast';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { Divider, Typography } from '@mui/material';
-import { getProfile } from '../../../api/profileApi';
-import { useContext } from 'react';
-import ProfileContext from '../../../components/context/ProfileContext';
-import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
 import AddCarAutocomplete from '../../../components/utils/MyAutocomplete';
 import ProfileLayout from '../../../components/user/profile/ProfileLayout';
 import MyTextField from '../../../components/utils/MyTextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { getAllBrands } from '../../../api/brandApi';
+import {addCarApi} from '../../../api/carApi';
 
 const AddCar = () => {
     const [models, setModels] = useState({});
@@ -20,10 +18,7 @@ const AddCar = () => {
     const [engines, setEngines] = useState([]);
     const [disableModel, setDisableModel] = useState(true);
     const [disableEngine, setDisableEngine] = useState(true);
-    const {user, setUser} = useContext(ProfileContext);
-    const navigate = useNavigate();
     const isSmallScreen = useMediaQuery('(max-width:899px)');
-    console.log('am in addcar');
 
     const [formData, setFormData] = useState({
         name: "",
@@ -40,26 +35,10 @@ const AddCar = () => {
 
     const {name, brand, model, engine, year, km, transmission, fuel, traction, description} = formData;
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-          const user = await getProfile();
-          if (user) {
-            setUser(user);
-          }
-        }
-    
-        fetchProfile();
-        if (!user) {
-          navigate('/', {replace: true});
-          return;
-        }
-      }, []);
-  
-
     const getBrands = async () => {
         try {
-            const res = await myAxios.get('/api/brand/all');
-            setBrands(res.data.brands.reduce((acc, brand) => {
+            const res = await getAllBrands();
+            setBrands(res.reduce((acc, brand) => {
                 acc[brand.name] = brand;
                 return acc;
             }
@@ -79,33 +58,7 @@ const AddCar = () => {
     }
 
     const addCar = async () => {
-        try {
-            const sendFormData = {...formData, brand: brands[brand]._id, model: models[model]._id,
-            engine: engine,
-            traction: traction, description: description,
-            year: parseInt(year), km: parseInt(km), transmission: transmission,
-            fuel: fuel, brandName: brand, modelName: model};
-
-            const res = await myAxios.post('/api/car/add', sendFormData);
-
-            if (res.data.success) {
-                toast.success("Mașină adăugată cu succes!");
-                setFormData({
-                    name: "",
-                    brand: "",
-                    model: "",
-                    engine: "",
-                    year: "",
-                    km: "",
-                    transmission: "",
-                    fuel: "",
-                    traction: "",
-                    description: "",
-                });
-            }
-        } catch (error) {
-            toast.error(error.response.data.error);
-        }
+        await addCarApi(formData, setFormData, brands, models);
     }
 
     const handleBrandChange = (event, newValue) => {
@@ -160,7 +113,7 @@ const AddCar = () => {
     }
 
     return (
-        <ProfileLayout>
+        <ProfileLayout withCard={true}>
             <Grid container direction="column" spacing={2} sx={{marginTop: '2%'}}>
             <Grid item sx={{alignSelf: "center"}}>
             {isSmallScreen && <Typography fontWeight="bold" variant='h6' color='primary'>Adăugare mașină</Typography>}

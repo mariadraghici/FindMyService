@@ -152,7 +152,7 @@ const Header = () => {
           {/* for desktop */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'}}>
             <Button color="inherit"><Link to='/' style={{ color: '#FFF' }}>Acasă</Link></Button>
-            <Button color="inherit"><Link to='/auctions' style={{ color: '#FFF' }}>Licitații</Link></Button>
+            {user && <Button color="inherit"><Link to='/auctions' style={{ color: '#FFF' }}>Licitații</Link></Button>}
             {!user && <Button color="inherit"><Link to='/signup' style={{ color: '#FFF' }}>Înregistrare</Link></Button>}
             {!user && <Button color="inherit" ><Link to='/signin' style={{ color: '#FFF' }}>Logare</Link></Button>}
             {user && user.role !== 2 && <Button color="inherit" ><Link to='/profile' style={{ color: '#FFF' }}>Contul meu</Link></Button>}
@@ -164,7 +164,7 @@ const Header = () => {
                   Oferte
                 </Badge>
               </Link></Button>}
-              {user && user.role === 0 &&
+              {user && user.role === 1 &&
               <Button color='inherit' LinkComponent={Link} to='/admin/dashboard' sx={{color: '#FFF'}}>ADMIN DASHBOARD</Button>
               }
             {user && <Button color="inherit" onClick={logout} sx={{ color: '#FFF' }}>Deconectează-te</Button>}

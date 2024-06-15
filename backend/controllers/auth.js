@@ -43,22 +43,29 @@ exports.signup = async(req, res, next) => {
             user = await User.create({name, email, password, role, socketNumber});
         }
 
-        // const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
-        // username: req.body.name,
-        // expiresAt: Date.now() + 86400000,
-        // userId: user._id
-        // });
+        const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
+        username: req.body.name,
+        expiresAt: Date.now() + 86400000,
+        userId: user._id
+        });
 
-        // const msg = {
-        //     from: process.env.SENDER_EMAIL,
-        //     to: email,
-        //     subject: 'FindMy Service Account Activation Link',
-        //     text: `http://${req.headers.host}/api/verifyEmail?token=${token.token}`,
-        //     html: `<h1>Click the link below to activate your account</h1>
-        //      <a href=http://${req.headers.host}/api/verifyEmail?token=${token.token}>Activate Account</a>`
-        // };
+        const msg = {
+            from: process.env.SENDER_EMAIL,
+            to: email,
+            subject: 'FindMy Service Account Activation Link',
+            text: `http://${req.headers.host}/api/verifyEmail?token=${token.token}`,
+            html: ` <h1 style="color: #e6004; font-size: 48px; text-align: center; margin-top: 20px;">
+                        Click the link below to activate your account
+                    </h1>
+                    <div style="text-align: center;">
+                        <a href="http://${req.headers.host}/api/verifyEmail?token=${token.token}"
+                        style="font-size: 20px; color: #ffffff; background-color: #e60049; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                            Activate Account
+                        </a>
+                    </div>`
+        };
 
-        // await sgMail.send(msg);
+        await sgMail.send(msg);
 
         res.status(201).json({
             success: true,
@@ -87,10 +94,11 @@ exports.verifyEmail = async(req, res, next) => {
 
         await token.deleteOne({ token});
 
-        res.status(200).json({
-            success: true,
-            message: 'Account verified successfully!'
-        });
+        // res.status(200).json({
+        //     success: true,
+        //     message: 'Account verified successfully!'
+        // });
+        res.redirect('http://localhost:3000/account-verified');
     } catch (error) {
         next(error);
     }

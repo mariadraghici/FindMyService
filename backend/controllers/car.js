@@ -5,16 +5,23 @@ const ErrorResponse = require('../utils/errorResponse');
 
 exports.createCar = async(req, res, next) => {
     try {
-        // const user = await User.findById(req.user);
         const car = await Car.create({ ...req.body, user: req.user._id });
-        await User.findOneAndUpdate({ _id: req.user._id }, {$push: {cars: car._id}}, {includeResultMetadata: true});
+
+        if (!car) {
+            return next(new ErrorResponse("Car not created", 400));
+        }
+    
+        const user = await User.findOneAndUpdate({ _id: req.user._id }, {$push: {cars: car._id}}, {includeResultMetadata: true});
+
+        if (!user) {
+            return next(new ErrorResponse("User not found", 400));
+        }
 
         res.status(201).json({
             success: true,
             car
         });
     } catch (error) {
-        console.log(error);
         next(error);
     }
 };
@@ -34,13 +41,22 @@ exports.displayCar = async(req, res, next) => {
 };
 
 exports.displayCarsByUserId = async(req, res, next) => {
-    
         try {
-            const user = await User.findById(req.user._id).populate('cars');
-            const cars = user.cars;
+
+            const { page = 1, limit = 10 } = req.query;
+            const cars = await Car.find({ user: req.user._id }).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 });
+
+            if (!cars) {
+                return next(new ErrorResponse("Cars not found", 400));
+            }
+            
+            const totalCars = await Car.countDocuments({ user: req.user._id });
+        
             res.status(201).json({
                 success: true,
-                cars
+                cars,
+                totalPages: Math.ceil(totalCars / limit),
+                currentPage: page,
             });
         } catch (error) {
             console.log(error);

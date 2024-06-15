@@ -7,8 +7,9 @@ import Button from '@mui/material/Button';
 import MyTextField from '../../utils/MyTextField';
 import toast from 'react-hot-toast';
 import myAxios from '../../axios/axios';
+import {deleteCarApi} from '../../../api/carApi';
 
-const CarCard = ({car}) => {
+const CarCard = ({car, setRefresh, refresh}) => {
     const isSmallScreen = useMediaQuery('(max-width:899px)');
     const [editButtonActive, setEditButtonActive] = React.useState(false);
     const [description, setDescription] = React.useState(car.description);
@@ -57,6 +58,11 @@ const CarCard = ({car}) => {
             console.log(error);
             toast.error("Error editing description!");
         }
+    };
+
+    const deleteCar = async () => {
+        await deleteCarApi(car);
+        setRefresh(!refresh);
     };
 
     if (!car) return (<div>No cars to show</div>);
@@ -125,6 +131,7 @@ const CarCard = ({car}) => {
                 {editButtonActive && <MyTextField label="Descriere" functionType="setter" value={description} changeFunction={setDescription} variant="outlined"/>}
                 {editButtonActive && <Button size="small" onClick={editDescription}>Salvează</Button>}
                 </Stack>
+                <Button sx={{marginTop: '15%'}} size="small" variant='contained' onClick={deleteCar}>Șterge</Button>
             </Stack>          
         </>
     )

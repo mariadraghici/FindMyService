@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import CardLayout from '../utils/CardLayout';
 import MyTextField from '../utils/MyTextField';
 import { CardContent } from '@mui/material';
@@ -7,6 +7,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import './addPostCard.css';
 import MyAutocomplete from '../utils/MyAutocomplete';
 import {toast} from 'react-hot-toast';
+import ProfileContext from '../context/ProfileContext';
 
 const AddPostCard = ({setAddButtonActive, setRefresh}) => {
     const [userCars, setUserCars] = React.useState([]);
@@ -14,6 +15,7 @@ const AddPostCard = ({setAddButtonActive, setRefresh}) => {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [selectedCar, setSelectedCar] = React.useState(null);
+    const {user} = React.useContext(ProfileContext);
 
     const getUserCars = async() => {
         try {
@@ -26,7 +28,21 @@ const AddPostCard = ({setAddButtonActive, setRefresh}) => {
 
     const handleAddPost = async () => {
         try {
-            console.log(selectedCar);
+            if (!selectedCar) {
+                toast.error('Selectati masina!');
+                return;
+            }
+
+            if (!title) {
+                toast.error('Introduceti un titlu!');
+                return;
+            }
+
+            if (!description) {
+                toast.error('Introduceti o descriere!');
+                return;
+            }
+
             const res = await myAxios.post('/api/auction/create', {
                 title, 
                 description, 
@@ -41,6 +57,7 @@ const AddPostCard = ({setAddButtonActive, setRefresh}) => {
             });
 
             if (res.status === 201) {
+                toast.success('Postul a fost adaugat cu succes!');
                 setRefresh(prev => prev + 1);
                 setAddButtonActive(false);
             } else {

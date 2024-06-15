@@ -1,18 +1,11 @@
-.post-stack {
-    width: 100%;
-}
 
 .post-card {
-    width: 100%;
+    width: 70%;
     margin: auto;
     margin-top: 20px;
 }
 
 @media screen and (max-width: 899px) {
-    .post-stack {
-        width: 100%;
-    }
-
     .post-card {
         width: 100%;
     }

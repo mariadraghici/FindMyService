@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import Container from '@mui/material/Container';
 import myAxios from "../../../components/axios/axios";
 import { useParams} from 'react-router-dom';
-import { Box, Divider, Grid } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
-import {Autocomplete, Popper, Paper} from "@mui/material";
+import {Autocomplete} from "@mui/material";
 import toast from 'react-hot-toast';
 import ProfileContext from "../../../components/context/ProfileContext";
 import 'leaflet/dist/leaflet.css';
@@ -29,6 +29,7 @@ import Reviews from "../../../components/service/presentationPage/Reviews";
 import AddReviewCard from "../../../components/service/presentationPage/AddReviewCard";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NewOffers from "../../../components/context/NewOffers";
+import OffersNotificationsCounter from "../../../components/context/OffersNotificationsCounter";
 
 const convertNewlinesToBreaks = (text) => {
     if (!text) {
@@ -62,10 +63,8 @@ const PresentationPage = () => {
     const [file, setFile] = useState(null);
     const [images, setImages] = useState([]);
     const [editButton, setEditButton] = useState(false);
-    const [page, setPage] = React.useState(1);
-    const [imageUrl, setImageUrl] = useState(images[0]);
     const [textFieldDescription, setTextFieldDescription] = useState('');
-    const [textModified, setTextModified] = useState(0);
+    const [presentationPageRefresh, setPresentationPageRefresh] = useState(0);
     const [editFacility, setEditFacility] = useState(false);
     const [allFacilities, setAllFacilities] = useState([]);
     const [selectedFacilityToAdd, setSelectedFacilityToAdd] = useState('');
@@ -85,11 +84,7 @@ const PresentationPage = () => {
     const [serviceSocket, setServiceSocket] = useState(0);
     const isSmallScreen = useMediaQuery('(max-width:1000px)');
     const {setNewOffers} = useContext(NewOffers);
-
-    const handleChangePage = (event, value) => {
-        setPage(value);
-        setImageUrl(images[value - 1]);
-    };
+    const {offersNotificationsCounter} = useContext(OffersNotificationsCounter);
 
     useEffect(() => {
         if (!user) {
@@ -110,7 +105,9 @@ const PresentationPage = () => {
             }
         }
 
-        resetNewOffers();
+        if (offersNotificationsCounter === 0) {
+            resetNewOffers();
+        }
     }, []);
 
     useEffect(() => {
@@ -144,7 +141,7 @@ const PresentationPage = () => {
             }
         }
         getServiceByName();
-    }, [URLserviceName, textModified]);
+    }, [URLserviceName, presentationPageRefresh]);
 
     useEffect(() => {
         if (user && user.role === 2 && service && service.name === user.name) {
@@ -251,7 +248,7 @@ const PresentationPage = () => {
         }
 
         // refresh the page
-        setTextModified(textModified + 1);
+        setPresentationPageRefresh(presentationPageRefresh + 1);
     }
 
     const handleScheduleEditing = async () => {
@@ -259,7 +256,7 @@ const PresentationPage = () => {
             const res = await myAxios.put(`/api/service/schedule/${service._id}`, {schedule: schedule});
             if (res.data.success) {
                 toast.success('Modificările au fost salvate!');
-                setTextModified(textModified + 1);
+                setPresentationPageRefresh(presentationPageRefresh + 1);
                 setScheduleEditButton(false);
             }
         } catch (error) {
@@ -288,7 +285,7 @@ const PresentationPage = () => {
                 setSelectedFacilityToAdd('');
                 setPriceLow(0);
                 setPriceHigh(0);
-                setTextModified(textModified + 1);
+                setPresentationPageRefresh(presentationPageRefresh + 1);
             }
         } catch (error) {
             console.log(error);
@@ -301,7 +298,7 @@ const PresentationPage = () => {
             const res = await myAxios.delete(`/api/serviceFacility/delete/${id}`);
             if (res.data.success) {
                 toast.success('Serviciul a fost sters cu succes!');
-                setTextModified(textModified + 1);
+                setPresentationPageRefresh(presentationPageRefresh + 1);
             }
         } catch (error) {
             console.log(error);
@@ -359,7 +356,7 @@ const PresentationPage = () => {
                 <Container className="for-container">
                     <Box className='box-carousel-about-card'>
                     <ImageCarousel images={images} user={user} file={file} setFile={setFile} onOwnPage={onOwnPage}
-                    setTextModified={setTextModified} textModified={textModified}/>
+                    setPresentationPageRefresh={setPresentationPageRefresh} presentationPageRefresh={presentationPageRefresh}/>
                     <AboutService service={service} location={location}
                     schedule={schedule}
                     scheduleEditButton={scheduleEditButton} onOwnPage={onOwnPage}

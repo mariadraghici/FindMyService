@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
 import toast from 'react-hot-toast';
 import axios from 'axios';
-// import 'react-dropdown/style.css';
 import '../../components/admin/admin-sidebar/admin-sidebar.css';
 import { Autocomplete, CardContent, Grid, Typography } from '@mui/material';
 import { Button, TextField, Stack } from '@mui/material';
@@ -23,19 +21,6 @@ const AddComponents = () => {
 
       const {name, engines, brand} = modelValues;
       const [brands, setBrands] = useState({});
-
-      // useEffect(() => {
-      //   axios.get('/api/brand/all')
-      //   .then(res => {
-      //     setBrands(res.data.brands.reduce((acc, brand) => {
-      //       acc[brand.name] = brand;
-      //       return acc;
-      //     }, {}));
-      //   })
-      //   .catch(err => {
-      //     toast.error(err.response.data.error);
-      //   });
-      // }, [brandName]);
 
       useEffect(() => {
         const fetchBrands = async () => {

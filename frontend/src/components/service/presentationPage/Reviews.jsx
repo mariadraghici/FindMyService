@@ -24,7 +24,7 @@ const Reviews = ({ serviceReviews }) => {
                     Recenzii
             </Typography>
             {serviceReviews.length !== 0 &&
-            <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent='space-between' spacing={5} alignItems={'stretch'}>
+            <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent='space-between' spacing={2} alignItems={'stretch'}>
                 {page - 1 >= 0 && <ReviewCard review={serviceReviews[page - 1]}/>}
                 {page <= pageNo && <ReviewCard review={serviceReviews[page]} />}
             </Stack>

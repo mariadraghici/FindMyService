@@ -63,6 +63,16 @@ const auctionSchema = new mongoose.Schema({
         type: String,
         enum: ['active', 'inactive'],
         default: 'active'
+    },
+
+    bestBid: {
+        type: Number,
+        default: 0
+    },
+
+    bestBidder: {
+        type: ObjectId,
+        ref: 'User'
     }
     
 }, {timestamps: true});

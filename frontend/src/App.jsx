@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import AddComponents from './pages/admin/AddComponents'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import UpdateComponents from './pages/admin/UpdateComponent'
-import MyCars from './pages/user/myCars/MyCars'
+import UserCars from './pages/user/userCars/UserCars'
 import AddCar from './pages/user/addCar/AddCar'
 import SignUpUser from './pages/signup/SignUpUser'
 import SignUpService from './pages/signup/SignUpService'
@@ -27,6 +27,9 @@ import OffersNotificationsCounter from './components/context/OffersNotifications
 import { getProfile } from './api/profileApi'
 import NewOffers from './components/context/NewOffers'
 import Posts from './pages/Posts'
+import ValidationSucces from './pages/user/ValidationSucces'
+import UserAuctions from './pages/user/userAuctions/UserAuctions'
+import PrivateRoute from './components/PrivateRoute'
 
 const socket = io.connect("http://localhost:3001");
 
@@ -85,26 +88,74 @@ function App() {
             <OffersNotificationsCounter.Provider value={{offersNotificationsCounter, setOffersNotificationsCounter}}>
               <ProfileContext.Provider value={{user, setUser}}>
                 <Toaster />
+                <Layout>
                   <Routes>
-                    <Route path="/" element={<Layout/>}>
+                    {/* <Route path="/" element={<Layout/>}> */}
                       <Route path="/" element={<Home/>}/>
                       <Route path="/signin" element={<Signin />}/>
                       <Route path="/signup" element={<Signup/>}/>
                       <Route path="/signup/user" element={<SignUpUser/>}/>
                       <Route path="/signup/service" element={<SignUpService/>}/>
+                      <Route path="/account-verified" element={<ValidationSucces/>}/>
 
-                      <Route path="/profile" element={<Profile/>}/>
-                      <Route path="/mycars" element={<MyCars/>}/>
-                      <Route path="/addcar" element={<AddCar/>}/>
-                      <Route path="/search" element={<SearchService/>}/>
-                      <Route path="/service/page/:name" element={<PresentationPage/>}/>
-                      <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
-                      <Route path="/admin/component/add" element={<AddComponents/>}/>
-                      <Route path="/admin/component/update" element={<UpdateComponents/>}/>
-                      <Route path="/service/offers" element={<OffersPage/>}/>
-                      <Route path="/auctions" element={<Posts/>}/>
-                    </Route>
+                      {/* <PrivateRoute user={user} role={[0, 1, 2]}> */}
+                      <Route path="/profile" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                          <Profile/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/mycars" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                          <UserCars/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/addcar" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                          <AddCar/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/myauctions" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                          <UserAuctions/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/search" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                          <SearchService/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/service/page/:name" element={
+                        <PrivateRoute user={user} role={[0, 1, 2]}>
+                        <PresentationPage/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/admin/dashboard" element={
+                        <PrivateRoute user={user} role={[1]}>
+                          <AdminDashboard/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/admin/component/add" element={
+                        <PrivateRoute user={user} role={[1]}>
+                        <AddComponents/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/admin/component/update" element={
+                        <PrivateRoute user={user} role={[1]}>
+                        <UpdateComponents/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/service/offers" element={
+                        <PrivateRoute user={user} role={[1, 2]}>
+                          <OffersPage/>
+                        </PrivateRoute>
+                        }/>
+                      <Route path="/auctions" element={
+                        <PrivateRoute user={user} role={[0, 1, 2]}>
+                        <Posts/>
+                        </PrivateRoute>
+                        }/>
                   </Routes>
+                </Layout>
               </ProfileContext.Provider>
             </OffersNotificationsCounter.Provider>
           </NewOffers.Provider>

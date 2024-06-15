@@ -11,6 +11,7 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
+import CardLayout from '../utils/CardLayout';
 
 const ServiceCard = ({service}) => {
     const [image, setImage] = React.useState(null);
@@ -36,7 +37,7 @@ const ServiceCard = ({service}) => {
     if (!service) return (<div>No services to show</div>);
 
     return (
-            <Card sx={{ maxWidth: '100%',  backgroundColor: 'white' }} variant='outlined'>
+            <CardLayout additionalClasses="car-card">
             <CardContent>
             <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" spacing={3} alignItems={isSmallScreen ? 'flex-start' : 'center'}>
                 <Stack direction="column" alignItems="start" spacing={1}>
@@ -73,7 +74,7 @@ const ServiceCard = ({service}) => {
                 </Box>
             </Stack>
             </CardContent>
-            </Card>
+            </CardLayout>
     )
 };
 

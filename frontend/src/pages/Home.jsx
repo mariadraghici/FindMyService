@@ -9,11 +9,13 @@ import NewOffers from '../components/context/NewOffers'
 import { useEffect } from 'react'
 import myAxios from '../components/axios/axios'
 import ProfileContext from '../components/context/ProfileContext'
+import OffersNotificationsCounter from '../components/context/OffersNotificationsCounter'
 
 const Home = () => {
   const {setNewOffers} = useContext(NewOffers);
   const {user} = useContext(ProfileContext);
   console.log('am in home');
+  const {offersNotificationsCounter} = useContext(OffersNotificationsCounter);
 
   useEffect(() => {
     if (!user) {
@@ -34,7 +36,9 @@ const Home = () => {
         }
     }
 
-    resetNewOffers();
+    if (offersNotificationsCounter === 0) {
+        resetNewOffers();
+    }
   }, []);
   
   return (

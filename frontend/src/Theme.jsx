@@ -35,6 +35,20 @@ const theme = createTheme({
             primary: '#EEEEEE'
         }
     },
+
+    components: {
+        MuiPaginationItem: {
+            styleOverrides: {
+              root: {
+                color: 'white',
+                '&.Mui-selected': {
+                  backgroundColor: 'primary',
+                  color: 'white',
+                },
+              },
+            },
+          },
+    }
 });
 
 const Theme = ({children}) => {

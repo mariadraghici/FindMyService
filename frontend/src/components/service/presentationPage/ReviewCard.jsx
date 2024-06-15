@@ -3,8 +3,10 @@ import Stack from "@mui/material/Stack";
 import Rating from "@mui/material/Rating";
 import './reviewCard.css'
 import Card from '@mui/material/Card';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const ReviewCard = ({review}) => {
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
 
     if (!review) {
         return null;
@@ -14,7 +16,7 @@ const ReviewCard = ({review}) => {
 
     return (
        <Card className="review-card">
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" alignItems="center">
                 <Typography variant="h6">{review.userFrom.name}
                 </Typography>
                 <Typography variant="h8">{new Date(review.createdAt).toLocaleDateString()}</Typography>

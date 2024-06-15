@@ -35,23 +35,11 @@ exports.createAuction = async(req, res, next) => {
 }
 
 exports.displayAuctions = async(req, res, next) => {
-    // try {
-    //     const posts = await Post.find().populate('comments').populate('user');
-    //     posts.sort((a, b) => b.createdAt - a.createdAt);
-    //     res.status(201).json({
-    //         success: true,
-    //         posts
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    //     next(error);
-    // }
-
     try {
         const { page = 1, limit = 10 } = req.query;
         
         const auctions = await Auction.find().skip((page - 1) * limit)
-            .limit(Number(limit));
+            .limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder');
         
         const totalAuctions = await Auction.countDocuments();
         
@@ -66,22 +54,20 @@ exports.displayAuctions = async(req, res, next) => {
     }
 }
 
-exports.displayAuction = async(req, res, next) => {
-    try {
-        const auction = await Auction.findById(req.params.id).populate('comments').populate('user');
-        res.status(201).json({
-            success: true,
-            auction
-        });
-    } catch (error) {
-        console.log(error);
-        next(error);
-    }
-}
-
 exports.deleteAuction = async(req, res, next) => {
     try {
-        await Auction.deleteOne({_id: req.params.id});
+        const auction = await Auction.findById(req.params.id);
+
+        if (!auction) {
+            return next(new Error('Auction not found!'));
+        }
+
+        await auction.remove();
+
+        await Comment.deleteMany({auction: req.params.id});
+
+        await User.updateOne({ _id: req.user._id }, { $pull: { auctions: req.params.id } });
+
         res.status(200).json({
             success: true,
             message: 'Post deleted successfully!'
@@ -99,6 +85,30 @@ exports.getCommentsForAuction = async(req, res, next) => {
         res.status(200).json({
             success: true,
             comments
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+exports.displayAuctionsForUser = async(req, res, next) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+
+        const auctions = await Auction.find({user: req.user._id}).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder');
+
+        if (!auctions) {
+            return next(new Error('Auctions not found!'));
+        }
+
+        const totalAuctions = await Auction.countDocuments({user: req.user._id});
+
+        res.status(200).json({
+            success: true,
+            auctions,
+            totalPages: Math.ceil(totalAuctions / limit),
+            currentPage: page,
         });
     } catch (error) {
         console.log(error);

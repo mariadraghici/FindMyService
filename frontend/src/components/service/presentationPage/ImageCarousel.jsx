@@ -23,7 +23,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified, textModified}) => {
+const ImageCarousel = ({images, file, user, setFile, onOwnPage, setPresentationPageRefresh, presentationPageRefresh}) => {
     const [editPhotos, setEditPhotos] = React.useState(false);
     const [currentImage, setCurrentImage] = React.useState(null);
     const isSmallScreen = useMediaQuery('(max-width:780px)');
@@ -53,7 +53,7 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
             
             if (res.status === 200) {
                 toast.success("Fisierul a fost sters cu succes!");
-                setTextModified(textModified + 1);
+                setPresentationPageRefresh(presentationPageRefresh + 1);
             } else {
                 toast.error("Fisierul nu a putut fi sters!");
             }
@@ -83,7 +83,7 @@ const ImageCarousel = ({images, file, user, setFile, onOwnPage, setTextModified,
 
                     if (res.data.status === 'success') {
                         toast.success("Fisierul a fost incarcat cu succes!");
-                        setTextModified(textModified + 1);
+                        setPresentationPageRefresh(presentationPageRefresh + 1);
                         setFile(null);
                     } else {
                         toast.error("Fisierul nu a putut fi incarcat!");

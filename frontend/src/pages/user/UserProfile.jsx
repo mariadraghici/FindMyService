@@ -10,7 +10,7 @@ const UserProfile = () => {
     console.log('am in user profile');
 
     return (
-       <ProfileLayout>
+       <ProfileLayout withCard={true}>
         <Typography variant="body1" color="text.primary" fontWeight="light">
             Nume
         </Typography>
@@ -29,7 +29,6 @@ const UserProfile = () => {
         <Typography variant="h6" color="primary" fontWeight="bold">
             {new Date(createdAt).toLocaleDateString()}
         </Typography>
-        {role === 1 ? <a href="/admin/dashboard"> Mergi la panoul de administrare </a> : <div></div>}
         </ProfileLayout>
     )
 }

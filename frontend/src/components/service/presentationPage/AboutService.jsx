@@ -4,9 +4,9 @@ import { Box, Typography, Card, CardContent, Stack } from '@mui/material';
 import RoomRoundedIcon from '@mui/icons-material/RoomRounded';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
-import star from '/img/star.png';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import GradeIcon from '@mui/icons-material/Grade';
 
 const convertNewlinesToBreaks = (text) => {
     if (!text) {
@@ -38,10 +38,10 @@ const AboutService = ({ service, location, scheduleEditButton, onOwnPage,
                         {name}
                     </Typography>
                     <Stack spacing={2} direction="row" justifyContent="flex-end">
-                        <img src={star} alt="rating" />
                         <Typography gutterBottom variant="h5" component="div">
                             {service.rating} / 5.0
                         </Typography>
+                        <GradeIcon sx={{color: 'primary.main', marginRight: '1%'}}/>
                     </Stack>
                 </Stack>
                 <Box sx={{display: 'flex', flexDirection: 'row'}}>

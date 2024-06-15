@@ -30,13 +30,14 @@ const carSchema = new mongoose.Schema({
     model: {
         type: ObjectId,
         trim: true, // removes whitespace before and after text
-        // required: [true, "Please add car model"],
+        required: [true, "Please add car model"],
         ref: "Model",
         maxlength: 100
     },
 
     engine: {
         type: String,
+        required: [true, "Please add car engine"],
         trim: true, // removes whitespace before and after text
         maxlength: 100
     },
@@ -80,7 +81,7 @@ const carSchema = new mongoose.Schema({
     user: {
         type: ObjectId,
         ref: "User",
-        required: true
+        required: true,
     },
 
 }, {timestamps: true});

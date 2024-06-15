@@ -5,17 +5,20 @@ import UserSidebar from '../UserSidebar';
 import bgImage from '/img/profile-car-img.png';
 import CardLayout from '../../utils/CardLayout';
 
-const ProfileLayout = ({ children }) => {
+const ProfileLayout = ({ children, withCard }) => {
     return (
         <Container maxWidth={false} sx={{padding: "0 !Important"}}>
             <Box className='box-layout'>
                 <img src={bgImage} alt="img-profile" className="img-style" />
+                <Container>
                 <Grid container direction={'column'} alignItems={'center'}>               
                     <UserSidebar/>
-                    <CardLayout additionalClasses="card-profile">
+                    {withCard === true && <CardLayout additionalClasses="card-profile">
                         {children}
-                    </CardLayout>
+                    </CardLayout>}
+                    {withCard === false && children}
                 </Grid>
+                </Container>
             </Box>
         </Container>
 

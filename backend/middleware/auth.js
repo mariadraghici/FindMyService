@@ -28,10 +28,8 @@ exports.isAuthenicated = async (req, res, next) => {
                         return res.status(401).send('Invalid Token 2.');
                     }
                     
-                    // res.json(JSON.stringify(decoded));
-                    const accessToken = jwt.sign({ "_id": decoded._id, "name": decoded.name }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
+                    const accessToken = jwt.sign({ "_id": decoded._id, "name": decoded.name }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3600s' });
                     
-
                     req.user = decoded;
                     res
                     .cookie("access_token", accessToken, {
@@ -44,6 +42,5 @@ exports.isAuthenicated = async (req, res, next) => {
                 req.user = decoded;
                 next();
             }
-            // res.json(JSON.stringify("hei"));
         });
 };

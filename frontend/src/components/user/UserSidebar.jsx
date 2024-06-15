@@ -21,7 +21,7 @@ function useRouteMatch(patterns) {
 };
 
 const UserSidebar = () => {
-  const routeMatch = useRouteMatch(['/mycars', '/addcar', '/profile'])
+  const routeMatch = useRouteMatch(['/mycars', '/addcar', '/profile', '/myauctions'])
   const currentTab = routeMatch?.pattern?.path
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
@@ -37,6 +37,7 @@ const UserSidebar = () => {
           <Tab label="Profilul meu" value="/profile" to="/profile" component={Link} sx={{fontSize: 'large'}}/>
           <Tab label="Adauga masina" value="/addcar" to="/addcar" component={Link} sx={{fontSize: 'large'}}/>
           <Tab label="Masinile mele" value="/mycars" to="/mycars" component={Link} sx={{fontSize: 'large'}}/>
+          <Tab label="Licitatiile mele" value="/myauctions" to="/myauctions" component={Link} sx={{fontSize: 'large'}}/>
       </Tabs>
   )
 }
