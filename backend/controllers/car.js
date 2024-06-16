@@ -49,7 +49,7 @@ exports.displayCarsByUserId = async(req, res, next) => {
             if (!cars) {
                 return next(new ErrorResponse("Cars not found", 400));
             }
-            
+
             const totalCars = await Car.countDocuments({ user: req.user._id });
         
             res.status(201).json({
@@ -68,6 +68,11 @@ exports.deleteCar = async(req, res, next) => {
     try {
         const user = await User.findByIdAndUpdate(req.user._id, {$pull: {cars: req.body.id}}, {new: true});
         const car = await Car.findByIdAndDelete(req.body.id);
+
+        if (!car) {
+            return next(new ErrorResponse("Car not found", 400));
+        }
+
         res.status(201).json({
             success: true,
             car,

@@ -4,8 +4,6 @@ import myAxios from "../../components/axios/axios";
 import { toast } from "react-hot-toast";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Autocomplete from "@mui/material/Autocomplete";
 import { IconButton, InputAdornment, OutlinedInput } from "@mui/material";
@@ -13,7 +11,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LocationChooseOnMap from "../../components/service/LocationChooseOnMap";
 import { useNavigate } from "react-router-dom";
-import ProfileContext from "../../components/context/ProfileContext";
 import SignupLayout from "../../components/signup/SignUpLayout";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -60,7 +57,6 @@ const SignUpService = () => {
 
       useEffect(() => {
         getcities();
-        // set values address to ''
       }, []);
       
     
@@ -111,7 +107,6 @@ const SignUpService = () => {
         setFirstPage(false);
       }
 
-      const open = Boolean(anchorEl);
     
     return (
         <SignupLayout>

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import './addcar.css';
-import myAxios from '../../../components/axios/axios';
 import toast from 'react-hot-toast';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';

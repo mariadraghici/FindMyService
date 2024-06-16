@@ -10,7 +10,6 @@ import myAxios from '../../components/axios/axios'
 import {useContext} from 'react'
 import ProfileContext from '../../components/context/ProfileContext'
 import signinImage from '/img/signin_photo.png'
-// import signinImage from '/img/signin_photo.webp'
 import './signin.css'
 import { CardContent, Stack } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

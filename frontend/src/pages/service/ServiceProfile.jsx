@@ -1,31 +1,10 @@
 import React from "react";
 import { useContext } from "react";
 import ProfileContext from "../../components/context/ProfileContext";
-import { getProfile } from "../../api/profileApi";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Stack, Typography, Box } from "@mui/material";
 
 const ServiceProfile = () => {
-    const {user, setUser} = useContext(ProfileContext);
-
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            const user = await getProfile();
-            if (user) {
-                setUser(user);
-            }
-        }
-
-        fetchProfile();
-        if (!user) {
-            navigate('/signin', {replace: true});
-        }
-
-    }, []);
-
+    const {user} = useContext(ProfileContext);
 
     const {name, email, createdAt, address, city, phone, description} = user;
     return (

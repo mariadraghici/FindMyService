@@ -167,6 +167,10 @@ const Header = () => {
               {user && user.role === 1 &&
               <Button color='inherit' LinkComponent={Link} to='/admin/dashboard' sx={{color: '#FFF'}}>ADMIN DASHBOARD</Button>
               }
+
+              {user && user.role !== 2 &&
+              <Button color='inherit' LinkComponent={Link} to='/serviceRecommendation' sx={{color: '#FFF'}}>Recomandă Service</Button>
+              }
             {user && <Button color="inherit" onClick={logout} sx={{ color: '#FFF' }}>Deconectează-te</Button>}
           </Box>
         </Toolbar>

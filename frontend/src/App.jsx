@@ -30,6 +30,7 @@ import Posts from './pages/Posts'
 import ValidationSucces from './pages/user/ValidationSucces'
 import UserAuctions from './pages/user/userAuctions/UserAuctions'
 import PrivateRoute from './components/PrivateRoute'
+import RecommendService from './pages/user/RecommendService'
 
 const socket = io.connect("http://localhost:3001");
 
@@ -97,6 +98,12 @@ function App() {
                       <Route path="/signup/user" element={<SignUpUser/>}/>
                       <Route path="/signup/service" element={<SignUpService/>}/>
                       <Route path="/account-verified" element={<ValidationSucces/>}/>
+
+                      <Route path="/serviceRecommendation" element={
+                        <PrivateRoute user={user} role={[0, 1]}>
+                        <RecommendService/>
+                        </PrivateRoute>
+                      }/>
 
                       {/* <PrivateRoute user={user} role={[0, 1, 2]}> */}
                       <Route path="/profile" element={

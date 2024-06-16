@@ -56,6 +56,7 @@ const offerRoutes = require('./routes/offer');
 const addressRoutes = require('./routes/address');
 const commentRoutes = require('./routes/comment');
 const auctionRoutes = require('./routes/auction');
+const recommendationRoutes = require('./routes/recommendation');
 const ErrorResponse = require('./utils/errorResponse');
 const { s3Upload, s3Uploadv3, s3GetImages, s3DeleteImages, s3GetImage} = require('./s3Service');
 
@@ -98,6 +99,7 @@ app.use("/api", offerRoutes);
 app.use("/api", addressRoutes);
 app.use("/api", commentRoutes);
 app.use("/api", auctionRoutes);
+app.use("/api", recommendationRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 // Error Handler Middleware
 app.use(errorHandler);

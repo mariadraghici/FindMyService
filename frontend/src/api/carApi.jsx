@@ -56,7 +56,7 @@ export const deleteCarApi = async (car) => {
             toast.error("Error deleting car!");
             return;
         }
-        
+
         toast.success("Car deleted successfully!");
        
     } catch (error) {
@@ -69,8 +69,7 @@ export const getMyCarsApi = async (page, limit) => {
         const res = await myAxios.get("/api/mycars", {
             params: { page, limit },
         });
-        // setCars(res.data.cars);
-        // setCar(res.data.cars[0]);
+
         return { data: res.data.cars, totalPages: res.data.totalPages };
     } catch (error) {
         toast.error("Error getting cars!");

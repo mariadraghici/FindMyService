@@ -1,50 +1,37 @@
 import React from "react";
 import { useContext, useState } from "react";
-import ProfileContext from "../../components/context/ProfileContext";
-import { getProfile } from "../../api/profileApi";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, Stack, Typography, Box, Container, Button, Divider } from "@mui/material";
-import myAxios from "../../components/axios/axios";
-import { toast } from "react-hot-toast";
+import { Typography, Container } from "@mui/material";
 import NewOffers from "../../components/context/NewOffers";
 import OffersNotificationsCounter from "../../components/context/OffersNotificationsCounter";
+import { getAllOffers } from "../../api/offersApi";
+import OfferCard from "../../components/service/OfferCard";
 
 const OffersPage = () => {
-    const {user, setUser} = useContext(ProfileContext);
     const [offers, setOffers] = useState([]);
-    const [currentId, setCurrentId] = useState(null);
-    const {newOffers, setNewOffers} = useContext(NewOffers);
+    const {newOffers} = useContext(NewOffers);
     const [newOffersdata, setNewOffersdata] = useState([]);
-    const {setOffersNotificationsCounter} = useContext(OffersNotificationsCounter);
+    const {offersNotificationsCounter, setOffersNotificationsCounter} = useContext(OffersNotificationsCounter);
     const [oldOffers, setOldOffers] = useState([]);
-
-    const navigate = useNavigate();
+    const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            const user = await getProfile();
-            if (user) {
-                setUser(user);
-            }
-        };
-
-        fetchProfile();
-        if (!user) {
-            navigate('/signin', { replace: true });
-        }
-
         const getOffers = async () => {
             try {
-                const res = await myAxios.get('/api/offers/display');
-                setOffers(res.data.offers);
+                const res = await getAllOffers();
+                setOffers(res);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
-        };
+        }
 
         getOffers();
-    }, []);
+    }, [refresh, offersNotificationsCounter]);
+
+    useEffect(() => {
+        console.log('resetting counter');
+        setOffersNotificationsCounter(0);
+    }, [offersNotificationsCounter]);
 
 
     useEffect(() => {
@@ -58,27 +45,6 @@ const OffersPage = () => {
         setOldOffers(offers.filter(offer => !newOffersIds.includes(String(offer._id))));
     }, [offers]);
 
-
-    const handleDeleteOffer = async () => {
-        try {
-            const res = await myAxios.delete(`/api/offers/delete/${currentId}`);
-            if (res.status === 200) {
-                toast.success(res.data.message);
-                let remainingOffers = newOffersdata.filter(offer => offer._id !== currentId);
-                setNewOffersdata(remainingOffers);
-                remainingOffers = oldOffers.filter(offer => offer._id !== currentId);
-                setOldOffers(remainingOffers);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    useEffect(() => {
-        if (currentId) {
-            handleDeleteOffer();
-        }
-    }, [currentId]);
 
     return (
         <Container sx={{display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center', marginTop: '2%'}}>
@@ -94,23 +60,14 @@ const OffersPage = () => {
         }
     
         {newOffersdata.length > 0 && newOffersdata?.map(offer => (
-            <Card key={offer._id} sx={{ width: '100%', marginTop: '2%' }} >
-                <CardContent>
-                    <Typography variant="h6" component="div">
-                        Email: {offer.userFrom.email}
-                    </Typography>
-                    <Typography variant="body">
-                        Mesaj: {offer.text}
-                    </Typography>
-                </CardContent>
-                <Stack direction='row' spacing={2} sx={{display: 'flex-end', justifyContent:'flex-end', marginBottom: '2%', paddingRight: '5%'}} >
-                <Button variant="contained" color="primary" onClick={() =>
-                {
-                    setCurrentId(offer._id);
-                }
-                }>Sterge</Button>
-                </Stack>
-            </Card>
+            <OfferCard key={offer._id} offer={offer}
+            setNewOffersdata={setNewOffersdata}
+            setOldOffers={setOldOffers}
+            newOffersdata={newOffersdata}
+            oldOffers={oldOffers}
+            refresh={refresh}
+            setRefresh={setRefresh}
+            />
         ))}
 
         {oldOffers.length === 0 && <Typography variant="h5" component="div" color='primary'>
@@ -124,23 +81,14 @@ const OffersPage = () => {
         }
 
         {oldOffers.length > 0 && oldOffers?.map(offer => (
-            <Card key={offer._id} sx={{ width: '100%', marginTop: '2%' }}>
-                <CardContent>
-                    <Typography variant="h6" component="div">
-                        Email: {offer.userFrom.email}
-                    </Typography>
-                    <Typography variant="body">
-                        Mesaj: {offer.text}
-                    </Typography>
-                </CardContent>
-                <Stack direction='row' spacing={2} sx={{display: 'flex-end', justifyContent:'flex-end', marginBottom: '2%', paddingRight: '5%'}} >
-                <Button variant="contained" color="primary" onClick={() => 
-                {
-                    setCurrentId(offer._id);
-                }
-                }>Sterge</Button>
-                </Stack>
-            </Card>
+            <OfferCard key={offer._id} offer={offer}
+            setNewOffersdata={setNewOffersdata}
+            setOldOffers={setOldOffers}
+            newOffersdata={newOffersdata}
+            oldOffers={oldOffers}
+            refresh={refresh}
+            setRefresh={setRefresh}
+            />
         ))}
         </Container>
     )
