@@ -132,7 +132,7 @@ const Header = () => {
               </Button>
               </MenuItem>}
 
-              {user && user.role === 0 && <MenuItem key={'admin'} onClick={handleCloseNavMenu}>
+              {user && user.role === 1 && <MenuItem key={'admin'} onClick={handleCloseNavMenu}>
               <Button color='inherit' LinkComponent={Link} to='/admin/dashboard' sx={{color: '#FFF'}}>ADMIN DASHBOARD</Button>
               </MenuItem>}
 

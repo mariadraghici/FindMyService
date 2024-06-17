@@ -11,9 +11,21 @@ import { Stack } from "@mui/material";
 import './signup.css';
 import SignupLayout from "../../components/signup/SignUpLayout";
 import { useNavigate } from "react-router-dom";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import FormHelperText from "@mui/material/FormHelperText";
+
 
 const SignUpUser = ({}) => {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
+
     const [values, setValues] = useState({
         name: '',
         email: '',
@@ -56,8 +68,33 @@ const SignUpUser = ({}) => {
              InputLabelProps={{style: { color: '#8E8E8E' }}}/>
             <TextField required value={email} onChange={handleChange('email')} label="Email" margin='normal' sx={{width: '100%'}} type='text'
              InputLabelProps={{style: { color: '#8E8E8E' }}}/>
-            <TextField  required value={password} onChange={handleChange('password')} label="Parola" margin='normal' sx={{width: '100%'}} type='password'
-              InputLabelProps={{style: { color: '#8E8E8E' }}}/>
+            <FormControl variant="outlined" sx={{width: '100%'}}>
+                  <InputLabel required htmlFor="outlined-adornment-password" sx={{color: 'placeholder.primary'}}>Password</InputLabel>
+                  
+                  <OutlinedInput
+                    value={password} onChange={handleChange('password')}
+                    id="outlined-adornment-password"
+                    inputProps={{
+                      style: { color: 'black' }
+                    }}
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                  />
+                   <FormHelperText sx={{margin: '0', color: 'black !important'}}>
+                    Parola trebuie să conțină cel puțin o literă mare, o literă mica, o cifră și un caracter special (?,!,#,..)</FormHelperText>
+                </FormControl>
             <Button onClick={handleSubmit} variant='contained' className="signup-button">Înregistrează-te</Button>
           </Stack>
         </SignupLayout>

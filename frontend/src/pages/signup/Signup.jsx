@@ -12,7 +12,7 @@ const Signup = () => {
       <Typography sx={{margin: '0% 0% 20% 0%', textAlign: 'center'}} variant='h5'>Înregistrează-te</Typography>
       <Stack direction="row" sx={{justifyContent: 'space-between', marginTop: '2%'}}>
         <Button variant='contained' sx={{width: '40%'}} component={Link} to={'/signup/user'}>
-        user
+        client
         </Button>
         <Button variant='contained' sx={{width: '40%'}} component={Link} to={'/signup/service'}>
         service

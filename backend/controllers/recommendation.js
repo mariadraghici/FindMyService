@@ -17,10 +17,15 @@ exports.createRecommendation = async(req, res, next) => {
 
 exports.displayRecommendations = async(req, res, next) => {
     try {
-        const recommendations = await Recommendation.find();
+        const {page, limit} = req.query;
+        const recommendations = await Recommendation.find().limit(limit * 1).skip((page - 1) * limit).populate('userFrom');
+
+        const totalRecommendations = await Recommendation.countDocuments();
+
         res.status(200).json({
             success: true,
-            recommendations
+            recommendations,
+            totalPages: Math.ceil(totalRecommendations / limit)
         });
     } catch (error) {
         next(error);

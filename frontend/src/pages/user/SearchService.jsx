@@ -40,7 +40,6 @@ const SearchService = () => {
     const [page, setPage] = useState(1);
     const [pageNo, setPageNo] = useState(1);
     const [filterButtonActivated, setFilterButtonActivated] = useState(false);
-    console.log('i am in search service');
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -68,7 +67,6 @@ const SearchService = () => {
         try {
             const res = await getAllServices();
             setServices(res);
-            console.log(res);
             setPageNo(Math.ceil(services.length / 5));
         } catch (error) {
             console.error(error);

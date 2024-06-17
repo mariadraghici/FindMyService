@@ -29,7 +29,6 @@ const OffersPage = () => {
     }, [refresh, offersNotificationsCounter]);
 
     useEffect(() => {
-        console.log('resetting counter');
         setOffersNotificationsCounter(0);
     }, [offersNotificationsCounter]);
 

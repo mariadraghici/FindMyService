@@ -87,11 +87,9 @@ const AddComponents = () => {
 
 
   return (
-    <Container>
-      <Stack direction='row' justifyContent='center' mt={5}>
-        <Stack direction='column' justifyContent='center'>
+    <Container sx={{marginTop: '5%'}}>
           <CardLayout >
-            <CardContent >
+            <CardContent>
               <Stack direction='column' justifyContent='center' spacing={2}>
               <Typography variant="h5">
                 Add Components
@@ -112,8 +110,6 @@ const AddComponents = () => {
               </Stack>
             </CardContent>
           </CardLayout>
-        </Stack>
-      </Stack>
     </Container>
   )
 }

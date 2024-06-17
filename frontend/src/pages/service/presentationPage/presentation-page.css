@@ -61,6 +61,10 @@
   width: 50%;
 }
 
+.reviews-stack {
+  width: 80%;
+}
+
 @media screen and (max-width: 1000px) {
   .add-review-stack {
     justify-content: center;

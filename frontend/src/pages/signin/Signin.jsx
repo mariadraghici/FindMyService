@@ -1,8 +1,6 @@
-import {React, useEffect, useState} from 'react'
+import {React, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import toast from 'react-hot-toast';
-import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -11,13 +9,13 @@ import {useContext} from 'react'
 import ProfileContext from '../../components/context/ProfileContext'
 import signinImage from '/img/signin_photo.png'
 import './signin.css'
-import { CardContent, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { getProfile } from '../../api/profileApi';
-import CardLayout from '../../components/utils/CardLayout';
+import FormWithBgImage from '../../components/utils/FormWithBgImageLayout';
 
 
 const Signin = () => {
@@ -69,13 +67,7 @@ const Signin = () => {
   }
 
   return (
-      <Container maxWidth={false} sx={{padding: "0 !Important"}}>
-        <Box sx={{display:'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <img src={signinImage} alt="signin_img" className="img-width-signin-photo"/>       
-          <Stack direction='column' spacing={2} className='card-stack'>
-            <CardLayout additionalClasses='card-signin'>
-              <CardContent className='card-content'>
-                <Stack direction='column' spacing={3} sx={{justifyContent: 'center', alignItems: 'center'}}>
+      <FormWithBgImage bgImage={signinImage} alt='signin'>
                 <AccountCircleIcon className='signin-icon'/>
                 <Typography variant='h5' color='secondary' className='login-text'>Logare</Typography>
                 <TextField value={email} onChange={handleChange('email')} label="Email" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
@@ -109,13 +101,13 @@ const Signin = () => {
                     label="Password"
                   />
                 </FormControl>
-                <Button onClick={handleSubmit} variant='contained'>Loghează-te</Button>
+                <Stack direction='row'spacing={2} sx={{width: '100%', justifyContent: 'space-between', marginBottom: '5% !important'}}>
+                  <Typography variant='body2' color='secondary' sx={{cursor: 'pointer', textDecoration: 'underline'}} onClick={() => navigate('/signup')} mt={0}>
+                    Nu ai cont? <br/> Înregistrează-te</Typography>
+                  <Typography variant='body2' color='secondary' sx={{cursor: 'pointer', textDecoration: 'underline'}} onClick={() => navigate('/forgotpassword')}>Ai uitat parola?</Typography>
                 </Stack>
-              </CardContent>
-            </CardLayout>
-          </Stack>
-        </Box>
-      </Container>
+                <Button onClick={handleSubmit} variant='contained'>Loghează-te</Button>
+      </FormWithBgImage>
   )
 }
 

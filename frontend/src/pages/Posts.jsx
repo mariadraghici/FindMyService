@@ -23,7 +23,7 @@ const Posts = () => {
             if (res.status === 200) {
                 setNewOffers([]);
             } else {
-                console.log(res.data.message);
+                // console.log(res.data.message);
             }
         } catch (error) {
             console.log(error);

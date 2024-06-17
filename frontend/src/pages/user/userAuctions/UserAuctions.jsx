@@ -12,6 +12,7 @@ const UserAuctions = () => {
                 title="Auctions"
                 apiFunction={getAuctionsForUser}
                 dataType="auctions"
+                records="licitatii"
                 limit={1}
                 refresh={refresh}
                 setRefresh={setRefresh}

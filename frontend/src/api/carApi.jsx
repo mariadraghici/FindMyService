@@ -24,6 +24,8 @@ export const addCarApi = async (formData, setFormData, brands, models) => {
         ...formData,
         brand: brands[formData.brand]._id,
         model: models[formData.model]._id,
+        brandName: brands[formData.brand].name,
+        modelName: models[formData.model].name,
         };
     
         const res = await myAxios.post("/api/car/add", sendFormData);

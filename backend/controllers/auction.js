@@ -39,7 +39,7 @@ exports.displayAuctions = async(req, res, next) => {
         const { page = 1, limit = 10 } = req.query;
         
         const auctions = await Auction.find().skip((page - 1) * limit)
-            .limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder');
+            .limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder').populate('user');
         
         const totalAuctions = await Auction.countDocuments();
         
@@ -96,7 +96,7 @@ exports.displayAuctionsForUser = async(req, res, next) => {
     try {
         const { page = 1, limit = 10 } = req.query;
 
-        const auctions = await Auction.find({user: req.user._id}).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder');
+        const auctions = await Auction.find({user: req.user._id}).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder').populate('user');
 
         if (!auctions) {
             return next(new Error('Auctions not found!'));

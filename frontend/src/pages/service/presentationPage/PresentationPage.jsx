@@ -58,7 +58,7 @@ const PresentationPage = () => {
     const [selectedCar, setSelectedCar] = useState('');
     const [userCars, setUserCars] = useState([]);
     const [serviceReviews, setServiceReviews] = useState([]);
-    const [sendReview, setSendReview] = useState(0);
+    const [refreshReviews, setRefreshReviews] = useState(0);
     const [rating, setRating] = useState(0);
     const [file, setFile] = useState(null);
     const [images, setImages] = useState([]);
@@ -98,7 +98,6 @@ const PresentationPage = () => {
                 if (res.status === 200) {
                     setNewOffers([]);
                 } else {
-                    console.log(res.data.message);
                 }
             } catch (error) {
                 console.log(error);
@@ -176,20 +175,25 @@ const PresentationPage = () => {
 
             getFacilities();
         }
-        const getServiceReviews = async() => {
-            try {
-                const res = await myAxios.get(`/api/service/reviews/${URLserviceName}`);
-                setServiceReviews(res.data.reviews);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        
-        getServiceReviews();
-    }, [sendReview, URLserviceName, user?.role, onOwnPage]);
+    }, [URLserviceName, user?.role, onOwnPage]);
 
 
     const addReview = async () => {
+
+        if (!selectedCar) {
+            toast.error('Selecteaza masina cu care ai fost la service!');
+            return;
+        }
+
+        if (!reviewText) {
+            toast.error('Introdu un comentariu!');
+            return;
+        }
+
+        if (!reviewTitle) {
+            toast.error('Introdu un titlu!');
+            return;
+        }
 
         if (!selectedCar) {
             toast.error('Selecteaza masina cu care ai fost la service!');
@@ -220,7 +224,8 @@ const PresentationPage = () => {
                 setSelectedCar('');
                 setReviewTitle('');
                 setRating(0);
-                setSendReview(sendReview + 1);
+                // setSendReview(sendReview + 1);
+                setRefreshReviews(refreshReviews + 1);
             }
         } catch (error) {
             console.log(error);
@@ -328,11 +333,11 @@ const PresentationPage = () => {
             });
 
             if (res.data.success) {
-                console.log(res.data);
+                // console.log(res.data);
                 socket.emit('join-room', serviceSocket)
-                console.log('I joined the room', serviceSocket);
+                // console.log('I joined the room', serviceSocket);
                 socket.emit('offer-request', {message: res.data.offer._id, room: serviceSocket})
-                console.log('I sent the message');
+                // console.log('I sent the message');
                 toast.success('Cererea a fost trimisa cu succes!');
                 setEmailOffer('');
                 setPhoneOffer('');
@@ -488,7 +493,6 @@ const PresentationPage = () => {
                     </Card>
 
                     <Stack direction={isSmallScreen ? 'column' : 'row'} mt={7} spacing={10}>
-                        <Stack className="add-review-stack">
                             <AddReviewCard
                             user={user}
                             handleReviewTitle={handleReviewTitle}
@@ -497,10 +501,7 @@ const PresentationPage = () => {
                             rating={rating} reviewTitle={reviewTitle} reviewText={reviewText}
                             setRating={setRating} setReviewTitle={setReviewTitle} setReviewText={setReviewText}
                             handleSelectReviewCar={handleSelectReviewCar}/>
-                        </Stack>
-                        <Stack className="reviews-stack">
-                            <Reviews serviceReviews={serviceReviews}/>
-                        </Stack>
+                        <Reviews service={service} setRefreshReviews={setRefreshReviews} refreshReviews={refreshReviews}/>
                     </Stack>
                 </Container> 
         </Container>

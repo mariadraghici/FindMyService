@@ -18,6 +18,7 @@ const PostCard = ({auction, setRefresh, refresh}) => {
     const [seeCommentsButtonActive, setSeeCommentsButtonActive] = React.useState(false);
     const [comments, setComments] = React.useState([]);
     const isSmallScreen = useMediaQuery('(max-width:899px)');
+    console.log(auction);
 
     const textStyle = {
         wordWrap: 'break-word',
@@ -31,13 +32,11 @@ const PostCard = ({auction, setRefresh, refresh}) => {
     const fetchComments = async () => {
         try {
             const res = await myAxios.get(`api/auction/${auction._id}/comments`);
-            console.log(res);
 
             if (res.status === 200) {
                 setComments(res.data.comments);
                 return;
             }
-            console.log(res.data.comments);
         } catch (error) {
             console.log(error);
         }
@@ -120,6 +119,12 @@ const PostCard = ({auction, setRefresh, refresh}) => {
                             {auction.description}
                         </Typography>
                         <Typography variant="body2" component="p" style={textStyle}>
+                            Utilizator: {auction.user.name}
+                        </Typography>
+                        <Typography variant="body2" component="p" style={textStyle}>
+                            Email utilizator: {auction.user.email}
+                        </Typography>
+                        <Typography variant="body2" component="p" style={textStyle}>
                             Brand: {auction.brandName}
                         </Typography>
                         <Typography variant="body2" component="p" style={textStyle}>
@@ -131,20 +136,20 @@ const PostCard = ({auction, setRefresh, refresh}) => {
                     </Stack>
                     <Stack direction='column'>
                         <Typography variant="h6" component="p" style={textStyle} color='primary'>
-                            Best bid
+                            Cea mai bună ofertă:
                         </Typography>
                         {auction.bestBidder &&
                         <Link to={`/service/page/${auction.bestBidder?.name}`} style={{ textDecoration: 'underline', color: 'black', fontWeight: 'bold' }}>                    
-                            User: {auction.bestBidder?.name}
+                            Service: {auction.bestBidder?.name}
                         </Link>
                         }
                         {auction.bestBidder && <Typography variant="body1" component="p" style={textStyle}>
-                            Price: {auction.bestBid} RON
+                            Valoare: {auction.bestBid} RON
                         </Typography>
                         }
 
                         {!auction.bestBidder && <Typography variant="body1" component="p" style={textStyle}>
-                            No bids yet
+                            Nici o ofertă până acum.
                         </Typography>
                         }
 
@@ -185,10 +190,10 @@ const PostCard = ({auction, setRefresh, refresh}) => {
             </CardContent>
             <CardActions>
                 <Stack direction='row' spacing={2}>
-                {!seeCommentsButtonActive &&  <Button size="small" onClick={handleCommentClick}>Vezi comentarii</Button>}
-                {seeCommentsButtonActive && <Button size="small" onClick={handleCommentClick}>Ascunde comentarii</Button>}
+                {!seeCommentsButtonActive &&  <Button size="small" onClick={handleCommentClick}>Vezi oferte</Button>}
+                {seeCommentsButtonActive && <Button size="small" onClick={handleCommentClick}>Ascunde oferte</Button>}
                 {user.role === 2 && <Button size="small" onClick={handleBidClick}>Licitează</Button>}
-                {user._id === auction.user && <Button size="small" onClick={handleDeleteAuctionClick}>Șterge</Button>}
+                {user._id === auction.user._id && <Button size="small" onClick={handleDeleteAuctionClick}>Șterge</Button>}
                 </Stack>
             </CardActions>
             </Stack>

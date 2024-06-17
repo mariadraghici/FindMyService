@@ -38,9 +38,11 @@ exports.isAuthenicated = async (req, res, next) => {
                     })
                     next();
                 });
-            } else {
+            } else if (!err) {
                 req.user = decoded;
                 next();
+            } else {
+                return res.status(401).send('Invalid Token.');
             }
         });
 };

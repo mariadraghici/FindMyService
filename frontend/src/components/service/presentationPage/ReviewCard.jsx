@@ -12,8 +12,6 @@ const ReviewCard = ({review}) => {
         return null;
     }
 
-    console.log(review);
-
     return (
        <Card className="review-card">
             <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" alignItems="center">

@@ -65,6 +65,9 @@ const userSchema = new mongoose.Schema({
 
     rating: {
         type: Number,
+        set: (v) => {
+            return Math.round(v * 100) / 100;
+        },
         default: 0
     },
 

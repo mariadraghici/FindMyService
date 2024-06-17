@@ -11,9 +11,14 @@ const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8
 exports.signup = async(req, res, next) => {
     const {email} = req.body;
     const userExist = await User.findOne({email});
+    const usernameExist = await User.findOne({name: req.body.name});
 
     if (userExist) {
         return next(new ErrorResponse(`User already exists with email of ${email}`, 400));
+    }
+
+    if (usernameExist) {
+        return next(new ErrorResponse(`Username already exists!`, 400));
     }
 
     if (!req.body.password.match(regex)) {
@@ -94,10 +99,6 @@ exports.verifyEmail = async(req, res, next) => {
 
         await token.deleteOne({ token});
 
-        // res.status(200).json({
-        //     success: true,
-        //     message: 'Account verified successfully!'
-        // });
         res.redirect('http://localhost:3000/account-verified');
     } catch (error) {
         next(error);
@@ -223,3 +224,106 @@ exports.singleUser = async(req, res, next) => {
         next(error);
     }  
 };
+
+exports.sendResetPasswordEmail = async(req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+
+        if (!user) {
+            return next(new ErrorResponse(`User not found!`, 404));
+        }
+
+        const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
+        username: user.name,
+        expiresAt: Date.now() + 86400000,
+        userId: user._id
+        });
+
+        console.log(token);
+
+        const msg = {
+            from: process.env.SENDER_EMAIL,
+            to: req.body.email,
+            subject: 'FindMy Service Reset Password Link',
+            text: `http://${req.headers.host}/api/resetPassword?token=${token.token}`,
+            html: ` <h1 style="color: #e6004; font-size: 48px; text-align: center; margin-top: 20px;">
+                        Click the link below to reset your password
+                    </h1>
+                    <div style="text-align: center;">
+                        <a href="http://${req.headers.host}/api/resetPassword?token=${token.token}"
+                        style="font-size: 20px; color: #ffffff; background-color: #e60049; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                            Reset Password
+                        </a>
+                    </div>`
+        };
+
+        await sgMail.send(msg);
+
+        res.status(200).json({
+            success: true,
+            message: 'Email sent successfully!'
+        });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+exports.updatePassword = async(req, res, next) => {
+    try {
+        const token = await Token.findOne({ token: req.body.token });
+
+        if (!token) {
+            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
+        }
+
+        const user = await User.findById(token.userId);
+
+        if (!user) {
+            return next(new ErrorResponse(`User not found!`, 404));
+        }
+
+        const { password, confirmPassword } = req.body;
+
+        if (!password || !confirmPassword) {
+            return next(new ErrorResponse(`Both fields are required!`, 400));
+        }
+
+        if (password !== confirmPassword) {
+            return next(new ErrorResponse(`Passwords do not match!`, 400));
+        }
+
+       user.password = password;
+
+        await user.save();
+        await token.deleteOne({ token });
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successfully!'
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.resetPassword = async(req, res, next) => {
+    try {
+
+        console.log(req.query.token);
+        const token = await Token.findOne({ token: req.query.token });
+
+        console.log(token);
+
+        if (!token || !token.expiresAt > Date.now()) {
+            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
+        }
+
+        res.redirect(`http://localhost:3000/updatepassword?token=${req.query.token}`);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+

@@ -1,8 +1,29 @@
-import {React, useState} from 'react'
+import React, {useState, Suspense, lazy} from 'react'
 import './App.css'
 import {useEffect} from 'react'
 import myAxios from './components/axios/axios'
 import Home from './pages/Home'
+// const Home = lazy(() => import('./pages/Home'))
+// const Signin = lazy(() => import('./pages/signin/Signin'))
+// const Signup = lazy(() => import('./pages/signup/Signup'))
+// const Profile = lazy(() => import('./pages/profile/Profile'))
+// const AddComponents = lazy(() => import('./pages/admin/AddComponents'))
+// const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
+// const UpdateComponents = lazy(() => import('./pages/admin/UpdateComponent'))
+// const UserCars = lazy(() => import('./pages/user/userCars/UserCars'))
+// const AddCar = lazy(() => import('./pages/user/addCar/AddCar'))
+// const SignUpUser = lazy(() => import('./pages/signup/SignUpUser'))
+// const SignUpService = lazy(() => import('./pages/signup/SignUpService'))
+// const SearchService = lazy(() => import('./pages/user/SearchService'))
+// const PresentationPage = lazy(() => import('./pages/service/presentationPage/PresentationPage'))
+// const OffersPage = lazy(() => import('./pages/service/OffersPage'))
+// const Posts = lazy(() => import('./pages/Posts'))
+// const ValidationSucces = lazy(() => import('./pages/user/ValidationSucces'))
+// const UserAuctions = lazy(() => import('./pages/user/userAuctions/UserAuctions'))
+// const RecommendService = lazy(() => import('./pages/user/RecommendService'))
+// const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+// const ResetPassword = lazy(() => import('./pages/ResetPassword'))
+
 import Signin from './pages/signin/Signin'
 import Signup from './pages/signup/Signup'
 import Profile from './pages/profile/Profile'
@@ -31,6 +52,8 @@ import ValidationSucces from './pages/user/ValidationSucces'
 import UserAuctions from './pages/user/userAuctions/UserAuctions'
 import PrivateRoute from './components/PrivateRoute'
 import RecommendService from './pages/user/RecommendService'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 const socket = io.connect("http://localhost:3001");
 
@@ -38,8 +61,6 @@ function App() {
   const [user, setUser] = useState(null);
   const [newOffers, setNewOffers] = useState([]);
   const [offersNotificationsCounter, setOffersNotificationsCounter] = useState(0);
-
-  console.log('am in app');
 
   useEffect(() => {
 
@@ -65,12 +86,11 @@ function App() {
     if (user && user.role === 2) {
       socket.on('receive-message', async (data) => {
         try {
-          console.log('received message');
           const res = await myAxios.put('/api/service/updateAndGetNewOffers', { userId: user._id, offer: data});
           setOffersNotificationsCounter(res.data.user.newOffers.length);
           setNewOffers(res.data.user.newOffers);
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         }
       });
 
@@ -97,7 +117,9 @@ function App() {
                       <Route path="/signup" element={<Signup/>}/>
                       <Route path="/signup/user" element={<SignUpUser/>}/>
                       <Route path="/signup/service" element={<SignUpService/>}/>
+                      <Route path="/forgotpassword" element={<ForgotPassword/>}/>
                       <Route path="/account-verified" element={<ValidationSucces/>}/>
+                      <Route path="/updatepassword" element={<ResetPassword/>}/>
 
                       <Route path="/serviceRecommendation" element={
                         <PrivateRoute user={user} role={[0, 1]}>

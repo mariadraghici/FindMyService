@@ -1,18 +1,24 @@
 import React from 'react'
-import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
+import AddComponents from './AddComponents'
+import {getRecommendations} from '../../api/recommendationApi'
+import LazyLoadingPaginationComponent from '../../components/utils/LazyLoadingPaginationComponent'
+import { Container } from '@mui/material'
 
 const AdminDashboard = () => {
+    const [refresh, setRefresh] = React.useState(0);
     return (
-        <div>
-            <div className="row justify-content-start">
-                <div className="col-3">
-                    <AdminSidebar />
-                </div>
-                <div className="col-8">
-                    heei
-                </div>
-        </div>
-        </div>
+        <Container>
+        <AddComponents />
+        <LazyLoadingPaginationComponent
+            dataType='recommendations'
+            title='Recommendations'
+            apiFunction={getRecommendations}
+            limit={5}
+            refresh={refresh}
+            records={'recomandari'}
+            setRefresh={setRefresh}
+        />
+        </Container>
   )
 }
 

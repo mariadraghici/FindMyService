@@ -29,6 +29,7 @@ const SignUpService = () => {
       const [allFieldsCompleted, setAllFieldsCompleted] = useState(false);
       const [anchorEl, setAnchorEl] = useState(null);
       const [firstPage, setFirstPage] = useState(true);
+
       const handleMouseDownPassword = (event) => {
         event.preventDefault();
       };
@@ -148,8 +149,8 @@ const SignUpService = () => {
                     }
                     label="Password"
                   />
-                   <FormHelperText sx={{margin: '0'}}>
-                    Parola trebuie să conțină cel puțin o literă mare, o cifră și un caracter special (?,!,#,..)</FormHelperText>
+                   <FormHelperText sx={{margin: '0', color: 'black !important'}}>
+                    Parola trebuie să conțină cel puțin o literă mare, o literă mica, o cifră și un caracter special (?,!,#,..)</FormHelperText>
                 </FormControl>
                   <TextField required value={phone} onChange={handleChange('phone')} label="Numar de telefon" margin='normal' sx={{width: '100%'}} type='text'
                   color='primary' InputLabelProps={{style: { color: '#8E8E8E' }}}

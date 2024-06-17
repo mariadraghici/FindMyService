@@ -5,6 +5,15 @@ const ErrorResponse = require('../utils/errorResponse');
 
 exports.createCar = async(req, res, next) => {
     try {
+
+        const name = req.body.name;
+
+        const carExists = await Car.findOne({ name });
+
+        if (carExists) {
+            return next(new ErrorResponse("Car name already exists", 400));
+        }
+    
         const car = await Car.create({ ...req.body, user: req.user._id });
 
         if (!car) {

@@ -5,6 +5,6 @@ export const getAllFacilities = async () => {
         const res = await myAxios.get('/api/facility/all');
         return res.data.facilities;
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 }

@@ -15,7 +15,6 @@ import CardLayout from '../utils/CardLayout';
 
 const ServiceCard = ({service}) => {
     const [image, setImage] = React.useState(null);
-    console.log(service);
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
     React.useEffect(() => {
@@ -23,7 +22,6 @@ const ServiceCard = ({service}) => {
             try {
                 const res = await getImageOfService(service.name);
                 setImage(res);
-                console.log(res);
             } catch (error) {
                 console.log(error);
             }

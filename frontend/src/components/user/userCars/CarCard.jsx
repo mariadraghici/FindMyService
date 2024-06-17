@@ -33,7 +33,6 @@ const CarCard = ({car, setRefresh, refresh}) => {
             }
 
             setKm(res.data.km);
-            console.log(res.data.km);
             toast.success("Km edited successfully!");
         } catch (error) {
             console.log(error);

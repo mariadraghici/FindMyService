@@ -1,13 +1,14 @@
 import  Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
-const MyAutocomplete = ({ options, label, value, onChange, disabled }) => {
+const MyAutocomplete = ({ options, label, value, onChange, disabled, required }) => {
     return (
         <Autocomplete
             size='small'
             id="combo-box-brands"
             options={options}
             renderInput={(params) => <TextField
+                required={required}
                 {...params} label={label}
                 color='primary'
                 InputLabelProps={

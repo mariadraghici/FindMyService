@@ -13,6 +13,7 @@ import '../signin/signin.css'
 import { CardContent, Stack } from '@mui/material';
 import CardLayout from '../../components/utils/CardLayout';
 import './recommendService.css'
+import FormWithBgImage from '../../components/utils/FormWithBgImageLayout';
 
 
 const RecommendService = () => {
@@ -66,27 +67,16 @@ const RecommendService = () => {
     }
 
     return (
-        <Container maxWidth={false} sx={{padding: "0 !Important"}}>
-        <Box sx={{display:'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <img src={signinImage} alt="signin_img" className="img-width-signin-photo"/>       
-          <Stack direction='column' spacing={2} className='card-stack'>
-            <CardLayout additionalClasses='card-signin'>
-              <CardContent className='card-content'>
-                <Stack direction='column' spacing={3} sx={{justifyContent: 'center', alignItems: 'center'}}>
-                <Typography variant='h5' align='center' color='primary' >Ajută-ne să creștem platforma ca să te ajutăm și noi pe tine!</Typography>
-                <Typography variant='h6' align='center' color='secondary' >Recomandă un service</Typography>
-                <TextField value={serviceName} onChange={handleChange('serviceName')} label="Numele service-ului" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
-                <TextField value={serviceEmail} onChange={handleChange('email')} label="Email-ul service-ului" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
-                <Typography variant='h7' align='center' color='secondary' >SAU</Typography>
-                <TextField value={phone} onChange={handleChange('phone')} label="Numar de telefon" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
-                <TextField value={content} onChange={handleChange('content')} label="Spune-ne de ce recomanzi service-ul" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
-                <Button onClick={handleSubmit} variant='contained'>Recomandă</Button>
-                </Stack>
-              </CardContent>
-            </CardLayout>
-          </Stack>
-        </Box>
-      </Container>
+        <FormWithBgImage bgImage={signinImage} alt='recommend-service'>
+            <Typography variant='h5' align='center' color='primary' >Ajută-ne să creștem platforma ca să te ajutăm și noi pe tine!</Typography>
+            <Typography variant='h6' align='center' color='secondary' >Recomandă un service</Typography>
+            <TextField value={serviceName} onChange={handleChange('serviceName')} label="Numele service-ului" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
+            <TextField value={serviceEmail} onChange={handleChange('email')} label="Email-ul service-ului" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
+            <Typography variant='h7' align='center' color='secondary' >SAU</Typography>
+            <TextField value={phone} onChange={handleChange('phone')} label="Numar de telefon" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
+            <TextField value={content} onChange={handleChange('content')} label="Spune-ne de ce recomanzi service-ul" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
+            <Button onClick={handleSubmit} variant='contained'>Recomandă</Button>
+        </FormWithBgImage>
     )
 }
 

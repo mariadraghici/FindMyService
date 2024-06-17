@@ -7,6 +7,7 @@ const Feed = ({refresh, setRefresh}) => {
             <LazyLoadingPaginationComponent
                 dataType='auctions'
                 title='Auctions'
+                records="licitatii"
                 apiFunction={getAllAuctions}
                 refresh={refresh}
                 limit={5}

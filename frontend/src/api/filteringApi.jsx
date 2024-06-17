@@ -6,7 +6,6 @@ export const filter = async (selectedCars, selectedFacilities, selectedcities, f
         let res = null;
         if (Object.values(selectedCars).every(value => value === false) && selectedcities.length === 0 && selectedFacilities.length === 0 &&
             formData.brand === '' && formData.model === '' && formData.engine === '') {
-            // console.log('here');
             return await getAllServices();
         }
 
@@ -89,10 +88,8 @@ export const filter = async (selectedCars, selectedFacilities, selectedcities, f
             }
         }
             
-        // setServices(res.data.services);
-        console.log(res);
         return res.data.services;
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 };

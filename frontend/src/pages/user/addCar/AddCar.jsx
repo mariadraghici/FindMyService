@@ -141,7 +141,7 @@ const AddCar = () => {
                     <AddCarAutocomplete options={["Benzină", "Motorină", "Electric", "Hibrid"]} label="Selectați tipul de combustibil" value={fuel} onChange={handleFuelChange} disabled={false}/>
                 </Grid>
                 <Grid item>
-                    <AddCarAutocomplete options={["FWD", "RWD", "AWD"]} label="Selectați tipul de tracțiune" value={traction} onChange={handleTractionChange} disabled={false}/>
+                    <AddCarAutocomplete options={["Față", "Spate", "Integral", "4 roți"]} label="Selectați tipul de tracțiune" value={traction} onChange={handleTractionChange} disabled={false}/>
                 </Grid>
                 <Grid item>
                     <MyTextField label='Descriere' name='description' value={description} type='text' changeFunction={handleChange('description')} variant='outlined'/>

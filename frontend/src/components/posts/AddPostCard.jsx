@@ -57,11 +57,11 @@ const AddPostCard = ({setAddButtonActive, setRefresh}) => {
             });
 
             if (res.status === 201) {
-                toast.success('Postul a fost adaugat cu succes!');
+                toast.success('Licitația a fost adaugată cu succes!');
                 setRefresh(prev => prev + 1);
                 setAddButtonActive(false);
             } else {
-                toast.error('Postul nu a putut fi adaugat! Incercati din nou!');
+                toast.error('Licitația nu a putut fi adaugată! Încercați din nou!');
             }
         } catch (error) {
             console.log(error);
@@ -73,10 +73,15 @@ const AddPostCard = ({setAddButtonActive, setRefresh}) => {
     }, []);
 
     const handleSelectCar = (e, value) => {
+        if (!value) {
+            setSelectedCarName(null);
+            setSelectedCar(null);
+            return;
+        }
         const currentCar = userCars.find(car => car.name === value);
         setSelectedCarName(currentCar.name);
         setSelectedCar(currentCar);
-        console.log(selectedCar);
+        console.log(currentCar);
     }
 
     return (

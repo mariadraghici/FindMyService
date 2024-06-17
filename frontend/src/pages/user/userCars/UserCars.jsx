@@ -15,6 +15,7 @@ const UserCars = () => {
                 apiFunction={getMyCarsApi}
                 limit={1}
                 refresh={refresh}
+                records={'masini'}
                 setRefresh={setRefresh}
             />
     </ProfileLayout>

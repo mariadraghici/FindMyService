@@ -8,6 +8,8 @@ import Rating from '@mui/material/Rating';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
+import MyAutocomplete from '../../utils/MyAutocomplete';
+import MyTextField from '../../utils/MyTextField';
 
 const AddReviewCard = ({handleReviewTitle, handleTextChange, user,
     addReview, selectedCar, userCars, handleSelectReviewCar, rating, reviewTitle, reviewText, setRating}) => {
@@ -25,24 +27,24 @@ const AddReviewCard = ({handleReviewTitle, handleTextChange, user,
                     <Typography gutterBottom variant="h7" component="div">
                         Selecteaza masina cu care ai fost la service
                     </Typography>
-                    <Autocomplete
+                    <MyAutocomplete
                         size='small'
                         value={selectedCar ? selectedCar.name : ''}
                         id="combo-box-transmission"
                         options={userCars.map(car => car.name)}
-                        renderInput={(params) => <TextField {...params} label="Selectați masina"/>}
-                        isOptionEqualToValue={(option, value) => option === value || value === ''}
+                        label={'Selectati masina'}
                         onChange={handleSelectReviewCar}
+                        required
                     />
                         <Typography gutterBottom variant="h7" component="div">
                             Titlu
                         </Typography>
-                        <TextField size='large' onChange={handleReviewTitle} type="text" name="name"
+                        <MyTextField required size='large' changeFunction={handleReviewTitle} type="text" name="name"
                             value={reviewTitle} fullWidth label='Scrie un titlu'/>
                         <Typography gutterBottom variant="h7" component="div">
                             Recenzie
                         </Typography>
-                        <TextField size='large' onChange={handleTextChange} type="text" name="name"
+                        <MyTextField required size='large' changeFunction={handleTextChange} type="text" name="name"
                             value={reviewText} fullWidth label='Scrie un comentariu'/>
                         <Typography variant="h7" component="div">
                             Rating

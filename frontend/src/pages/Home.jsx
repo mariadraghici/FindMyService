@@ -3,8 +3,8 @@ import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import './home.css'
 import { Grid, Typography } from '@mui/material'
-import landingpage from '/img/landing_page.png'
-import logo from '/img/logo_light_mare.png'
+import landingpage from '/img/landing_page.webp'
+import logo from '/img/logo_light_mare.webp'
 import NewOffers from '../components/context/NewOffers'
 import { useEffect } from 'react'
 import myAxios from '../components/axios/axios'
@@ -14,7 +14,6 @@ import OffersNotificationsCounter from '../components/context/OffersNotification
 const Home = () => {
   const {setNewOffers} = useContext(NewOffers);
   const {user} = useContext(ProfileContext);
-  console.log('am in home');
   const {offersNotificationsCounter} = useContext(OffersNotificationsCounter);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const Home = () => {
             if (res.status === 200) {
                 setNewOffers([]);
             } else {
-                console.log(res.data.message);
+                // console.log(res.data.message);
             }
         } catch (error) {
             console.log(error);

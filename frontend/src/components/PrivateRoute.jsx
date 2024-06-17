@@ -8,14 +8,12 @@ import React from 'react';
 const PrivateRoute = ({ children, role }) => {
     const { user, setUser } = useContext(ProfileContext);
     const [loading, setLoading] = useState(true);
-
-    console.log('am in private route');
+    console.log(user);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const profile = await getProfile();
-                console.log(profile);
                 if (profile) {
                     setUser(profile);
                 } else {
@@ -37,7 +35,6 @@ const PrivateRoute = ({ children, role }) => {
     }
 
     if (!user) {
-        console.log('no user');
         return <Navigate to='/signin' />;
     }
 
