@@ -27,7 +27,6 @@ const SignUpService = () => {
       const [lng, setLng] = useState(0);
       const handleClickShowPassword = () => setShowPassword((show) => !show);
       const [allFieldsCompleted, setAllFieldsCompleted] = useState(false);
-      const [anchorEl, setAnchorEl] = useState(null);
       const [firstPage, setFirstPage] = useState(true);
 
       const handleMouseDownPassword = (event) => {

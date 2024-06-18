@@ -68,6 +68,7 @@ const Signin = () => {
 
   return (
       <FormWithBgImage bgImage={signinImage} alt='signin'>
+        <Stack direction='column' spacing={3} sx={{justifyContent: 'center', alignItems: 'center'}}>
                 <AccountCircleIcon className='signin-icon'/>
                 <Typography variant='h5' color='secondary' className='login-text'>Logare</Typography>
                 <TextField value={email} onChange={handleChange('email')} label="Email" InputLabelProps={{style: {color: 'black'}}} type='text' InputProps={{style: { color:'black' }}} sx={{ width: '100%'}} className='outlinedInput'/>
@@ -107,6 +108,7 @@ const Signin = () => {
                   <Typography variant='body2' color='secondary' sx={{cursor: 'pointer', textDecoration: 'underline'}} onClick={() => navigate('/forgotpassword')}>Ai uitat parola?</Typography>
                 </Stack>
                 <Button onClick={handleSubmit} variant='contained'>Loghează-te</Button>
+        </Stack>
       </FormWithBgImage>
   )
 }
