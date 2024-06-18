@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 import './profile.css';
 import UserProfile from '../user/UserProfile';
-import ProfileContext from '../../components/context/ProfileContext';
+import ProfileContext from '../../context/ProfileContext';
 import ServiceProfile from '../service/ServiceProfile';
 
 const Profile = () => {

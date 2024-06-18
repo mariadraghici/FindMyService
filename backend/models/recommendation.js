@@ -13,14 +13,14 @@ const recommendationSchema = new mongoose.Schema({
         trim: true,
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-            "Please fill a valid email address"
+            "Vă rugăm să introduceți o adresă de email validă"
         ]
     },
 
     content: {
         type: String,
         trim: true,
-        required: [true, "Please add some text"],
+        required: [true, "Vă rugăm să adăugați un text"],
         maxlength: 500
     },
 
@@ -29,7 +29,7 @@ const recommendationSchema = new mongoose.Schema({
         trim: true,
         match: [
             /^(\+)?([ 0-9]){10,14}$/,
-            "Please fill a valid phone number"
+            "Vă rugăm să introduceți un număr de telefon valid"
         ]
     },
     

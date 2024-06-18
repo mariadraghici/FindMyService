@@ -14,15 +14,15 @@ exports.signup = async(req, res, next) => {
     const usernameExist = await User.findOne({name: req.body.name});
 
     if (userExist) {
-        return next(new ErrorResponse(`User already exists with email of ${email}`, 400));
+        return next(new ErrorResponse(`Utilizator deja existent cu adresa de email ${email}`, 400));
     }
 
     if (usernameExist) {
-        return next(new ErrorResponse(`Username already exists!`, 400));
+        return next(new ErrorResponse(`Acest ume de utilizator deja există!`, 400));
     }
 
     if (!req.body.password.match(regex)) {
-        return next(new ErrorResponse(`Password must contain at least one uppercase letter, one lowercase letter, one number and one special character`, 400));
+        return next(new ErrorResponse(`Parola trebuie să conțină cel puțin 8 caractere, o literă mare, o literă mică, un număr și un caracter special!`, 400));
     }
 
     try {
@@ -35,7 +35,7 @@ exports.signup = async(req, res, next) => {
         if (latestUser) {
             socketNumber = latestUser.socketNumber + 1;
           } else {
-            socketNumber = 1; // Starting number if no users exist
+            socketNumber = 1;
           }
 
         if (role === 2) {
@@ -74,7 +74,6 @@ exports.signup = async(req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: 'Account created successfully! Check your email to activate your account.'
         });
     } catch (error) {
         console.log(error);
@@ -85,14 +84,14 @@ exports.signup = async(req, res, next) => {
 exports.verifyEmail = async(req, res, next) => {
     try {
         const token = await Token.findOne({ token: req.query.token });
-        if (!token) {
-            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
-        }
+        // if (!token) {
+        //     return next(new ErrorResponse(`Contactați-ne pentru ajutor.`, 400));
+        // }
 
         const user = await User.findById(token.userId);
-        if (!user) {
-            return next(new ErrorResponse(`User not found!`, 404));
-        }
+        // if (!user) {
+        //     return next(new ErrorResponse(`User not found!`, 404));
+        // }
 
         user.verified = true;
         await user.save();
@@ -133,10 +132,6 @@ exports.signin = async(req, res, next) => {
             await initial_token.deleteOne({ token: initial_token.token });
         }
 
-        // if (!user.verified) {
-        //     return next(new ErrorResponse(`Account not verified!`, 400));
-        // }
-
         const accessToken = jwt.sign({ "_id": user._id, "name": user.name }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' });
         const refreshToken = jwt.sign({ "_id": user._id, "name": user.name }, process.env.RFRESH_TOKEN_SECRET, { expiresIn: '1d' });
         
@@ -154,6 +149,7 @@ exports.signin = async(req, res, next) => {
             secure: true,
           })
         .json({"role": role});
+
     } catch(error) {
         console.log(error);
         next(new ErrorResponse(`Cannot log in, check credentials!`, 400));
@@ -164,13 +160,12 @@ exports.logout = async (req, res) => {
     const cookie = req.cookies;
 
     if (!cookie?.access_token) {
-        res.status(400).send('Not logged in!');
-        return;
+        return next(new ErrorResponse(`Nu poți să te deconectezi momentan!`, 400));
     }
 
     jwt.verify(cookie.access_token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
         if (err && err.name !== 'TokenExpiredError') {
-            return res.status(401).send('Invalid Token.');
+            return next(new ErrorResponse(`Token invalid!`, 400));
         }
         
         const user = jwt.verify(cookie.access_token, process.env.ACCESS_TOKEN_SECRET, { ignoreExpiration: true });
@@ -179,37 +174,31 @@ exports.logout = async (req, res) => {
             const logout = await token.deleteOne({ token: token.token });
 
             if (!token || !logout) {
-                return res.status(400).send('Cannot logout!');
+                return next(new ErrorResponse(`Nu poți să te deconectezi momentan!`, 400));
             }
 
         } catch (error) {
-            console.log(error);
-            return res.status(400).send('Cannot logout!');
+            return next(new ErrorResponse(`Nu poți să te deconectezi momentan!`, 400));
         }
 
         res.clearCookie('access_token', { httpOnly: true, sameSite: 'None', secure: true})
         .status(200)
-        .send('Logged out successfully!');
+        .json({message: 'Deconectare reușită!'});
     });
 };
 
-// User profile
 exports.userProfile = async (req, res, next) => {
 
     try {
         const user = await User.findById(req.user._id).populate('city').populate('address');
         
-        if (!user) {
-            return next(new ErrorResponse(`User not found!`, 404));
-        }
         
         return res.status(200).json({
             success: true,
             user
         });
     } catch (error) {
-        console.log(error);
-        new ErrorResponse(`Cannot get user profile!`, 400);
+        next(error);
     }
 };
 
@@ -229,17 +218,11 @@ exports.sendResetPasswordEmail = async(req, res, next) => {
     try {
         const user = await User.findOne({ email: req.body.email });
 
-        if (!user) {
-            return next(new ErrorResponse(`User not found!`, 404));
-        }
-
         const token = await Token.create({ token: crypto.randomBytes(16).toString('hex'),
         username: user.name,
         expiresAt: Date.now() + 86400000,
         userId: user._id
         });
-
-        console.log(token);
 
         const msg = {
             from: process.env.SENDER_EMAIL,
@@ -261,10 +244,9 @@ exports.sendResetPasswordEmail = async(req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'Email sent successfully!'
+            message: 'Email-ul de resetare a parolei a fost trimis cu succes!'
         });
     } catch (error) {
-        console.log(error);
         next(error);
     }
 }
@@ -274,7 +256,7 @@ exports.updatePassword = async(req, res, next) => {
         const token = await Token.findOne({ token: req.body.token });
 
         if (!token) {
-            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
+            return next(new ErrorResponse(`Contactează-ne pentru ajutor.`, 400));
         }
 
         const user = await User.findById(token.userId);
@@ -286,11 +268,11 @@ exports.updatePassword = async(req, res, next) => {
         const { password, confirmPassword } = req.body;
 
         if (!password || !confirmPassword) {
-            return next(new ErrorResponse(`Both fields are required!`, 400));
+            return next(new ErrorResponse(`Ambele câmpuri sunt obligatorii!`, 400));
         }
 
         if (password !== confirmPassword) {
-            return next(new ErrorResponse(`Passwords do not match!`, 400));
+            return next(new ErrorResponse(`Parolele nu sunt identice!`, 400));
         }
 
        user.password = password;
@@ -300,7 +282,7 @@ exports.updatePassword = async(req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'Password reset successfully!'
+            message: 'Parola a fost resetată cu succes!'
         });
     } catch (error) {
         next(error);
@@ -316,7 +298,7 @@ exports.resetPassword = async(req, res, next) => {
         console.log(token);
 
         if (!token || !token.expiresAt > Date.now()) {
-            return next(new ErrorResponse(`Invalid token! Please contact us for support.`, 400));
+            return next(new ErrorResponse(`Contactează-ne pentru ajutor.`, 400));
         }
 
         res.redirect(`http://localhost:3000/updatepassword?token=${req.query.token}`);

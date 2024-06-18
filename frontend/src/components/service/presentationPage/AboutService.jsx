@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Box, Typography, Card, CardContent, Stack } from '@mui/material';
 import RoomRoundedIcon from '@mui/icons-material/RoomRounded';

@@ -1,4 +1,4 @@
-import myAxios from '../components/axios/axios';
+import myAxios from '../axios/axios';
 import { toast } from 'react-hot-toast';
 
 export const getProfile = async () => {
@@ -11,18 +11,5 @@ export const getProfile = async () => {
         }
     } catch (error) {
         return null;
-    }
-}
-
-export const isAuth = async () => {
-    try {
-        const res = await myAxios.get('/api/isAuthenicated');
-        if (res.status === 200) {
-            return true;
-        } else {
-            return false;
-        }
-    } catch (error) {
-        return false;
     }
 }

@@ -1,8 +1,7 @@
 import FormWithBgImage from "../components/utils/FormWithBgImageLayout";
 import { Button, Typography } from "@mui/material";
 import { useState } from "react";
-import MyTextField from "../components/utils/MyTextField";
-import myAxios from "../components/axios/axios";
+import myAxios from "../axios/axios";
 import { toast } from "react-hot-toast";
 import bgImage from "/img/signin_photo.png";
 import { useSearchParams } from 'react-router-dom';
@@ -42,12 +41,12 @@ const ResetPassword = () => {
     
     const handleSubmit = async () => {
         if (!password || !confirmPassword) {
-            toast.error("Both fields are required");
+            toast.error("Ambele câmpuri sunt obligatorii");
             return;
         }
     
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match");
+            toast.error("Parolele nu se potrivesc!");
             return;
         }
     

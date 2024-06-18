@@ -2,8 +2,8 @@ import React from "react";
 import { useContext, useState } from "react";
 import { useEffect } from "react";
 import { Typography, Container } from "@mui/material";
-import NewOffers from "../../components/context/NewOffers";
-import OffersNotificationsCounter from "../../components/context/OffersNotificationsCounter";
+import NewOffers from "../../context/NewOffers";
+import OffersNotificationsCounter from "../../context/OffersNotificationsCounter";
 import { getAllOffers } from "../../api/offersApi";
 import OfferCard from "../../components/service/OfferCard";
 

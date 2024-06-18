@@ -35,7 +35,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('offer-request', (data) => {
-    console.log(data);
     socket.to(data.room).emit('receive-message', data.message);
   });
 });
@@ -118,6 +117,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { file
 
 app.post('/api/upload', upload.array("file"), async (req, res) => {
   const files = req.files;
+  console.log(req);
   const username = req.body.name;
 
   try {

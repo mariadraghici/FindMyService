@@ -8,7 +8,7 @@ const commentSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: [true, "Please add a comment"],
+        required: [true, "Vă rugăm să adăugați un comentariu"],
         maxlength: 1000
     },
     auction: {
@@ -18,7 +18,7 @@ const commentSchema = new mongoose.Schema({
 
     price : {
         type: Number,
-        required: [true, "Please add a price"]
+        required: [true, "Vă rugăm să adăugați un preț"],
     }
 }, {timestamps: true});
 

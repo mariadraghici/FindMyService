@@ -4,7 +4,7 @@ const facilitySchema = new mongoose.Schema({
     name:{
         type: String,
         trim: true,
-        required: [true, "Name is required"],
+        required: [true, "Numele facilității este necesar!"],
         maxlength: 200
     },
 

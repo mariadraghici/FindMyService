@@ -1,10 +1,10 @@
 import {React, useState, useEffect, useContext} from 'react';
-import myAxios from '../../components/axios/axios';
+import myAxios from '../../axios/axios';
 import ServiceCard from '../../components/service/ServiceCard';
 import Container from '@mui/material/Container';
 import {Link} from 'react-router-dom';
 import { Card, Divider, FormControlLabel, Grid, Stack, Typography } from '@mui/material';
-import ProfileContext from '../../components/context/ProfileContext'
+import ProfileContext from '../../context/ProfileContext'
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { toast } from 'react-hot-toast';
@@ -20,6 +20,7 @@ import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 import MyAutocomplete from '../../components/utils/MyAutocomplete';
 import MyAutocompleteWithCheckboxes from '../../components/utils/AutocompleteWithCheckboxes';
+import LazyLoadingPaginationComponent from '../../components/utils/LazyLoadingPaginationComponent';
 
 const SearchService = () => {
     const [services, setServices] = useState([]);
@@ -40,6 +41,7 @@ const SearchService = () => {
     const [page, setPage] = useState(1);
     const [pageNo, setPageNo] = useState(1);
     const [filterButtonActivated, setFilterButtonActivated] = useState(false);
+    const [refresh, setRefresh] = useState(0);
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -63,15 +65,15 @@ const SearchService = () => {
             toast.error(error.response.data.error);
         }
     }
-    const setAllServices = async () => {
-        try {
-            const res = await getAllServices();
-            setServices(res);
-            setPageNo(Math.ceil(services.length / 5));
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    // const setAllServices = async () => {
+    //     try {
+    //         const res = await getAllServices();
+    //         setServices(res);
+    //         setPageNo(Math.ceil(services.length / 5));
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 
     const setAllCities = async () => {
         try {
@@ -92,17 +94,18 @@ const SearchService = () => {
     }
 
     const handleFiltre = async () => {
-        try {
-            const res = await filter(selectedCars, selectedFacilities, selectedCities, formData);
-            setServices(res);
-            setFilterButtonActivated(false);
-        } catch (error) {
-            console.log(error);
-        }
+        // try {
+        //     const res = await filter(selectedCars, selectedFacilities, selectedCities, formData);
+        //     setServices(res);
+        //     setFilterButtonActivated(false);
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        setRefresh(refresh + 1);
     }
 
     useEffect(() => {
-        setAllServices();
+        // setAllServices();
         setAllCities();
         setAllFacilities();
         setAllBrands();
@@ -250,7 +253,7 @@ const SearchService = () => {
                     </Stack>}
                 </Grid>
                 <Grid item md={9} xs={12}>
-                    <Stack sx={{justifyContent: 'center'}} spacing={2}>
+                    {/* <Stack sx={{justifyContent: 'center'}} spacing={2}>
                     {services?.slice((page - 1) * 5, (page - 1) * 5 + 5).map(service => (
                         <div key={service._id}>
                             <Link to={`/service/page/${service.name}`}>
@@ -275,7 +278,10 @@ const SearchService = () => {
                             },
                         }}
                         variant='outlined' count={pageNo} page={page} onChange={handlePageChange} />}
-                    </Grid>
+                    </Grid> */}
+                    <LazyLoadingPaginationComponent dataType={'services'} apiFunction={filter} limit={3} searchService={{
+                        selectedCars: selectedCars, selectedFacilities: selectedFacilities, selectedCities: selectedCities, formData: formData
+                        }} refresh={refresh} setRefresh={setRefresh}/>  
                 </Grid>
             </Grid>
         </Container>

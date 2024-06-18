@@ -6,7 +6,7 @@ exports.createCommentAndAddToAuction = async(req, res, next) => {
         const comment = await Comment.create(req.body);
 
         if (!comment) {
-            return next(ErrorResponse('Comment could not be created!', 400));
+            return next(ErrorResponse('Comentariul nu a putut fi postat!', 400));
         }
 
         const auctionId = req.body.auction;

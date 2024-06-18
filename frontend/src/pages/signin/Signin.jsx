@@ -4,9 +4,9 @@ import toast from 'react-hot-toast';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import myAxios from '../../components/axios/axios'
+import myAxios from '../../axios/axios'
 import {useContext} from 'react'
-import ProfileContext from '../../components/context/ProfileContext'
+import ProfileContext from '../../context/ProfileContext'
 import signinImage from '/img/signin_photo.png'
 import './signin.css'
 import { Stack } from '@mui/material';
@@ -50,19 +50,19 @@ const Signin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const signUser = await myAxios.post('api/signin', {
+      const signUser = await myAxios.post('/api/signin', {
         email,
         password
       });
       
       if (signUser.status === 200) {
         setValues({email: '', password: ''});
-        toast.success("User logged in successfully!");
+        toast.success('Logare cu succes!');
         fetchProfile();
         navigate('/', {replace: true});
       }
     } catch (error) {
-      toast.error("Invalid email or password!");
+      toast.error(error.response.data.error);
     }
   }
 

@@ -1,8 +1,8 @@
 import React, {useContext, useState, useEffect} from 'react'
-import myAxios from './axios/axios';
+import myAxios from '../axios/axios';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import ProfileContext from './context/ProfileContext';
+import ProfileContext from '../context/ProfileContext';
 import './header.css';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 import logo from '/img/light_logo_mic.webp';
 import { Grid } from '@mui/material';
 import Badge from '@mui/material/Badge';
-import OffersNotificationsCounter from './context/OffersNotificationsCounter';
+import OffersNotificationsCounter from '../context/OffersNotificationsCounter';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Header = () => {
       const res = await myAxios.get('/api/logout');
       if (res.status === 200) {
         setUser(null);
-        toast.success(res.data);
+        toast.success(res.data.message);
         navigate('/');
       }
     } catch (error) {
@@ -102,9 +102,6 @@ const Header = () => {
                 {!user && <MenuItem key={'signin'} onClick={handleCloseNavMenu}>
                 <Button color="inherit" ><Link to='/signin' style={{ color: '#FFF' }}>Logare</Link></Button>
                 </MenuItem>}
-              {/* {user && user.role !== 2 && <MenuItem key={'profile'} onClick={handleCloseNavMenu}>
-              <Button color="inherit" ><Link to='/profile' style={{ color: '#FFF' }}>Contul meu</Link></Button>
-                </MenuItem>} */}
               {user && (user.role === 0 || user.role === 1) && <MenuItem key={'search'} onClick={handleCloseNavMenu}>
               <Button color="inherit" ><Link to='/search' style={{ color: '#FFF' }}>Caută Service</Link></Button>
                 </MenuItem>}
@@ -115,7 +112,7 @@ const Header = () => {
               <Button color="inherit" >
                 <Link to='/service/offers' style={{ color: '#FFF' }}>
              
-              <Badge badgeContent={offersNotificationsCounter} color="error">
+              <Badge badgeContent={offersNotificationsCounter === 0 || offersNotificationsCounter === -1 ? 0 : offersNotificationsCounter } color="error">
                 Oferte
               </Badge>
               </Link></Button>
@@ -160,7 +157,7 @@ const Header = () => {
             {user && user.role === 2 && <Button color="inherit" ><Link to={`/service/page/${user.name}`} style={{ color: '#FFF' }}>Pagina mea</Link></Button>}
             {user && user.role === 2 && <Button color="inherit" >
               <Link to='/service/offers' style={{ color: '#FFF' }}>
-                <Badge badgeContent={offersNotificationsCounter} color="error">
+                <Badge badgeContent={offersNotificationsCounter === 0 || offersNotificationsCounter === -1 ? 0 : offersNotificationsCounter } color="error">
                   Oferte
                 </Badge>
               </Link></Button>}

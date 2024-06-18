@@ -1,4 +1,4 @@
-import {Card, CardContent, Icon, Stack} from '@mui/material';
+import {Card, CardContent} from '@mui/material';
 import './cardlayout.css';
 
 const CardLayout = ({children, additionalClasses }) => {

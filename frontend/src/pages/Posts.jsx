@@ -2,12 +2,12 @@ import { Button, Container, setRef } from '@mui/material'
 import './posts.css'
 import { useEffect, useState } from 'react'
 import { useContext } from 'react';
-import ProfileContext from '../components/context/ProfileContext';
-import AddPostCard from '../components/posts/AddPostCard';
+import ProfileContext from '../context/ProfileContext';
+import AddPostCard from '../components/auctions/AddPostCard';
 import Stack from '@mui/material/Stack';
-import Feed from '../components/posts/Feed';
-import OffersNotificationsCounter from '../components/context/OffersNotificationsCounter';
-import NewOffers from '../components/context/NewOffers';
+import Feed from '../components/auctions/Feed';
+import OffersNotificationsCounter from '../context/OffersNotificationsCounter';
+import NewOffers from '../context/NewOffers';
 
 const Posts = () => {
     const {user} = useContext(ProfileContext);
@@ -22,11 +22,9 @@ const Posts = () => {
 
             if (res.status === 200) {
                 setNewOffers([]);
-            } else {
-                // console.log(res.data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error('Failed to reset new offers', error);
         }
     }
 

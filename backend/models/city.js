@@ -4,23 +4,23 @@ const CitySchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true, // removes whitespace before and after text
-        required: [true, "City name is required"],
+        required: [true, "Nume necesar!"],
         maxlength: 32
     },
 
     lat: {
         type: Number,
-        required: [true, "Latitude is required"]
+        required: [true, "Latitudinea este necesară!"]
     },
 
     lng: {
         type: Number,
-        required: [true, "Longitude is required"]
+        required: [true, "Longitudinea este necesară!"]
     },
 
     judet: {
         type: String,
-        required: [true, "Judet is required"]
+        required: [true, "Judetul este necesar!"]
     }
 }, {timestamps: true});
 

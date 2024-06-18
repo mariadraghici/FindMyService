@@ -22,7 +22,7 @@ const RecommendationCard = ({ recommendation, setRefresh }) => {
             setRefresh((prev) => !prev);
         } catch (error) {
             console.error(error);
-            toast.error("Could not delete recommendation");
+            toast.error("A apărut o eroare la ștergerea recomandării!");
         }
     }
     

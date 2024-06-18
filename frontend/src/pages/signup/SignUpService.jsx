@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { useState } from "react";
-import myAxios from "../../components/axios/axios";
+import myAxios from "../../axios/axios";
 import { toast } from "react-hot-toast";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -76,7 +76,7 @@ const SignUpService = () => {
       const handleSubmit = async (e) => {
         e.preventDefault();
         if (!name || !email || !password || !address || !phone || !city) {
-          toast.error("All fields are required!");
+          toast.error("Toate câmpurile sunt obligatorii!");
           return;
         }
 
@@ -96,7 +96,7 @@ const SignUpService = () => {
     
           if (signService.status === 201) {
             setValues({name: '', email: '', password: '', role: 2, address: '', phone: '', city: null});
-            toast.success("Service registered successfully!");
+            toast.success("Cont creat! Verificați email-ul pentru a vă activa contul!");
             navigate('/signin');
           }
         } catch (error) {

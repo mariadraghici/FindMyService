@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Button from '@mui/material/Button';
 import MyTextField from '../../utils/MyTextField';
 import toast from 'react-hot-toast';
-import myAxios from '../../axios/axios';
+import myAxios from '../../../axios/axios';
 import {deleteCarApi} from '../../../api/carApi';
 
 const CarCard = ({car, setRefresh, refresh}) => {

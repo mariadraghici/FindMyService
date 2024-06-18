@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import AdminSidebar from '../../components/admin/admin-sidebar/AdminSidebar'
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import DataTable from 'react-data-table-component';
+import myAxios from '../../axios/axios';
 
 const UpdateComponents = () => {
 
@@ -22,7 +22,7 @@ const UpdateComponents = () => {
     const [models, setModels] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/models/display')
+        myAxios.get('/api/models/display')
         .then(res => {
             if (res.data.success === true) {
                 setModels(res.data.models);

@@ -1,4 +1,4 @@
-import myAxios from "../components/axios/axios";
+import myAxios from "../axios/axios";
 import { toast } from "react-hot-toast";
 
 export const addCarApi = async (formData, setFormData, brands, models) => {

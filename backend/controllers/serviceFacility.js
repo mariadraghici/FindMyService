@@ -12,7 +12,7 @@ exports.createServiceFacility = async (req, res, next) => {
             await alreadyExists.updateOne({ priceLow, priceHigh });
             return res.status(200).json({
                 success: true,
-                message: 'ServiceFacility updated',
+                message: 'Serviciul a fost actualizat cu succes!',
             });
         }
 
@@ -39,7 +39,7 @@ exports.getServiceFacilitiesByServiceId = async (req, res, next) => {
         const serviceFacilities = service.serviceFacilities;
 
         if (!serviceFacilities) {
-            return next(new ErrorResponse('ServiceFacilities not found', 404));
+            return next(new ErrorResponse('Serviciul nu a fost găsit!', 404));
         }
 
         res.status(200).json({
@@ -56,7 +56,7 @@ exports.deleteServiceFacility = async (req, res, next) => {
     try {
         const serviceFacility = await ServiceFacility.findById(req.params.id);
         if (!serviceFacility) {
-            return next(new ErrorResponse('ServiceFacility not found', 404));
+            return next(new ErrorResponse('Serviciul nu a fost găsit!', 404));
         }
 
         const user = await User.findById(serviceFacility.serviceId);
@@ -72,7 +72,7 @@ exports.deleteServiceFacility = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'ServiceFacility deleted',
+            message: 'Serviciul a fost șters cu succes!',
         });
     } catch (error) {
         console.log(error);

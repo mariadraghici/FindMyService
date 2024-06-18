@@ -1,5 +1,4 @@
 import React from 'react';
-import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -12,6 +11,7 @@ import LocalPhoneRoundedIcon from '@mui/icons-material/LocalPhoneRounded';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import CardLayout from '../utils/CardLayout';
+import { Link } from 'react-router-dom';
 
 const ServiceCard = ({service}) => {
     const [image, setImage] = React.useState(null);
@@ -35,6 +35,7 @@ const ServiceCard = ({service}) => {
     if (!service) return (<div>No services to show</div>);
 
     return (
+        <Link to={`/service/page/${service.name}`}>
             <CardLayout additionalClasses="car-card">
             <CardContent>
             <Stack direction={isSmallScreen ? 'column' : 'row'} justifyContent="space-between" spacing={3} alignItems={isSmallScreen ? 'flex-start' : 'center'}>
@@ -73,6 +74,7 @@ const ServiceCard = ({service}) => {
             </Stack>
             </CardContent>
             </CardLayout>
+            </Link>
     )
 };
 

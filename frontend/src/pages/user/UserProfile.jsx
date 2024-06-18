@@ -1,6 +1,6 @@
 import React from "react";
 import { useContext } from "react";
-import ProfileContext from "../../components/context/ProfileContext";
+import ProfileContext from "../../context/ProfileContext";
 import { Typography } from "@mui/material";
 import ProfileLayout from "../../components/user/profile/ProfileLayout";
 

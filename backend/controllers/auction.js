@@ -8,7 +8,7 @@ exports.createAuction = async(req, res, next) => {
         const auction = await Auction.create(req.body);
 
         if (!auction) {
-            return next(new Error('Auction could not be created!'));
+            return next(new Error('Licitația nu a putut fi creată!'));
         }
 
         const user = await User.findById(req.user._id);
@@ -16,7 +16,7 @@ exports.createAuction = async(req, res, next) => {
         console.log(user);
 
         if (!user) {
-            return next(new Error('User not found!'));
+            return next(new Error('Utilizatorul nu a fost găsit!'));
         }
 
         user.auctions.push(auction._id);
@@ -59,7 +59,7 @@ exports.deleteAuction = async(req, res, next) => {
         const auction = await Auction.findById(req.params.id);
 
         if (!auction) {
-            return next(new Error('Auction not found!'));
+            return next(new Error('Licitația nu a fost găsită!'));
         }
 
         await auction.remove();
@@ -70,7 +70,7 @@ exports.deleteAuction = async(req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'Post deleted successfully!'
+            message: 'Licitația a fost ștearsă cu succes!'
         });
     } catch (error) {
         console.log(error);
@@ -99,7 +99,7 @@ exports.displayAuctionsForUser = async(req, res, next) => {
         const auctions = await Auction.find({user: req.user._id}).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 }).populate('bestBidder').populate('user');
 
         if (!auctions) {
-            return next(new Error('Auctions not found!'));
+            return next(new Error('Licitațiile nu au fost găsite!'));
         }
 
         const totalAuctions = await Auction.countDocuments({user: req.user._id});

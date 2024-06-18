@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Container from '@mui/material/Container';
-import myAxios from "../../../components/axios/axios";
+import myAxios from "../../../axios/axios";
 import { useParams} from 'react-router-dom';
 import { Box, Divider } from "@mui/material";
 import Card from '@mui/material/Card';
@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import TextField from '@mui/material/TextField';
 import {Autocomplete} from "@mui/material";
 import toast from 'react-hot-toast';
-import ProfileContext from "../../../components/context/ProfileContext";
+import ProfileContext from "../../../context/ProfileContext";
 import 'leaflet/dist/leaflet.css';
 import { getAllImagesOfService } from "../../../api/imageApi";
 import { getProfile } from "../../../api/profileApi";
@@ -19,7 +19,7 @@ import { getAllFacilities } from "../../../api/facilityApi";
 import { useNavigate } from "react-router-dom";
 import LeafletMap from "../../../components/LeafletMap";
 import MyTextField from "../../../components/utils/MyTextField";
-import SocketContext from "../../../components/context/SocketContext";
+import SocketContext from "../../../context/SocketContext";
 import './presentation-page.css';
 import AboutService from "../../../components/service/presentationPage/AboutService";
 import FacilityTypography from "../../../components/service/presentationPage/FacilityTypography";
@@ -28,8 +28,8 @@ import ImageCarousel from "../../../components/service/presentationPage/ImageCar
 import Reviews from "../../../components/service/presentationPage/Reviews";
 import AddReviewCard from "../../../components/service/presentationPage/AddReviewCard";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import NewOffers from "../../../components/context/NewOffers";
-import OffersNotificationsCounter from "../../../components/context/OffersNotificationsCounter";
+import NewOffers from "../../../context/NewOffers";
+import OffersNotificationsCounter from "../../../context/OffersNotificationsCounter";
 
 const convertNewlinesToBreaks = (text) => {
     if (!text) {
@@ -54,10 +54,9 @@ const PresentationPage = () => {
     const URLserviceName = params.name;
     const [reviewText, setReviewText] = useState('');
     const [reviewTitle, setReviewTitle] = useState('');
-    const {user, setUser} = useContext(ProfileContext);
+    const {user} = useContext(ProfileContext);
     const [selectedCar, setSelectedCar] = useState('');
     const [userCars, setUserCars] = useState([]);
-    const [serviceReviews, setServiceReviews] = useState([]);
     const [refreshReviews, setRefreshReviews] = useState(0);
     const [rating, setRating] = useState(0);
     const [file, setFile] = useState(null);
@@ -71,7 +70,6 @@ const PresentationPage = () => {
     const [priceLow, setPriceLow] = useState(0);
     const [priceHigh, setPriceHigh] = useState(0);
     const [onOwnPage, setOnOwnPage] = useState(false);
-    const navigate = useNavigate();
     const [schedule, setSchedule] = useState('');
     const [scheduleEditButton, setScheduleEditButton] = useState(false);
     const [offerText, setOfferText] = useState('');
@@ -110,18 +108,6 @@ const PresentationPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            const user = await getProfile();
-            if (user) {
-              setUser(user);
-            } else {
-                navigate('/signin', {replace: true});
-                return;
-            }
-          }
-      
-        fetchProfile();
-
         const getServiceByName = async () => {
             try {
                 const res = await myAxios.get(`/api/service/page/${URLserviceName}`);
@@ -224,7 +210,6 @@ const PresentationPage = () => {
                 setSelectedCar('');
                 setReviewTitle('');
                 setRating(0);
-                // setSendReview(sendReview + 1);
                 setRefreshReviews(refreshReviews + 1);
             }
         } catch (error) {
@@ -252,7 +237,6 @@ const PresentationPage = () => {
             console.log(error);
         }
 
-        // refresh the page
         setPresentationPageRefresh(presentationPageRefresh + 1);
     }
 
@@ -333,11 +317,8 @@ const PresentationPage = () => {
             });
 
             if (res.data.success) {
-                // console.log(res.data);
                 socket.emit('join-room', serviceSocket)
-                // console.log('I joined the room', serviceSocket);
                 socket.emit('offer-request', {message: res.data.offer._id, room: serviceSocket})
-                // console.log('I sent the message');
                 toast.success('Cererea a fost trimisa cu succes!');
                 setEmailOffer('');
                 setPhoneOffer('');

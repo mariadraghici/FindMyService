@@ -1,13 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import toast from 'react-hot-toast';
-import axios from 'axios';
 import '../../components/admin/admin-sidebar/admin-sidebar.css';
-import { Autocomplete, CardContent, Grid, Typography } from '@mui/material';
+import { Autocomplete, CardContent, Typography } from '@mui/material';
 import { Button, TextField, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import CardLayout from '../../components/utils/CardLayout';
 import MyTextField from '../../components/utils/MyTextField';
-import myAxios from '../../components/axios/axios';
+import myAxios from '../../axios/axios';
 
 const AddComponents = () => {
 
@@ -49,13 +48,13 @@ const AddComponents = () => {
       const handleBrandSubmit = async (e) => {
         e.preventDefault();
         try {
-          const added = await axios.post('/api/brand/create', {
+          const added = await myAxios.post('/api/brand/create', {
             name: brandName,
           });
 
           if (added.data.success === true) {
             setBrandName('');
-            toast.success("Brand added successfully!"); 
+            toast.success("Brand adăugat cu succes!"); 
           } 
         } catch (error) {
           toast.error(error.response.data.error);
@@ -65,15 +64,20 @@ const AddComponents = () => {
       const handleModelSubmit = async (e) => {
         // e.preventDefault();
         try {
-          const added = await axios.post('/api/model/create', {
+          const added = await myAxios.post('/api/model/create', {
             name: name,
             brand: brands[brand]._id,
             engines: engines.split(',').map((engine) => engine.trim()),
           });
 
-          const updatedBrand = await axios.put('/api/brand/update/' + brands[brand]._id, {
-            modelId: added.data.model._id,
-          });
+          if (added.data.success === true) {
+            setModelValues({name: '', engines: []});
+            toast.success("Model adăugat cu succes!"); 
+          }
+
+          // const updatedBrand = await myAxios.put('/api/brand/update/' + brands[brand]._id, {
+          //   modelId: added.data.model._id,
+          // });
 
           // if (added.data.success === true && updatedBrand.data.success === true) {
           //   setModelValues({name: '', engines: []});
@@ -94,7 +98,6 @@ const AddComponents = () => {
               <Typography variant="h5">
                 Add Components
               </Typography>
-              {/* <TextField size="small" label="Brand Name" variant="outlined" value={brandName} onChange={handleBrandChange}/> */}
               <MyTextField size="small" label="Brand Name" variant="outlined" value={brandName}  changeFunction={handleBrandChange}/>
               <Button variant="contained" onClick={handleBrandSubmit}>Add Brand</Button>
               <Autocomplete size='small' options={Object.keys(brands)} onChange={(event, value) => 
@@ -102,9 +105,7 @@ const AddComponents = () => {
               } renderInput={(params) => <TextField {...params} label="Select Brand" variant="outlined"
                 InputLabelProps={{style: {color: 'grey'}}} color='secondary'
                />} />
-              {/* <TextField size="small" label="Model Name" variant="outlined" value={name} onChange={handleModelChange('name')}/> */}
               <MyTextField size="small" label="Model Name" variant="outlined" value={name} changeFunction={handleModelChange('name')}/>
-              {/* <TextField size="small" label="Engines" variant="outlined" value={engines} onChange={handleModelChange('engines')}/> */}
               <MyTextField size="small" label="Engines" variant="outlined" value={engines} changeFunction={handleModelChange('engines')}/>
               <Button variant="contained" onClick={handleModelSubmit}>Add Model</Button>
               </Stack>

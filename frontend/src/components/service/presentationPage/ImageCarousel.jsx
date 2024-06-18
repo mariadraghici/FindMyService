@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import React from 'react'
 import { Box, Grid } from '@mui/material';
-import myAxios from "../../axios/axios";
+import myAxios from "../../../axios/axios";
 import { useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';

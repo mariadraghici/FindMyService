@@ -1,17 +1,13 @@
-import {React, useEffect, useState} from 'react'
+import {React, useState} from 'react'
 import toast from 'react-hot-toast';
-import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import myAxios from '../../components/axios/axios'
+import myAxios from '../../axios/axios'
 import {useContext} from 'react'
-import ProfileContext from '../../components/context/ProfileContext'
+import ProfileContext from '../../context/ProfileContext'
 import signinImage from '/img/signin_photo.png'
 import '../signin/signin.css'
-import { CardContent, Stack } from '@mui/material';
-import CardLayout from '../../components/utils/CardLayout';
 import './recommendService.css'
 import FormWithBgImage from '../../components/utils/FormWithBgImageLayout';
 

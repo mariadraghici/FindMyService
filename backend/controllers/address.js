@@ -17,7 +17,6 @@ exports.createAddress = async (req, res, next) => {
             address
         })
     } catch (error) {
-        console.log(error)
         next(error)
     }
 }

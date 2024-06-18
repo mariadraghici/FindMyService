@@ -1,11 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import myAxios from "../../components/axios/axios";
+import myAxios from "../../axios/axios";
 import { toast } from "react-hot-toast";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/material";
 import './signup.css';
@@ -51,7 +49,7 @@ const SignUpUser = ({}) => {
         
           if (signUser.status === 201) {
             setValues({name: '', email: '', password: '',  role: 0});
-            toast.success("User registered successfully!");
+            toast.success("Contul a fost creat cu succes! Verifică-ți email-ul pentru a confirma contul.");
             navigate('/signin');
           }
         } catch (error) {

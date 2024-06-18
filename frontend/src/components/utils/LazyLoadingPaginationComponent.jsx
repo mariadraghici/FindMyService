@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
-import PostCard from '../posts/PostCard';
+import AuctionCard from '../auctions/AuctionCard';
 import ServiceCard from '../service/ServiceCard';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
@@ -20,7 +20,7 @@ const StyledPaginationItem = styled('div')(({ theme }) => ({
   }));
 
 
-const LazyLoadingPaginationComponent = ({ dataType, title, apiFunction, limit, refresh, setRefresh, records, service }) => {
+const LazyLoadingPaginationComponent = ({ dataType, title, apiFunction, limit, refresh, setRefresh, records, service, searchService }) => {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -49,10 +49,14 @@ const LazyLoadingPaginationComponent = ({ dataType, title, apiFunction, limit, r
                 if (service) {
                     const res = await apiFunction(page, limit, service.name);
                     setData(res.data);
-                    console.log(res);
                     setTotalPages(res.totalPages);
                     return;
                 }
+            } else if (dataType === 'services') {
+                const res = await apiFunction(searchService.selectedCars, searchService.selectedFacilities, searchService.selectedCities, searchService.formData, page, limit);
+                setData(res.data);
+                setTotalPages(res.totalPages);
+                return;
             } else {
                 const res = await apiFunction(page, limit);
                 setData(res.data);
@@ -65,7 +69,7 @@ const LazyLoadingPaginationComponent = ({ dataType, title, apiFunction, limit, r
 
     const renderCard = (item) => {
         if (dataType === 'auctions') {
-            return <PostCard auction={item} refresh={refresh} setRefresh={setRefresh}/>;
+            return <AuctionCard auction={item} refresh={refresh} setRefresh={setRefresh}/>;
         } else if (dataType === 'services') {
             return <ServiceCard service={item} />;
         } else if (dataType === 'cars') {

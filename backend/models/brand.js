@@ -5,7 +5,7 @@ const brandSchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true, // removes whitespace before and after text
-        required: [true, "Please add a brand name"],
+        required: [true, "Nume necesar!"],
         maxlength: 100
     },
 

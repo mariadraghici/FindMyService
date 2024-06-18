@@ -4,13 +4,13 @@ const {ObjectId} = mongoose.Schema;
 const auctionSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "Please add a title"],
+        required: [true, "Vă rugăm să adăugați un titlu"],
         maxlength: 100
     },
 
     description: {
         type: String,
-        required: [true, "Please add a description"],
+        required: [true, "Vă rugăm să adăugați o descriere"],
         maxlength: 10000
     },
 

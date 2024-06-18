@@ -1,16 +1,29 @@
 import React from 'react';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import styled from '@mui/material/styles/styled';
 
-function Footer() {
-  var w = window.innerWidth;
-  var h = window.innerHeight;
+const FooterContainer = styled('footer')({
+  padding: '10px 0',
+  marginTop: 'auto',
+});
+
+const Footer = () => {
   return (
-    <></>
-    // <Container sx={{bottom: 0, textAlign: 'center', minWidth: '100%', padding:'1%', position: "fixed"}}>
-      // <Typography variant="h9" sx={{bottom: 0, textAlign:'center', color: 'white', padding:'1%', position: "fixed", width: '100%'}}>Copyright @ 2024 FindMyService </Typography>
-    // </Container>
-  )
-}
+    <FooterContainer>
+      <Container maxWidth="md">
+        <Typography variant="body2" color="textSecondary" align="center">
+          {'© '}
+          <Link color="inherit">
+            FindMyService
+          </Link>{' '}
+          {new Date().getFullYear()}
+          {'.'}
+        </Typography>
+      </Container>
+    </FooterContainer>
+  );
+};
 
 export default Footer

@@ -9,10 +9,19 @@ const mongoose = require('mongoose');
 
 exports.allServices = async(req, res, next) => {
     try {
-        const services = await User.find({role: 2}).populate('city').populate('facilities').populate('address').populate('images');
+        let {page = 1, limit = 10} = req.query;
+
+        page = parseInt(page);
+        limit = parseInt(limit);
+        const services = await User.find({role: 2}).populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2}).countDocuments();
+
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -24,7 +33,7 @@ exports.getServiceByName = async(req, res, next) => {
         const {name} = req.params;
         const service = await User.findOne({name}).populate('city').populate('facilities').populate('address');
         if (!service) {
-            return next(new ErrorResponse('Service not found', 404));
+            return next(new ErrorResponse('Serviceul nu există!', 404));
         }
         res.status(200).json({
             success: true,
@@ -41,7 +50,7 @@ exports.getReviews = async(req, res, next) => {
         const userTo = await User.findOne({name});
 
         if (!userTo) {
-            return next(new ErrorResponse('Service not found', 404));
+            return next(new ErrorResponse('Serviceul nu există!', 404));
         }
         const reviews = await Review.find({userTo: userTo._id}).populate('userFrom').populate('car');
         res.status(200).json({
@@ -56,6 +65,7 @@ exports.getReviews = async(req, res, next) => {
 exports.serviceFilter = async(req, res, next) => {
     try {
         let {cars, cities, serviceFacilities} = req.body;
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const cars_info = await Car.find({_id: {$in: cars}});
@@ -68,11 +78,15 @@ exports.serviceFilter = async(req, res, next) => {
         }));
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}, facilities: {$in: facilities}}).countDocuments();
         
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -85,6 +99,7 @@ exports.serviceFilterOnlyByCityAndCars = async(req, res, next) => {
         const cars_info = await Car.find({_id: {$in: cars}});
         let reviews = [];
         let all_reviews = [];
+        const {page = 1, limit = 10} = req.query;
 
         await Promise.all(cars_info.map(async(car) => {
             reviews = await Review.find({brand: car.brand, model: car.model, engine: car.engine})
@@ -92,11 +107,15 @@ exports.serviceFilterOnlyByCityAndCars = async(req, res, next) => {
         }));
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}}).countDocuments();
         
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -106,6 +125,7 @@ exports.serviceFilterOnlyByCityAndCars = async(req, res, next) => {
 exports.serviceFilterOnlyByFacilityAndCars = async(req, res, next) => {
     try {
         let {cars, serviceFacilities} = req.body;
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const cars_info = await Car.find({_id: {$in: cars}});
@@ -118,11 +138,15 @@ exports.serviceFilterOnlyByFacilityAndCars = async(req, res, next) => {
         }));
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}}).countDocuments();
         
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -135,6 +159,7 @@ exports.serviceFilterOnlyByCars = async(req, res, next) => {
         const cars_info = await Car.find({_id: {$in: cars}});
         let reviews = [];
         let all_reviews = [];
+        const {page = 1, limit = 10} = req.query;
 
         await Promise.all(cars_info.map(async(car) => {
             reviews = await Review.find({brand: car.brand, model: car.model, engine: car.engine})
@@ -142,11 +167,13 @@ exports.serviceFilterOnlyByCars = async(req, res, next) => {
         }));
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
         
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(services.length / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -156,13 +183,18 @@ exports.serviceFilterOnlyByCars = async(req, res, next) => {
 exports.serviceFilterOnlyByCity = async(req, res, next) => {
     try {
         const {cities} = req.body;
+        const {page = 1, limit = 10} = req.query;
         
         const services = await User.find({role: 2, city: {$in: cities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, city: {$in: cities}}).countDocuments();
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -172,16 +204,20 @@ exports.serviceFilterOnlyByCity = async(req, res, next) => {
 exports.serviceFilterOnlyByFacility = async(req, res, next) => {
     try {
         const {serviceFacilities} = req.body;
-        console.log(serviceFacilities);
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
 
         const services = await User.find({role: 2, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, facilities: {$in: facilities}}).countDocuments();
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -191,14 +227,17 @@ exports.serviceFilterOnlyByFacility = async(req, res, next) => {
 exports.serviceFilterOnlyByCityAndFacility = async(req, res, next) => {
     try {
         const {cities, serviceFacilities} = req.body;
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const services = await User.find({role: 2, city: {$in: cities}, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(services.length / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -209,6 +248,7 @@ exports.serviceFilterOnlyByCityAndOthers = async(req, res, next) => {
     try {
         const {cities, others} = req.body;
         const {brand, model, engine} = others;
+        const {page = 1, limit = 10} = req.query;
         let reviews = [];
         let all_reviews = [];
 
@@ -224,11 +264,15 @@ exports.serviceFilterOnlyByCityAndOthers = async(req, res, next) => {
         }
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
+
+        const totalServices = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}}).countDocuments();
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(totalServices / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -238,6 +282,7 @@ exports.serviceFilterOnlyByCityAndOthers = async(req, res, next) => {
 exports.serviceFilterOnlyByFacilityAndOthers = async(req, res, next) => {
     try {
         const {others, serviceFacilities} = req.body;
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const {brand, model, engine} = others;
@@ -256,11 +301,13 @@ exports.serviceFilterOnlyByFacilityAndOthers = async(req, res, next) => {
         }
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(services.length / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -270,6 +317,7 @@ exports.serviceFilterOnlyByFacilityAndOthers = async(req, res, next) => {
 exports.serviceFilterOnlyByCityAndFacilityAndOthers = async(req, res, next) => {
     try {
         const {cities, others, serviceFacilities} = req.body;
+        const {page = 1, limit = 10} = req.query;
 
         let facilities = await serviceFacility.find({facilityId: {$in: serviceFacilities}});
         const {brand, model, engine} = others;
@@ -288,11 +336,13 @@ exports.serviceFilterOnlyByCityAndFacilityAndOthers = async(req, res, next) => {
         }
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}, city: {$in: cities}, facilities: {$in: facilities}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
 
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(services.length / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -305,6 +355,7 @@ exports.serviceFilterOnlyByOthers = async(req, res, next) => {
         const {brand, model, engine} = others;
         let reviews = [];
         let all_reviews = [];
+        const {page = 1, limit = 10} = req.query;
 
         if (brand !== '' && model !== '' && engine !== '') {
             reviews = await Review.find({brandName: brand, modelName: model, engine: engine});
@@ -318,11 +369,13 @@ exports.serviceFilterOnlyByOthers = async(req, res, next) => {
         }
 
         const services = await User.find({role: 2, _id: {$in: all_reviews.map(review => review.userTo)}})
-        .populate('city').populate('facilities').populate('address').populate('images');
+        .populate('city').populate('facilities').populate('address').populate('images').skip((page - 1) * limit).limit(limit);
         
         res.status(200).json({
             success: true,
-            services
+            services,
+            totalPages: Math.ceil(services.length / limit),
+            currentPage: page
         });
     } catch (error) {
         next(error);
@@ -364,7 +417,6 @@ exports.editSchedule = async(req, res, next) => {
 exports.updateAndGetNewOffers = async (req, res, next) => {
     try {
 
-        console.log(req.body);
         const user = await User.findOneAndUpdate({
             _id: mongoose.Types.ObjectId(req.body.userId)
         }, {
@@ -377,11 +429,26 @@ exports.updateAndGetNewOffers = async (req, res, next) => {
         // user.newOffers.push(req.body.offerId);
 
         // await user.save();
-        console.log(user);
 
         return res.status(200).json({
             success: true,
             user
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+exports.getNewOffers = async(req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return next(new ErrorResponse('User not found', 404));
+        }
+
+        res.status(200).json({
+            success: true,
+            newOffers: user.newOffers
         });
     } catch (error) {
         next(error);

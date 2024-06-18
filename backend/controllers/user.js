@@ -56,21 +56,6 @@ exports.editDescription = async (req, res, next) => {
     } catch (error) {
         return next(new ErrorResponse('Error editing description', 400));
     }
-
-    // const car = await Car.findById(id);
-
-    // if (!car) {
-    //     return next(new ErrorResponse('Car not found', 404));
-    // }
-
-    // car.description = description;
-
-    // await car.save();
-
-    // return res.status(200).json({
-    //     success: true,
-    //     description: car.description
-    // });
 };
 
 exports.editKm = async (req, res, next) => {

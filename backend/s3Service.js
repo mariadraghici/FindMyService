@@ -48,7 +48,6 @@ exports.s3Uploadv3 = async (files, username) => {
     await Promise.all(params.map(param => s3client.send(new PutObjectCommand(param))));
 
     const user = await User.findOne({name: username});
-    console.log(user);
     imagesIds = [];
     const result = await Promise.all(fileNames.map(async (fileName) => {
         const image = await Image.create({imageName: fileName});

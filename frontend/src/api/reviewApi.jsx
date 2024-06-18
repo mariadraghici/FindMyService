@@ -1,7 +1,6 @@
-import myAxios from "../components/axios/axios";
+import myAxios from "../axios/axios";
 
 export const getReviewsForService = async ( page, limit, name) => {
-    console.log('here', name);
     try {
         const res = await myAxios.get(`/api/getreviewsservice/${name}`, {
             params: {
@@ -10,7 +9,6 @@ export const getReviewsForService = async ( page, limit, name) => {
             }
         });
 
-        console.log(res);
         if (res.status === 200) {
             return {
                 data: res.data.reviews,

@@ -1,8 +1,5 @@
-import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, Divider, Grid, Typography } from '@mui/material';
-import ReviewCard from './ReviewCard';
+import { Typography } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {getReviewsForService} from '../../../api/reviewApi';
 import LazyLoadingPaginationComponent from '../../utils/LazyLoadingPaginationComponent';

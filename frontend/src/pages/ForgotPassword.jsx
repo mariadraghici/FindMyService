@@ -3,7 +3,7 @@ import { Button, FormControl, InputAdornment, OutlinedInput, Stack, InputLabel, 
 import signinImage from '/img/signin_photo.png';
 import { useState } from 'react';
 import MyTextField from '../components/utils/MyTextField';
-import myAxios from '../components/axios/axios';
+import myAxios from '../axios/axios';
 import { toast } from 'react-hot-toast';
 
 const ForgotPassword = () => {
@@ -15,7 +15,7 @@ const ForgotPassword = () => {
 
     const handleSubmit = async () => {
         if (!email) {
-            toast.error('Email is required');
+            toast.error('Email-ul este obligatoriu!');
             return;
         }
         try {

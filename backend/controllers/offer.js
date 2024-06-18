@@ -33,7 +33,7 @@ exports.deleteOffer = async(req, res, next) => {
         await Offer.deleteOne({_id: req.params.id});
         res.status(200).json({
             success: true,
-            message: 'Offer deleted successfully!'
+            message: 'Oferta a fost ștearsă cu succes!'
         });
     } catch (error) {
         console.log(error);

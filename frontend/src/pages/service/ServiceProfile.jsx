@@ -1,6 +1,6 @@
 import React from "react";
 import { useContext } from "react";
-import ProfileContext from "../../components/context/ProfileContext";
+import ProfileContext from "../../context/ProfileContext";
 import { Card, CardContent, Stack, Typography, Box } from "@mui/material";
 
 const ServiceProfile = () => {

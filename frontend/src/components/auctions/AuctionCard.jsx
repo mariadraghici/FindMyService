@@ -1,16 +1,16 @@
 import CardLayout from '../utils/CardLayout';
 import React from 'react';
 import {CardActions, CardContent, Typography, Button, Stack, Divider} from '@mui/material';
-import './postCard.css';
-import myAxios from '../axios/axios';
+import './auctionCard.css';
+import myAxios from '../../axios/axios';
 import { useEffect } from 'react';
 import MyTextField from '../utils/MyTextField';
-import ProfileContext from '../context/ProfileContext';
+import ProfileContext from '../../context/ProfileContext';
 import toast from 'react-hot-toast';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link } from 'react-router-dom';
 
-const PostCard = ({auction, setRefresh, refresh}) => {
+const AuctionCard = ({auction, setRefresh, refresh}) => {
     const [bidButtonActive, setBidButtonActive] = React.useState(false);
     const {user} = React.useContext(ProfileContext);
     const [bid, setBid] = React.useState(0);
@@ -18,7 +18,6 @@ const PostCard = ({auction, setRefresh, refresh}) => {
     const [seeCommentsButtonActive, setSeeCommentsButtonActive] = React.useState(false);
     const [comments, setComments] = React.useState([]);
     const isSmallScreen = useMediaQuery('(max-width:899px)');
-    console.log(auction);
 
     const textStyle = {
         wordWrap: 'break-word',
@@ -201,4 +200,4 @@ const PostCard = ({auction, setRefresh, refresh}) => {
     )
 }
 
-export default PostCard
+export default AuctionCard

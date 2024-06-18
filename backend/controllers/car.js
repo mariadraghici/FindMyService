@@ -11,19 +11,19 @@ exports.createCar = async(req, res, next) => {
         const carExists = await Car.findOne({ name });
 
         if (carExists) {
-            return next(new ErrorResponse("Car name already exists", 400));
+            return next(new ErrorResponse("Numele acesta de mașină deja există", 400));
         }
     
         const car = await Car.create({ ...req.body, user: req.user._id });
 
         if (!car) {
-            return next(new ErrorResponse("Car not created", 400));
+            return next(new ErrorResponse("Mașina nu a putut fi creată", 400));
         }
     
         const user = await User.findOneAndUpdate({ _id: req.user._id }, {$push: {cars: car._id}}, {includeResultMetadata: true});
 
         if (!user) {
-            return next(new ErrorResponse("User not found", 400));
+            return next(new ErrorResponse("Utilizatorul nu a putut fi găsit", 400));
         }
 
         res.status(201).json({
@@ -56,7 +56,7 @@ exports.displayCarsByUserId = async(req, res, next) => {
             const cars = await Car.find({ user: req.user._id }).skip((page - 1) * limit).limit(Number(limit)).sort({ createdAt: -1 });
 
             if (!cars) {
-                return next(new ErrorResponse("Cars not found", 400));
+                return next(new ErrorResponse("Mașinile nu au putut fi găstie!", 400));
             }
 
             const totalCars = await Car.countDocuments({ user: req.user._id });
@@ -79,7 +79,7 @@ exports.deleteCar = async(req, res, next) => {
         const car = await Car.findByIdAndDelete(req.body.id);
 
         if (!car) {
-            return next(new ErrorResponse("Car not found", 400));
+            return next(new ErrorResponse("Mașina nu a putut fi găsită", 400));
         }
 
         res.status(201).json({

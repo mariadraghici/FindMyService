@@ -1,11 +1,9 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import './addReviewCard.css';
 import Rating from '@mui/material/Rating';
-import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import MyAutocomplete from '../../utils/MyAutocomplete';

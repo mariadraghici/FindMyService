@@ -7,24 +7,24 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true, // removes whitespace before and after text
-        required: [true, "Name is required"],
+        required: [true, "Nume necesar!"],
         maxlength: 32
     },
     email: {
         type: String,
         trim: true,
-        required: [true, "Email is required"],
+        required: [true, "Email necesar!"],
         unique: true,
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-            "Please fill a valid email address"
+            "Introduceți un email valid!"
         ]
     },
     password: {
         type: String,
         trim: true,
-        required: [true, "Password is required"],
-        minlength: [6, "Password must be at least 6 characters long"],
+        required: [true, "Parolă necesară!"],
+        minlength: [6, "Parola trebuie să aibă cel puțin 6 caractere!"],
     },
     
     role: {

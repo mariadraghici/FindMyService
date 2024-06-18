@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, CardContent, Typography, Button, Stack } from '@mui/material';
-import myAxios from '../axios/axios';
 import { toast } from 'react-hot-toast';
 import {deleteOffer} from '../../api/offersApi';
 

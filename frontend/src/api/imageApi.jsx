@@ -1,4 +1,4 @@
-import myAxios from "../components/axios/axios";
+import myAxios from "../axios/axios";
 
 export const getAllImagesOfService = async (serviceName) => {
     try {

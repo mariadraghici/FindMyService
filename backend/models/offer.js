@@ -5,7 +5,7 @@ const offerSchema = new mongoose.Schema({
     text: {
         type: String,
         trim: true,
-        required: [true, "Please add some text"],
+        required: [true, "Vă rugăm să adăugați un text"],
         maxlength: 500
     },
 
@@ -29,7 +29,7 @@ const offerSchema = new mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        required: [true, "Please add an email"],
+        required: [true, "Vă rugăm să adăugați un email"],
         match: [
             /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
             "Please fill a valid email address"

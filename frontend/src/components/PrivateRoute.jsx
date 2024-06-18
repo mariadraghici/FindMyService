@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import ProfileContext from './context/ProfileContext';
+import ProfileContext from '../context/ProfileContext';
 import { useContext, useState, useEffect } from 'react';
 import { getProfile } from '../api/profileApi';
 import { Container, Typography } from '@mui/material';
@@ -8,7 +8,6 @@ import React from 'react';
 const PrivateRoute = ({ children, role }) => {
     const { user, setUser } = useContext(ProfileContext);
     const [loading, setLoading] = useState(true);
-    console.log(user);
 
     useEffect(() => {
         const fetchProfile = async () => {

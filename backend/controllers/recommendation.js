@@ -37,14 +37,14 @@ exports.deleteRecommendation = async(req, res, next) => {
         const recommendation = await Recommendation.findById(req.params.id);
 
         if (!recommendation) {
-            return next(new ErrorResponse("Recommendation not found", 400));
+            return next(new ErrorResponse("Recomandarea nu există!", 400));
         }
 
         await recommendation.remove();
 
         res.status(200).json({
             success: true,
-            message: "Recommendation deleted"
+            message: "Recomandarea a fost ștearsă cu succes!"
         });
     } catch (error) {
         next(error);

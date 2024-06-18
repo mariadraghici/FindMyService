@@ -13,8 +13,6 @@ const CityChooseOnMap = ({lng, lat, setLat, setLng, setChooseLocation, values, s
         libraries
     });
 
-    const [selected, setSelected] = useState(null);
-
     if (!isLoaded) {
         return <Typography variant="h8" color='white'>Harta se incarca...</Typography>
     }

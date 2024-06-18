@@ -5,11 +5,11 @@ import './home.css'
 import { Grid, Typography } from '@mui/material'
 import landingpage from '/img/landing_page.webp'
 import logo from '/img/logo_light_mare.webp'
-import NewOffers from '../components/context/NewOffers'
+import NewOffers from '../context/NewOffers'
 import { useEffect } from 'react'
-import myAxios from '../components/axios/axios'
-import ProfileContext from '../components/context/ProfileContext'
-import OffersNotificationsCounter from '../components/context/OffersNotificationsCounter'
+import myAxios from '../axios/axios'
+import ProfileContext from '../context/ProfileContext'
+import OffersNotificationsCounter from '../context/OffersNotificationsCounter'
 
 const Home = () => {
   const {setNewOffers} = useContext(NewOffers);
@@ -28,7 +28,7 @@ const Home = () => {
             if (res.status === 200) {
                 setNewOffers([]);
             } else {
-                // console.log(res.data.message);
+                console.error('Failed to reset new offers');
             }
         } catch (error) {
             console.log(error);

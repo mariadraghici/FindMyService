@@ -1,29 +1,8 @@
 import React, {useState, Suspense, lazy} from 'react'
 import './App.css'
 import {useEffect} from 'react'
-import myAxios from './components/axios/axios'
+import myAxios from './axios/axios'
 import Home from './pages/Home'
-// const Home = lazy(() => import('./pages/Home'))
-// const Signin = lazy(() => import('./pages/signin/Signin'))
-// const Signup = lazy(() => import('./pages/signup/Signup'))
-// const Profile = lazy(() => import('./pages/profile/Profile'))
-// const AddComponents = lazy(() => import('./pages/admin/AddComponents'))
-// const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
-// const UpdateComponents = lazy(() => import('./pages/admin/UpdateComponent'))
-// const UserCars = lazy(() => import('./pages/user/userCars/UserCars'))
-// const AddCar = lazy(() => import('./pages/user/addCar/AddCar'))
-// const SignUpUser = lazy(() => import('./pages/signup/SignUpUser'))
-// const SignUpService = lazy(() => import('./pages/signup/SignUpService'))
-// const SearchService = lazy(() => import('./pages/user/SearchService'))
-// const PresentationPage = lazy(() => import('./pages/service/presentationPage/PresentationPage'))
-// const OffersPage = lazy(() => import('./pages/service/OffersPage'))
-// const Posts = lazy(() => import('./pages/Posts'))
-// const ValidationSucces = lazy(() => import('./pages/user/ValidationSucces'))
-// const UserAuctions = lazy(() => import('./pages/user/userAuctions/UserAuctions'))
-// const RecommendService = lazy(() => import('./pages/user/RecommendService'))
-// const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
-// const ResetPassword = lazy(() => import('./pages/ResetPassword'))
-
 import Signin from './pages/signin/Signin'
 import Signup from './pages/signup/Signup'
 import Profile from './pages/profile/Profile'
@@ -37,16 +16,16 @@ import AddCar from './pages/user/addCar/AddCar'
 import SignUpUser from './pages/signup/SignUpUser'
 import SignUpService from './pages/signup/SignUpService'
 import Layout from './components/Layout'
-import ProfileContext from './components/context/ProfileContext'
+import ProfileContext from './context/ProfileContext'
 import SearchService from './pages/user/SearchService'
 import PresentationPage from './pages/service/presentationPage/PresentationPage'
 import OffersPage from './pages/service/OffersPage'
 import Theme from './Theme';
-import SocketContext from './components/context/SocketContext'
+import SocketContext from './context/SocketContext'
 import io from "socket.io-client";
-import OffersNotificationsCounter from './components/context/OffersNotificationsCounter'
+import OffersNotificationsCounter from './context/OffersNotificationsCounter'
 import { getProfile } from './api/profileApi'
-import NewOffers from './components/context/NewOffers'
+import NewOffers from './context/NewOffers'
 import Posts from './pages/Posts'
 import ValidationSucces from './pages/user/ValidationSucces'
 import UserAuctions from './pages/user/userAuctions/UserAuctions'
@@ -60,7 +39,17 @@ const socket = io.connect("http://localhost:3001");
 function App() {
   const [user, setUser] = useState(null);
   const [newOffers, setNewOffers] = useState([]);
-  const [offersNotificationsCounter, setOffersNotificationsCounter] = useState(0);
+  const [offersNotificationsCounter, setOffersNotificationsCounter] = useState(-1);
+
+  const getNotifications = async () => {
+    try {
+      const res = await myAxios.get('/api/service/getNewOffers');
+      setOffersNotificationsCounter(res.data.newOffers.length);
+      setNewOffers(res.data.newOffers);
+    } catch (error) {
+      // console.log(error);
+    }
+  }
 
   useEffect(() => {
 
@@ -68,6 +57,7 @@ function App() {
       const profile = await getProfile();
       if (profile) {
         setUser(profile);
+        getNotifications();
       } else {
         setUser(null);
       }
@@ -111,7 +101,6 @@ function App() {
                 <Toaster />
                 <Layout>
                   <Routes>
-                    {/* <Route path="/" element={<Layout/>}> */}
                       <Route path="/" element={<Home/>}/>
                       <Route path="/signin" element={<Signin />}/>
                       <Route path="/signup" element={<Signup/>}/>
@@ -127,7 +116,6 @@ function App() {
                         </PrivateRoute>
                       }/>
 
-                      {/* <PrivateRoute user={user} role={[0, 1, 2]}> */}
                       <Route path="/profile" element={
                         <PrivateRoute user={user} role={[0, 1]}>
                           <Profile/>
