@@ -84,14 +84,8 @@ exports.signup = async(req, res, next) => {
 exports.verifyEmail = async(req, res, next) => {
     try {
         const token = await Token.findOne({ token: req.query.token });
-        // if (!token) {
-        //     return next(new ErrorResponse(`Contactați-ne pentru ajutor.`, 400));
-        // }
 
         const user = await User.findById(token.userId);
-        // if (!user) {
-        //     return next(new ErrorResponse(`User not found!`, 404));
-        // }
 
         user.verified = true;
         await user.save();

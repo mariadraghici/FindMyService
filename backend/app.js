@@ -8,15 +8,8 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 const cors = require('cors');
 const multer = require('multer');
-const {GridFsStorage} = require('multer-gridfs-storage');
-const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 const path = require('path');
-const uuid = require('uuid').v4;
-const User = require('./models/user');
-const Image = require('./models/image');
-const sharp = require('sharp');
-const fs = require('fs');
 const http = require('http');
 const { Server } = require('socket.io');
 
@@ -57,7 +50,7 @@ const commentRoutes = require('./routes/comment');
 const auctionRoutes = require('./routes/auction');
 const recommendationRoutes = require('./routes/recommendation');
 const ErrorResponse = require('./utils/errorResponse');
-const { s3Upload, s3Uploadv3, s3GetImages, s3DeleteImages, s3GetImage} = require('./s3Service');
+const { s3Uploadv3, s3GetImages, s3DeleteImages, s3GetImage} = require('./s3Service');
 
 // Connect to MongoDB
 mongoose.connect(process.env.DATABASE, {

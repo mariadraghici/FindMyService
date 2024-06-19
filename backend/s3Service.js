@@ -3,21 +3,6 @@ const uuid = require("uuid").v4;
 const Image = require('./models/image');
 const User = require('./models/user');
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const sharp = require('sharp');
-
-// exports.s3Uploadv2 = async (files) => {
-//     const s3 = new S3();
-
-//     const params = files.map(file => {
-//         return {
-//             Bucket: process.env.AWS_BUCKET_NAME,
-//             Key: `uploads/${uuid()}-${file.originalname}`,
-//             Body: file.buffer
-//         }
-//     });
-
-//     return await Promise.all(params.map(param => s3.upload(param).promise()));
-// }
 
 exports.s3Uploadv3 = async (files, username) => {
     const s3client = new S3Client();
@@ -29,13 +14,6 @@ exports.s3Uploadv3 = async (files, username) => {
     for (let i = 0; i < length; i++) {
         fileNames.push(`uploads/${username}-${uuid()}-${files[i].originalname}`);
     }
-
-    // Resize images with Sharp
-    // const resizedImages = await Promise.all(files.map(file => {
-    //     return sharp(file.buffer)
-    //         .resize({ width: 600, height: 400, fit: 'contain'})
-    //         .toBuffer();
-    // }));
 
     const params = files.map((file, index) => {
         return {
@@ -64,7 +42,6 @@ exports.s3GetImages = async (serviceName) => {
     const s3 = new S3Client();
     const user = await User.find({name: serviceName}).populate('images');
     const images = user[0].images;
-    // console.log(images);
 
     for (const image of images) {
         const getObjectParams = {
@@ -84,7 +61,6 @@ exports.s3GetImage = async (serviceName) => {
     const s3 = new S3Client();
     const user = await User.find({name: serviceName}).populate('images');
     const images = user[0].images;
-    // console.log(images);
     const image = images[0];
 
     
@@ -124,7 +100,6 @@ exports.s3DeleteImages = async (serviceName, imageId) => {
     user.images.pull(imageId);
     await user.save();
 
-    // Delete the image document from the database
     await Image.findByIdAndDelete(imageId);
 
     return { message: "Image deleted successfully" };
