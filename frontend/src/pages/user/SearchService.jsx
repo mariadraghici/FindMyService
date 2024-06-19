@@ -23,7 +23,6 @@ import MyAutocompleteWithCheckboxes from '../../components/utils/AutocompleteWit
 import LazyLoadingPaginationComponent from '../../components/utils/LazyLoadingPaginationComponent';
 
 const SearchService = () => {
-    const [services, setServices] = useState([]);
     const {user} = useContext(ProfileContext);
     const [cars, setCars] = useState([]);
     const [selectedCars, setSelectedCars] = useState({});
@@ -38,8 +37,6 @@ const SearchService = () => {
     const [models, setModels] = useState({});
     const [engines, setEngines] = useState([]);
     const isSmallScreen = useMediaQuery('(max-width:899px)');
-    const [page, setPage] = useState(1);
-    const [pageNo, setPageNo] = useState(1);
     const [filterButtonActivated, setFilterButtonActivated] = useState(false);
     const [refresh, setRefresh] = useState(0);
 
@@ -48,10 +45,6 @@ const SearchService = () => {
         model: "",
         engine: "",
     });
-
-    const handlePageChange = (event, value) => {
-        setPage(value);
-    };
 
     const setAllBrands = async () => {
         try {
@@ -65,15 +58,6 @@ const SearchService = () => {
             toast.error(error.response.data.error);
         }
     }
-    // const setAllServices = async () => {
-    //     try {
-    //         const res = await getAllServices();
-    //         setServices(res);
-    //         setPageNo(Math.ceil(services.length / 5));
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
 
     const setAllCities = async () => {
         try {
@@ -94,36 +78,29 @@ const SearchService = () => {
     }
 
     const handleFiltre = async () => {
-        // try {
-        //     const res = await filter(selectedCars, selectedFacilities, selectedCities, formData);
-        //     setServices(res);
-        //     setFilterButtonActivated(false);
-        // } catch (error) {
-        //     console.log(error);
-        // }
         setRefresh(refresh + 1);
     }
 
+    const getCars = async () => {
+        try {
+            const res = await myAxios.get('/api/mycars');
+            setCars(res.data.cars);
+            setSelectedCars(res.data.cars.reduce((acc, car) => {
+                acc[car._id] = false;
+                return acc;
+            }, {}))
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
-        // setAllServices();
         setAllCities();
         setAllFacilities();
         setAllBrands();
 
         if (user) {
-            try {
-                const getCars = async () => {
-                    const res = await myAxios.get('/api/mycars');
-                    setCars(res.data.cars);
-                    setSelectedCars(res.data.cars.reduce((acc, car) => {
-                        acc[car._id] = false;
-                        return acc;
-                    }, {}))
-                }
-                getCars();
-            } catch (error) {
-                console.log(error);
-            }
+            getCars();
         }
     }, [user]);
 
@@ -253,32 +230,6 @@ const SearchService = () => {
                     </Stack>}
                 </Grid>
                 <Grid item md={9} xs={12}>
-                    {/* <Stack sx={{justifyContent: 'center'}} spacing={2}>
-                    {services?.slice((page - 1) * 5, (page - 1) * 5 + 5).map(service => (
-                        <div key={service._id}>
-                            <Link to={`/service/page/${service.name}`}>
-                            <ServiceCard service={service} />
-                            </Link>
-                        </div>
-                    ))}
-
-                    </Stack>
-                    <Grid container justifyContent="flex-end" sx={{ bottom: '10px', right: '10px' }}>
-                        {services.length !== 0 && <Pagination
-                        sx={{
-                            '& .MuiPaginationItem-root': {
-                            color: 'white', // Change the color of the numbers to white
-                            },
-                            '& .Mui-selected': {
-                            backgroundColor: 'primary.main', // Ensure selected item has appropriate contrast
-                            color: 'white', // Selected item color
-                            },
-                            '& .MuiPaginationItem-root.Mui-selected': {
-                            backgroundColor: 'primary.main', // Selected item background color
-                            },
-                        }}
-                        variant='outlined' count={pageNo} page={page} onChange={handlePageChange} />}
-                    </Grid> */}
                     <LazyLoadingPaginationComponent dataType={'services'} apiFunction={filter} limit={3} searchService={{
                         selectedCars: selectedCars, selectedFacilities: selectedFacilities, selectedCities: selectedCities, formData: formData
                         }} refresh={refresh} setRefresh={setRefresh}/>  

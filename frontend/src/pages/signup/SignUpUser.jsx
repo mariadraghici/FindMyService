@@ -15,7 +15,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import FormHelperText from "@mui/material/FormHelperText";
 
 
-const SignUpUser = ({}) => {
+const SignUpUser = () => {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);

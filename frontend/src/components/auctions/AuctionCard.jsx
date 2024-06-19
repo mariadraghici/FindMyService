@@ -24,6 +24,12 @@ const AuctionCard = ({auction, setRefresh, refresh}) => {
         wordBreak: 'break-all',
     };
 
+    useEffect(() => {
+        if (seeCommentsButtonActive) {
+            fetchComments();
+        }
+    }, [seeCommentsButtonActive, refresh]);
+
     if (!auction) {
         return null;
     }
@@ -40,12 +46,6 @@ const AuctionCard = ({auction, setRefresh, refresh}) => {
             console.log(error);
         }
     }
-
-    useEffect(() => {
-        if (seeCommentsButtonActive) {
-            fetchComments();
-        }
-    }, [seeCommentsButtonActive, refresh]);
 
     const handleCommentClick = () => {
         setSeeCommentsButtonActive(!seeCommentsButtonActive);

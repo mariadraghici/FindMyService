@@ -6,8 +6,6 @@ export const resetNewOffers = async (userId) => {
 
         if (res.status === 200) {
             return res.data.message;
-        } else {
-            return res.data.message;
         }
     } catch (error) {
         console.log(error);

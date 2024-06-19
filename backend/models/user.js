@@ -51,12 +51,6 @@ const userSchema = new mongoose.Schema({
         ref: "City"
     },
 
-    address: {
-        type: String,
-        trim: true,
-        maxlength: 200
-    },
-
     phone: {
         type: String,
         trim: true,
